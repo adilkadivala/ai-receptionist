@@ -17,6 +17,8 @@ How the product is built, from a one-person plumbing business to a large hospita
    - `api`: the dashboard's REST API;
    - `voice`: live calls;
    - `worker`: background jobs and schedules.
+
+   The business rules live once, in `services/`, and all three use them.
 4. **Every customer shares one platform.** Each business's data is kept apart inside the database itself (Postgres row-level security). A separate database is only for enterprise contracts that pay for it, built from the same code.
 5. **Pay only for what runs.** No Kubernetes, load balancer, Redis or separate vector database until real load needs them. Postgres does the data, search index, job queue and locks. Both frontends are static files on a CDN.
 6. **No AI models on our servers.** Listening, thinking and speaking all go through provider APIs. Every provider has a backup.
@@ -90,6 +92,7 @@ Three readers went through the books that fit this product. These are the decisi
 | **No AI gateway yet** | One LLM and one route gain nothing from a gateway, and the extra hop adds delay before the first word. Keep a thin `llm` adapter, and reconsider when there's a second LLM vendor or regional stacks. | routing p.2–4, 99–100, 136–139 |
 | **Testing the AI** | `evals/` holds cases by intent, language, noise and business type. Grade the final state (was the booking made once?), not the order of steps. Plus fake calendars and CRMs, injected failures, and red-team calls (instructions hidden in speech or CRM fields). Smoke cases on every PR; the full set nightly. A release is blocked by any duplicate write, any action without permission, or any wrong answer that sounded confident. | agentic evals p.6, 44–58, 126, 141–166; tool use p.77–78 |
 | **Privacy** | Voice counts as biometric data: get consent for clones, set retention per organization, and when deleting a caller, purge everything derived from them. Never use a voice to prove who someone is. | voice AI p.47–49 |
+| **Code layout** | One repo, one folder per running process (`api`, `voice`, `worker`) over shared code; split into separate deployments only when one part must scale alone. Inside the server, calls go one way: routes, tools and jobs → `services/` → `repositories/` → `core/`. Safety rules live as YAML packs apart from the code that runs them. Details in section 11. | AI system design p.98; FastAPI p.33–35; guardrails p.87; voice AI p.52 |
 
 **Later**, from the same books:
 - Canary releases (1–5%, then 25/50/100) with automatic rollback.
@@ -247,21 +250,38 @@ Ai-receptionist/
 │   │       ├── pages/            Overview, Calls, Receptionist, Phone numbers, Billing, Signup
 │   │       └── lib/api.ts        the typed api client
 │   └── server/                   Python 3.12 · FastAPI · Pipecat · SQLAlchemy · Alembic   (dev: port 8000)
-│       ├── core/                 settings, tenant database sessions, tables
-│       ├── api/                  process 1: dashboard REST API   (next) routes/, auth/
+│       ├── core/                 shared foundation, no business rules
+│       │   ├── config.py  db.py  models.py      settings, tenant database sessions, tables
+│       │   └── (next) security.py  http.py  redact.py
+│       │                         password and token helpers; HTTP client with deadlines, retry and circuit breaker; redaction
+│       ├── api/                  process 1: dashboard REST API
+│       │   ├── main.py           builds the app and mounts the routers
+│       │   └── (next) deps.py    current user, current organization, tenant session
+│       │       (next) routes/    one thin router per resource: auth, agents, numbers, calls, billing, webhooks
+│       │       (next) schemas/   Pydantic request and response models; the OpenAPI the dashboard client comes from
 │       ├── voice/                process 2: live calls
-│       │   ├── call.py  routes.py  language.py  prompt.py  texml.py
-│       │   └── (next) context.py providers.py safety.py deadline.py watchdog.py metrics.py phrases.py
-│       │       tools/ registry.py guard.py book.py transfer.py take_message.py end_call.py
-│       ├── (next) worker/        process 3: summarize_call, ingest_knowledge, usage_rollup, retention_sweep, reconcile_actions
-│       ├── (next) knowledge/     ingest, chunk, embed, hybrid search
-│       ├── (next) integrations/  calendars, CRMs, Resend, Dodo; each with a fake for tests
-│       ├── (next) billing/       plans, usage, caps
-│       ├── (next) common/        HTTP client with timeouts, retry + circuit breaker, redaction
+│       │   ├── routes.py  texml.py               Telnyx webhook and audio WebSocket
+│       │   ├── call.py                           the pipeline: wires the stages together, handles barge-in
+│       │   ├── language.py  prompt.py
+│       │   └── (next) main.py    its own entry point (today voice is mounted inside the api)
+│       │       (next) stt.py  tts.py             one file per stage, each with its backup and deadline
+│       │       (next) providers.py               picks the provider chain allowed for the organization's compliance tier
+│       │       (next) context.py  deadline.py  watchdog.py  metrics.py  phrases.py
+│       │       (next) tools/     registry.py  guard.py, then one thin file per tool: book, transfer, take_message, end_call
+│       │       (next) safety/    code: SafetyGate and emergency detector; loads, validates and hot-reloads the rules
+│       │           └── policies/ data: YAML rule packs (medical advice, emergency phrases per language, off-topic)
+│       ├── (next) worker/        process 3: main.py runs the job queue and the scheduler
+│       │   └── jobs/             summarize_call, ingest_knowledge, usage_rollup, retention_sweep, reconcile_actions
+│       ├── (next) services/      business rules shared by all three processes:
+│       │                         agents, calls, bookings, messages, knowledge, usage, billing
+│       ├── (next) repositories/  every database query, one file per group of tables, always inside Database.tenant()
+│       ├── (next) integrations/  outside services behind our own interface, each with a fake for tests:
+│       │                         llm (the thin Claude adapter), calendars, CRMs, email (Resend), payments (Dodo)
 │       ├── migrations/           database changes
 │       ├── scripts/              export_openapi.py
-│       ├── tests/                fast tests; db/ (row-level security)   (next) chaos/
-│       └── (next) evals/         cases/*.jsonl, simulated callers, sandbox, redteam; cost money, run nightly
+│       ├── tests/                every commit: fast tests; db/ needs Postgres (row-level security)
+│       │                         (next) chaos/ (fake providers that hang or fail), safety/ (gate for every rule-pack edit)
+│       └── (next) evals/         cases/*.jsonl, simulated callers, sandbox, redteam, run.py; cost money, run nightly
 ├── packages/
 │   ├── api-client/               openapi.json (from the server) → src/schema.d.ts (generated) + createApiClient()
 │   └── ui/                       theme.css: shared Tailwind colours and fonts
@@ -273,6 +293,16 @@ Ai-receptionist/
                                   web job (Biome, typecheck, tests, builds, generated-types check)
 ```
 
+**How the server's code fits together** (from FastAPI p.33–35, AI system design p.98, guardrails p.87, voice AI p.52):
+- **Calls go one way:** `api/routes/`, `voice/tools/` and `worker/jobs/` → `services/` → `repositories/` → `core/`.
+  - Routes, tools and jobs only translate their input (an HTTP request, a tool call, a job) and hold no SQL.
+  - Services hold the business rules and know nothing about HTTP.
+  - Repositories hold the SQL and no business rules.
+- **Services are shared.** A booking the AI makes during a call and one made from the dashboard both go through `services/bookings.py`, so the idempotency key and the audit row are written in one place. That's why `services/` sits at the top of `apps/server/`, not inside `api/` as in the FastAPI book's single-app layout.
+- **Each process has its own entry point:** `api/main.py`, `voice/main.py` and `worker/main.py`. Moving voice to its own servers at stage 2 changes the deployment, not the code.
+- **Safety rules are data, not code.** Engineers decide how the checks work (`voice/safety/`); whoever handles compliance decides what the rules are (`policies/*.yaml`), so a hospital rule or a new language is a reviewed YAML edit. A pack that fails validation never loads, and the last good pack stays in use.
+- **Two kinds of tests:** `tests/` runs on every commit and costs nothing; `evals/` calls real providers, costs money and runs nightly.
+
 ---
 
 ## 12. Build order
@@ -280,14 +310,15 @@ Ai-receptionist/
 1. **Foundation:** git repository; CI; local Postgres; `core` database layer with organizations, agents, phone numbers and calls under row-level security. **Done 2026-10-31.**
 2. **Three-app layout:** landing, dashboard and server in `apps/`, a shared API client and theme in `packages/`, and CI for both. **Done 2026-10-31.**
 3. **Voice:**
+   - give voice its own entry point (`voice/main.py`) instead of running inside the api;
    - switch to Soniox with backups, deadlines and circuit breakers;
    - load the agent from the dialed number;
    - save every call and its per-turn timings;
    - pre-recorded phrases;
    - chaos tests.
-4. **Tools and safety:** tool registry and guard, `action_log` idempotency, read-back, `SafetyGate`, emergency transfer.
-5. **Worker:** job queue, call summaries and email, usage events, rollups and caps.
-6. **Dashboard and login:** users, memberships, cookie auth, setup wizard, call history, audit log.
+4. **Tools and safety:** tool registry and guard, first `services/` and `repositories/` (bookings, messages) with `action_log` idempotency, read-back, `SafetyGate` with YAML rule packs, emergency transfer.
+5. **Worker:** `worker/main.py` with the job queue, call summaries and email, usage events, rollups and caps.
+6. **Dashboard and login:** `api/routes/`, `deps.py` and `schemas/`; users, memberships, cookie auth, setup wizard, call history, audit log.
 7. **Knowledge:** documents and hybrid search, with an organization check in the search code.
 8. **Billing:** plans, overage, Dodo.
 9. **Evals and infrastructure:** eval suite in CI; Terraform for stage 1; staging, then production; real test calls in every launch language.
