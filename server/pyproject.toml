@@ -1,0 +1,33 @@
+[project]
+name = "ai-receptionist-server"
+version = "0.1.0"
+description = "AI phone receptionist: answers a business's calls with Claude"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.16",
+    "fastapi[standard]>=0.115.6",
+    "pipecat-ai[anthropic,cartesia,deepgram,websocket]>=1.15.0",
+    "psycopg[binary]>=3.2",
+    "pydantic-settings>=2.16.0",
+    "sqlalchemy[asyncio]>=2.0.40",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.0.0",
+    "ruff>=0.17.1",
+]
+
+[tool.ruff]
+line-length = 130
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["B008"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+filterwarnings = ["ignore::DeprecationWarning:pipecat.*", "ignore:.*AudioContextTTSService.*:DeprecationWarning"]
