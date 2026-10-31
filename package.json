@@ -1,0 +1,22 @@
+{
+  "name": "ai-receptionist",
+  "private": true,
+  "packageManager": "pnpm@11.5.1",
+  "engines": {
+    "node": ">=22.22"
+  },
+  "scripts": {
+    "dev:landing": "pnpm --filter @receptionist/landing dev",
+    "dev:dashboard": "pnpm --filter @receptionist/dashboard dev",
+    "api:generate": "cd apps/server && uv run python -m scripts.export_openapi ../../packages/api-client/openapi.json && cd ../.. && pnpm --filter @receptionist/api-client generate",
+    "check": "biome check .",
+    "fix": "biome check --write .",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "build": "pnpm -r build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.0",
+    "typescript": "~6.0.3"
+  }
+}

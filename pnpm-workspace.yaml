@@ -1,0 +1,12 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Only install versions that have been public for 7 days, so a bad or hijacked release
+# is usually pulled before it reaches us.
+minimumReleaseAge: 10080
+
+# openapi-typescript declares TypeScript 5 but works with 6 (checked by `pnpm api:generate`).
+peerDependencyRules:
+  allowedVersions:
+    openapi-typescript>typescript: "6"

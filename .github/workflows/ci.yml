@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: server
+        working-directory: apps/server
     services:
       postgres:
         image: pgvector/pgvector:pg17
@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Create database roles and databases
-        run: psql -v ON_ERROR_STOP=1 -h localhost -p 5433 -U postgres -f ../infra/compose/postgres-init.sql
+        run: psql -v ON_ERROR_STOP=1 -h localhost -p 5433 -U postgres -f ../../infra/compose/postgres-init.sql
         env:
           PGPASSWORD: postgres-ci
       - uses: astral-sh/setup-uv@v6
@@ -37,3 +37,26 @@ jobs:
       - run: uv run ruff check .
       - run: uv run ruff format --check .
       - run: uv run pytest -q
+      - name: OpenAPI description is up to date (run `pnpm api:generate` if this fails)
+        run: |
+          uv run python -m scripts.export_openapi ../../packages/api-client/openapi.json
+          git diff --exit-code ../../packages/api-client/openapi.json
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generated API types are up to date (run `pnpm api:generate` if this fails)
+        run: |
+          pnpm --filter @receptionist/api-client generate
+          git diff --exit-code packages/api-client
+      - run: pnpm check
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

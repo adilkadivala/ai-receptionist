@@ -9,9 +9,13 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 
-# Node (client/)
+# Node (apps/landing, apps/dashboard, packages/)
 node_modules/
 .next/
+out/
+dist/
+next-env.d.ts
+*.tsbuildinfo
 
 # Copyrighted reading material: kept on disk, never committed
 learn/

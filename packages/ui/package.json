@@ -1,0 +1,8 @@
+{
+  "name": "@receptionist/ui",
+  "private": true,
+  "description": "Brand colours and fonts shared by the landing page and the dashboard.",
+  "exports": {
+    "./theme.css": "./theme.css"
+  }
+}
