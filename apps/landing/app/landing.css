@@ -1,0 +1,21 @@
+/* Landing-only global rules. Theme tokens live in @receptionist/ui/globals.css. */
+
+/* Scrollbars and form controls follow the theme that layout.tsx picks from the OS. */
+.dark {
+  color-scheme: dark;
+}
+
+/* Reduced motion: no movement anywhere, including shadcn's accordion and sheet.
+   Unlayered, so it wins over Tailwind's layered utilities without !important.
+   Animations keep a tiny duration so their end events still fire; transitions go to 0s, because Base UI warns
+   when a panel shows both a transition and an animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0s;
+    scroll-behavior: auto;
+  }
+}
