@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Landing page</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FAFAFA}
+a{color:#09090B}a:hover{color:#3340F0}
+@keyframes wave{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(22,163,74,.55)}70%{box-shadow:0 0 0 7px rgba(22,163,74,0)}100%{box-shadow:0 0 0 0 rgba(22,163,74,0)}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes travel{0%{left:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{left:calc(100% - 10px);opacity:0}}
+@keyframes slotIn{0%,12%{opacity:0;transform:translateY(10px) scale(.97)}24%,86%{opacity:1;transform:none}100%{opacity:0;transform:none}}
+@keyframes reveal{0%,8%{clip-path:inset(0 100% 0 0)}30%,88%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 0 0);opacity:0}}
+@keyframes ticker{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@keyframes strike{0%,20%{width:0}45%,85%{width:100%}100%{width:100%;opacity:0}}
+@keyframes fadeLate{0%,40%{opacity:0}55%,85%{opacity:1}100%{opacity:0}}
+.bento{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.span2{grid-column:span 2}.row2{grid-row:span 2}
+@media (max-width:980px){.bento{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.bento{grid-template-columns:minmax(0,1fr)}.span2{grid-column:auto}.row2{grid-row:auto}}
+@media (prefers-reduced-motion:reduce){.motion,.motion *{animation:none!important}}
+</style>
+</helmet>
+<div style="background: #FAFAFA; color: #09090B; font-family: 'Geist', ui-sans-serif, system-ui, sans-serif; min-height: 100vh; overflow-x: clip">
+<div style="max-width: 1248px; margin: 0 auto; border-left: 1px dashed #D9DBE3; border-right: 1px dashed #D9DBE3; box-sizing: border-box">
+
+  <div style="position: relative; background: #F1F2F6">
+    <div class="motion" aria-hidden="true" style="position: absolute; top: 0; left: 15%; right: 15%; height: 150px; pointer-events: none; background-image: repeating-conic-gradient({{accent}} 0 25%, transparent 0 50%); background-size: 6px 6px; opacity: 0.55; mask-image: radial-gradient(ellipse 50% 100% at 50% 0%, #000 0%, rgba(0,0,0,.35) 45%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 50% 100% at 50% 0%, #000 0%, rgba(0,0,0,.35) 45%, transparent 75%)"></div>
+    <div aria-hidden="true" style="position: absolute; top: 0; left: 5%; right: 5%; height: 190px; pointer-events: none; background-image: radial-gradient(circle, {{accent}} 1.2px, transparent 1.4px); background-size: 14px 14px; opacity: 0.5; mask-image: radial-gradient(ellipse 50% 100% at 50% 0%, #000 0%, transparent 70%); -webkit-mask-image: radial-gradient(ellipse 50% 100% at 50% 0%, #000 0%, transparent 70%)"></div>
+
+    <header style="position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 24px">
+      <a href="#top" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: #09090B; font-weight: 600; font-size: 16px; letter-spacing: -0.01em">
+        <span style="display: inline-flex; width: 30px; height: 30px; border-radius: 8px; background: {{accent}}; color: #FFFFFF; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2a9 9 0 0 1 9 9"></path><path d="M13 6a5 5 0 0 1 5 5"></path><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg></span>
+        AI Receptionist
+      </a>
+      <nav aria-label="Main" style="display: flex; flex-wrap: wrap; gap: 4px">
+        <a href="#product" style="padding: 8px 12px; border-radius: 8px; font-size: 14px; color: #3F3F46; text-decoration: none">Product</a>
+        <a href="#how" style="padding: 8px 12px; border-radius: 8px; font-size: 14px; color: #3F3F46; text-decoration: none">How it works</a>
+        <a href="#languages" style="padding: 8px 12px; border-radius: 8px; font-size: 14px; color: #3F3F46; text-decoration: none">Languages</a>
+        <a href="#pricing" style="padding: 8px 12px; border-radius: 8px; font-size: 14px; color: #3F3F46; text-decoration: none">Pricing</a>
+        <a href="#faq" style="padding: 8px 12px; border-radius: 8px; font-size: 14px; color: #3F3F46; text-decoration: none">FAQ</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <a href="#login" style="display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: #09090B; text-decoration: none">Log in</a>
+        <a href="#signup" style="display: inline-flex; align-items: center; height: 36px; padding: 0 14px; border-radius: 10px; background: {{ctaBg}}; font-size: 14px; font-weight: 500; color: #FFFFFF; text-decoration: none">Get started</a>
+      </div>
+    </header>
+
+    <section id="top" style="position: relative; padding: 72px 24px 0; text-align: center">
+      <a href="#languages" style="display: inline-flex; align-items: center; gap: 10px; height: 32px; padding: 0 12px 0 4px; border-radius: 999px; border: 1px solid #E4E4E7; background: #FFFFFF; font-size: 13px; color: #3F3F46; text-decoration: none">
+        <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 999px; background: #18181B; color: #FFFFFF; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.06em">NEW</span>
+        42 languages from day one
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+      </a>
+      <h1 style="margin: 28px auto 0; max-width: 920px; font-size: clamp(44px, 7vw, 80px); line-height: 1.0; letter-spacing: -0.05em; font-weight: 600">Every call answered.<br><span style="color: #71717A">Day or night, in 42 languages.</span></h1>
+      <p style="margin: 24px auto 0; max-width: 620px; font-size: 18px; line-height: 1.6; color: #52525B">An AI receptionist that picks up 24/7, books appointments into your calendar, takes messages and hands urgent calls to a person. For a one-person plumbing business or a large hospital.</p>
+      <div style="margin-top: 32px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px">
+        <a href="#signup" style="display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 12px; background: {{ctaBg}}; color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none">Get started<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+        <a href="#product" style="display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 20px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E4E4E7; color: #09090B; font-size: 15px; font-weight: 500; text-decoration: none; box-shadow: 0 1px 2px rgba(9,9,11,0.05)"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>Hear a live call</a>
+      </div>
+      <p style="margin: 18px 0 0; font-size: 13px; color: #63636B">Plans from $29 a month. Callers always hear they're talking to an AI.</p>
+
+      <div style="position: relative; margin: 64px -24px 0; background: {{accent}}; padding: 92px 24px 0">
+        <div aria-hidden="true" style="position: absolute; top: 0; left: -50vw; right: -50vw; border-top: 1px dashed #D9DBE3"></div>
+        <span aria-hidden="true" style="position: absolute; top: -4px; left: -4px; width: 7px; height: 7px; background: {{accent}}"></span>
+        <span aria-hidden="true" style="position: absolute; top: -4px; right: -4px; width: 7px; height: 7px; background: {{accent}}"></span>
+        <div aria-hidden="true" style="position: absolute; top: 0; left: 0; right: 0; display: flex; flex-direction: column">
+          <div style="height: 16px; background-image: conic-gradient(transparent 25%, #F1F2F6 0); background-size: 6px 6px"></div>
+          <div style="height: 16px; background-image: repeating-conic-gradient(#F1F2F6 0 25%, transparent 0 50%); background-size: 6px 6px; background-position: 3px 0"></div>
+          <div style="height: 16px; background-image: conic-gradient(#F1F2F6 25%, transparent 0); background-size: 6px 6px"></div>
+          <div style="height: 16px; background-image: radial-gradient(#F1F2F6 1.4px, transparent 1.5px); background-size: 12px 12px"></div>
+        </div>
+
+        <div style="position: relative; display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 2px; padding: 4px; border-radius: 12px; background: #FFFFFF; box-shadow: 0 8px 24px -12px rgba(9,9,11,0.35)">
+          <span style="height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 9px; font-size: 13px; color: #52525B">Calls</span>
+          <span style="height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 9px; font-size: 13px; font-weight: 500; color: #09090B; background: #F1F2F6">Overview</span>
+          <span style="height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 9px; font-size: 13px; color: #52525B">Receptionist</span>
+          <span style="height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 9px; font-size: 13px; color: #52525B">Phone numbers</span>
+          <span style="height: 32px; display: inline-flex; align-items: center; padding: 0 12px; border-radius: 9px; font-size: 13px; color: #52525B">Billing</span>
+        </div>
+
+        <div style="max-width: 1060px; margin: 28px auto 0; padding: 10px 10px 0; border-radius: 20px 20px 0 0; background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.32); border-bottom: 0; box-sizing: border-box">
+          <div style="border-radius: 12px 12px 0 0; background: #FFFFFF; text-align: start; overflow: hidden">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #EFEFF1">
+              <div style="display: flex; align-items: center; gap: 10px"><span style="font-size: 14px; font-weight: 600">Rivera Plumbing</span><span style="font-size: 13px; color: #63636B">Overview</span></div>
+              <span style="display: inline-flex; align-items: center; gap: 6px; height: 26px; padding: 0 10px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 12px; font-weight: 500"><span class="motion" style="width: 6px; height: 6px; border-radius: 999px; background: #16A34A; animation: livePulse 1.8s ease-out infinite"></span>Answering calls</span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; padding: 16px 18px">
+              <div style="padding: 14px; border-radius: 12px; border: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; color: #63636B">Calls answered</span><span style="font-size: 24px; letter-spacing: -0.03em; font-weight: 600">1,284</span></div>
+              <div style="padding: 14px; border-radius: 12px; border: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; color: #63636B">Bookings made</span><span style="font-size: 24px; letter-spacing: -0.03em; font-weight: 600">86</span></div>
+              <div style="padding: 14px; border-radius: 12px; border: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 6px"><span style="font-size: 12px; color: #63636B">Sent to you</span><span style="font-size: 24px; letter-spacing: -0.03em; font-weight: 600">31</span></div>
+              <div style="padding: 14px; border-radius: 12px; border: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 8px"><span style="font-size: 12px; color: #63636B">Minutes used</span><span style="font-size: 24px; letter-spacing: -0.03em; font-weight: 600">212<span style="font-size: 14px; color: #63636B"> / 350</span></span></div>
+            </div>
+            <div style="overflow-x: auto; padding: 0 18px 18px">
+              <table style="width: 100%; min-width: 640px; border-collapse: collapse; font-size: 13px">
+                <thead><tr style="color: #63636B; font-size: 12px"><th scope="col" style="padding: 8px 0; text-align: start; font-weight: 500">Caller</th><th scope="col" style="padding: 8px; text-align: start; font-weight: 500">What they needed</th><th scope="col" style="padding: 8px; text-align: start; font-weight: 500">Language</th><th scope="col" style="padding: 8px; text-align: start; font-weight: 500">Outcome</th><th scope="col" style="padding: 8px 0; text-align: end; font-weight: 500">Time</th></tr></thead>
+                <tbody>
+                  <tr style="border-top: 1px solid #EFEFF1"><td style="padding: 10px 0; font-weight: 500">Maria Lopez</td><td style="padding: 10px 8px; color: #3F3F46">Kitchen sink leak · booked Wed 10:00</td><td style="padding: 10px 8px; color: #3F3F46">English</td><td style="padding: 10px 8px"><span style="display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 12px; font-weight: 500">Booked</span></td><td style="padding: 10px 0; text-align: end; color: #63636B">11:42 pm</td></tr>
+                  <tr style="border-top: 1px solid #EFEFF1"><td style="padding: 10px 0; font-weight: 500">Unknown caller</td><td style="padding: 10px 8px; color: #3F3F46">Burst pipe, water in the basement</td><td style="padding: 10px 8px; color: #3F3F46">English</td><td style="padding: 10px 8px"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: #EEF0FE; color: #2A35C9; font-size: 12px; font-weight: 500">Transferred</span></td><td style="padding: 10px 0; text-align: end; color: #63636B">8:51 pm</td></tr>
+                  <tr style="border-top: 1px solid #EFEFF1"><td style="padding: 10px 0; font-weight: 500">Priya Shah</td><td style="padding: 10px 8px; color: #3F3F46">Wants a quote for a bathroom refit</td><td style="padding: 10px 8px; color: #3F3F46">Hinglish</td><td style="padding: 10px 8px"><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: #FEF3C7; color: #92400E; font-size: 12px; font-weight: 500">Message taken</span></td><td style="padding: 10px 0; text-align: end; color: #63636B">6:20 pm</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section aria-label="Who it's for" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 28px; padding: 28px 24px; border-bottom: 1px dashed #D9DBE3; background: #FFFFFF">
+    <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">Built for</span>
+    <span style="font-size: 15px; font-weight: 500; color: #3F3F46">Plumbers and electricians</span>
+    <span style="font-size: 15px; font-weight: 500; color: #3F3F46">Salons and clinics</span>
+    <span style="font-size: 15px; font-weight: 500; color: #3F3F46">Lawyers and consultants</span>
+    <span style="font-size: 15px; font-weight: 500; color: #3F3F46">Hotels</span>
+    <span style="font-size: 15px; font-weight: 500; color: #3F3F46">Hospitals</span>
+    <span style="font-size: 15px; font-weight: 500; color: #3F3F46">Multi-branch companies</span>
+  </section>
+
+  <section id="product" style="padding: 96px 24px; display: flex; flex-direction: column; gap: 40px">
+    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">See it work</span>
+      <h2 style="margin: 0; max-width: 720px; font-size: clamp(32px, 4vw, 48px); line-height: 1.06; letter-spacing: -0.04em; font-weight: 600">Hear it answer, in your callers' language</h2>
+      <p style="margin: 0; max-width: 560px; font-size: 16px; line-height: 1.6; color: #52525B">An example call, played live. Pick a language and watch it book, transfer or take a message.</p>
+    </div>
+
+    <div class="bento">
+
+      <div class="span2 row2" style="display: flex; flex-direction: column; gap: 16px; padding: 20px; border-radius: 20px; border: 1px solid #E4E4E7; background: #FFFFFF; box-shadow: 0 1px 2px rgba(9,9,11,0.04); min-height: 560px; box-sizing: border-box">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <span style="display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 999px; background: #DCFCE7; color: #166534; font-family: 'Geist Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.06em"><span class="motion" style="width: 6px; height: 6px; border-radius: 999px; background: #16A34A; animation: livePulse 1.6s ease-out infinite"></span>LIVE</span>
+            <span style="font-size: 14px; font-weight: 600">{{demo.business}}</span>
+          </div>
+          <span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: #3F3F46; font-variant-numeric: tabular-nums">{{timer}}</span>
+        </div>
+
+        <div role="group" aria-label="Call language" style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{langs}}" as="l" hint-placeholder-count="5">
+            <button type="button" aria-pressed="{{l.selected}}" onClick="{{l.pick}}" lang="{{l.code}}" style="{{l.style}}">{{l.label}}</button>
+          </sc-for>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 12px; border-radius: 14px; background: #F7F7F9">
+          <div class="motion" aria-hidden="true" style="height: 64px; display: flex; align-items: center; justify-content: center; gap: 3px">
+            <sc-for list="{{waveBars}}" as="b" hint-placeholder-count="40">
+              <span style="{{b.style}}"></span>
+            </sc-for>
+          </div>
+          <span aria-live="polite" style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #52525B">{{speakingLabel}}</span>
+        </div>
+
+        <div dir="{{demo.dir}}" lang="{{demo.code}}" style="flex: 1; display: flex; flex-direction: column; gap: 10px; font-size: 14px; line-height: 1.5; min-height: 250px">
+          <sc-for list="{{visibleTurns}}" as="t" hint-placeholder-count="3">
+            <p style="{{t.style}}">{{t.text}}</p>
+          </sc-for>
+          <sc-if value="{{ended}}" hint-placeholder-val="{{false}}">
+            <span dir="ltr" style="{{demo.outcomeStyle}}">{{demo.outcome}}</span>
+          </sc-if>
+        </div>
+        <p style="margin: 0; font-size: 12px; color: #63636B">Example call. Wording and timing are illustrative.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 20px; border: 1px solid #E4E4E7; background: #FFFFFF">
+        <div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 15px; font-weight: 600">Books into your calendar</h3><p style="margin: 0; font-size: 13px; line-height: 1.5; color: #63636B">Reads the details back, then books. Never twice.</p></div>
+        <div class="motion" style="display: flex; flex-direction: column; gap: 6px; margin-top: auto">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; background: #F7F7F9; font-size: 12px"><span style="font-family: 'Geist Mono', monospace; color: #63636B">09:00</span><span style="color: #3F3F46">Boiler service</span></div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 10px; border-radius: 10px; border: 1px solid {{accent}}; background: #EEF0FE; font-size: 12px; animation: slotIn 4.5s ease-in-out infinite"><span style="display: flex; gap: 10px"><span style="font-family: 'Geist Mono', monospace; color: #2A35C9">10:00</span><span style="font-weight: 500; color: #1E25A0">Maria Lopez · sink leak</span></span><span style="font-size: 11px; color: #2A35C9">New</span></div>
+          <div style="display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; border: 1px dashed #E4E4E7; font-size: 12px"><span style="font-family: 'Geist Mono', monospace; color: #63636B">11:00</span><span style="color: #63636B">Free</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 20px; border: 1px solid #E4E4E7; background: #FFFFFF">
+        <div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 15px; font-weight: 600">Urgent calls go to a person</h3><p style="margin: 0; font-size: 13px; line-height: 1.5; color: #63636B">Emergencies and "can I speak to someone" go straight to you.</p></div>
+        <div style="margin-top: auto; display: flex; align-items: center; gap: 8px">
+          <span style="display: inline-flex; width: 36px; height: 36px; border-radius: 999px; background: #F4F4F5; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #3F3F46; flex-shrink: 0">Caller</span>
+          <span class="motion" aria-hidden="true" style="position: relative; flex: 1; height: 2px; background: repeating-linear-gradient(90deg, #E4E4E7 0 6px, transparent 6px 10px)"><span style="position: absolute; top: -4px; width: 10px; height: 10px; border-radius: 999px; background: {{accent}}; animation: travel 2.4s ease-in-out infinite"></span></span>
+          <span style="display: inline-flex; width: 36px; height: 36px; border-radius: 10px; background: {{accent}}; color: #FFFFFF; align-items: center; justify-content: center; flex-shrink: 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M15 13v2"></path><path d="M9 13v2"></path></svg></span>
+          <span class="motion" aria-hidden="true" style="position: relative; flex: 1; height: 2px; background: repeating-linear-gradient(90deg, #E4E4E7 0 6px, transparent 6px 10px)"><span style="position: absolute; top: -4px; width: 10px; height: 10px; border-radius: 999px; background: #16A34A; animation: travel 2.4s ease-in-out 1.2s infinite"></span></span>
+          <span style="display: inline-flex; width: 36px; height: 36px; border-radius: 999px; background: #DCFCE7; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #166534; flex-shrink: 0">You</span>
+        </div>
+      </div>
+
+      <div class="span2" style="display: flex; flex-wrap: wrap; gap: 16px; padding: 20px; border-radius: 20px; border: 1px solid #E4E4E7; background: #FFFFFF">
+        <div style="flex: 1 1 180px; display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 15px; font-weight: 600">A summary of every call</h3><p style="margin: 0; font-size: 13px; line-height: 1.5; color: #63636B">Emailed the moment it hangs up, with the full transcript.</p></div>
+        <div class="motion" style="flex: 2 1 260px; min-width: 0; padding: 14px; border-radius: 12px; border: 1px solid #E4E4E7; background: #FCFCFD; display: flex; flex-direction: column; gap: 8px; font-size: 12px">
+          <div style="display: flex; justify-content: space-between; gap: 8px; color: #63636B"><span>AI Receptionist</span><span style="font-family: 'Geist Mono', monospace">11:43 pm</span></div>
+          <span style="font-size: 13px; font-weight: 600; animation: reveal 6s steps(28) infinite">New booking: Maria Lopez</span>
+          <span style="color: #3F3F46; animation: reveal 6s steps(36) 0.5s infinite">Kitchen sink leak under the cabinet.</span>
+          <span style="color: #3F3F46; animation: reveal 6s steps(36) 1s infinite">Booked Wed 10:00 · 555-0142 confirmed.</span>
+        </div>
+      </div>
+
+      <div class="span2" style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 20px; border: 1px solid #E4E4E7; background: #FFFFFF; overflow: hidden">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px"><h3 style="margin: 0; font-size: 15px; font-weight: 600">42 languages, switched mid-call</h3><span style="font-size: 28px; letter-spacing: -0.04em; font-weight: 600; color: {{accent}}">42</span></div>
+        <div class="motion" aria-hidden="true" style="display: flex; flex-direction: column; gap: 8px; mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)">
+          <div style="display: flex; gap: 8px; width: max-content; animation: marquee 24s linear infinite">
+            <sc-for list="{{greetingsA}}" as="g" hint-placeholder-count="18">
+              <span style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid #E4E4E7; background: #FFFFFF; font-size: 13px; white-space: nowrap">{{g}}</span>
+            </sc-for>
+          </div>
+          <div style="display: flex; gap: 8px; width: max-content; animation: marquee 28s linear infinite reverse">
+            <sc-for list="{{greetingsB}}" as="g" hint-placeholder-count="18">
+              <span style="display: inline-flex; align-items: center; height: 32px; padding: 0 12px; border-radius: 999px; background: #F4F4F5; font-size: 13px; white-space: nowrap">{{g}}</span>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 20px; border: 1px solid #E4E4E7; background: #FFFFFF">
+        <div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 15px; font-weight: 600">Several calls at once</h3><p style="margin: 0; font-size: 13px; line-height: 1.5; color: #63636B">Nobody waits on hold.</p></div>
+        <div class="motion" aria-hidden="true" style="margin-top: auto; height: 96px; overflow: hidden; mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent); -webkit-mask-image: linear-gradient(180deg, transparent, #000 25%, #000 75%, transparent)">
+          <div style="display: flex; flex-direction: column; gap: 6px; animation: ticker 7s linear infinite">
+            <sc-for list="{{incoming}}" as="c" hint-placeholder-count="8">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px; border-radius: 9px; border: 1px solid #E4E4E7; font-size: 12px"><span style="font-family: 'Geist Mono', monospace; color: #3F3F46">{{c.number}}</span><span style="color: #166534">{{c.state}}</span></div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 14px; padding: 20px; border-radius: 20px; border: 1px solid #E4E4E7; background: #FFFFFF">
+        <div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 15px; font-weight: 600">Robocalls blocked</h3><p style="margin: 0; font-size: 13px; line-height: 1.5; color: #63636B">Spam never reaches you or your minutes.</p></div>
+        <div class="motion" style="margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px; border-radius: 10px; background: #F7F7F9; font-size: 12px">
+          <span style="position: relative; color: #3F3F46"><span style="font-family: 'Geist Mono', monospace">+1 888 555 0100</span><span aria-hidden="true" style="position: absolute; left: 0; top: 50%; height: 1.5px; background: #3F3F46; animation: strike 4s ease-in-out infinite"></span></span>
+          <span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; background: #E4E4E7; color: #3F3F46; font-size: 11px; font-weight: 500; animation: fadeLate 4s ease-in-out infinite">Blocked</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="how" style="border-top: 1px dashed #D9DBE3">
+    <div style="padding: 72px 24px 40px; display: flex; flex-direction: column; gap: 14px; max-width: 640px">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">How it works</span>
+      <h2 style="margin: 0; font-size: clamp(32px, 4vw, 44px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600">Live in three steps</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); border-top: 1px solid #E4E4E7; background: #FFFFFF">
+      <div style="padding: 32px 24px 40px; border-inline-end: 1px solid #E4E4E7; border-bottom: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: {{accent}}">01</span>
+        <h3 style="margin: 0; font-size: 19px; letter-spacing: -0.015em; font-weight: 600">Keep your number</h3>
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #52525B">Forward the calls you already get, or pick a new local number.</p>
+      </div>
+      <div style="padding: 32px 24px 40px; border-inline-end: 1px solid #E4E4E7; border-bottom: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: {{accent}}">02</span>
+        <h3 style="margin: 0; font-size: 19px; letter-spacing: -0.015em; font-weight: 600">Tell it about your business</h3>
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #52525B">Services, prices, opening hours, common questions and who should get urgent calls.</p>
+      </div>
+      <div style="padding: 32px 24px 40px; border-bottom: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 12px">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 13px; color: {{accent}}">03</span>
+        <h3 style="margin: 0; font-size: 19px; letter-spacing: -0.015em; font-weight: 600">It answers every call</h3>
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #52525B">It books, transfers and emails you a summary of every call, around the clock.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="languages" style="padding: 96px 24px; display: flex; flex-wrap: wrap; gap: 48px">
+    <div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">Languages</span>
+      <span style="font-size: 120px; line-height: 0.9; letter-spacing: -0.06em; font-weight: 600; color: {{accent}}">42</span>
+      <h2 style="margin: 0; font-size: 28px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 600">Your callers' language, from day one</h2>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #52525B">It hears which language the caller speaks and answers in it, even when they mix two, like Hindi and English. Every plan includes every language.</p>
+    </div>
+    <ul style="flex: 1.6 1 460px; min-width: 0; margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px">
+      <sc-for list="{{languages}}" as="lang" hint-placeholder-count="42">
+        <li style="display: inline-flex; align-items: center; height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid #E4E4E7; background: #FFFFFF; font-size: 14px; color: #27272A">{{lang}}</li>
+      </sc-for>
+    </ul>
+  </section>
+
+  <section id="pricing" style="padding: 96px 24px; border-top: 1px dashed #D9DBE3; display: flex; flex-direction: column; gap: 40px">
+    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 14px">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">Pricing</span>
+      <h2 style="margin: 0; font-size: clamp(32px, 4vw, 44px); line-height: 1.08; letter-spacing: -0.035em; font-weight: 600">Simple plans. Every language included.</h2>
+      <p style="margin: 0; font-size: 16px; color: #52525B">Extra minutes are $0.20 each. Booking, transfers, spam blocking and call summaries come with every plan.</p>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 20px; padding: 28px; border-radius: 16px; border: 1px solid #E4E4E7; background: #FFFFFF">
+        <div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 17px; font-weight: 600">Starter</h3><span style="font-size: 14px; color: #63636B">One business, one number</span></div>
+        <p style="margin: 0"><span style="font-size: 48px; letter-spacing: -0.04em; font-weight: 600">$29</span><span style="font-size: 15px; color: #63636B">/month</span></p>
+        <span style="font-size: 15px">100 call minutes</span>
+        <a href="#signup" style="display: inline-flex; align-items: center; justify-content: center; height: 42px; border-radius: 10px; border: 1px solid #E4E4E7; background: #FFFFFF; font-size: 14px; font-weight: 500; color: #09090B; text-decoration: none">Choose Starter</a>
+      </div>
+      <div style="position: relative; display: flex; flex-direction: column; gap: 20px; padding: 28px; border-radius: 16px; border: 2px solid {{accent}}; background: #FFFFFF; box-shadow: 0 24px 48px -28px rgba(51,64,240,0.45)">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px"><div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 17px; font-weight: 600">Pro</h3><span style="font-size: 14px; color: #63636B">Busy small businesses</span></div><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; background: #EEF0FE; color: #2A35C9; font-size: 12px; font-weight: 500">Most popular</span></div>
+        <p style="margin: 0"><span style="font-size: 48px; letter-spacing: -0.04em; font-weight: 600">$79</span><span style="font-size: 15px; color: #63636B">/month</span></p>
+        <span style="font-size: 15px">350 call minutes</span>
+        <a href="#signup" style="display: inline-flex; align-items: center; justify-content: center; height: 42px; border-radius: 10px; background: {{ctaBg}}; font-size: 14px; font-weight: 500; color: #FFFFFF; text-decoration: none">Choose Pro</a>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 20px; padding: 28px; border-radius: 16px; border: 1px solid #E4E4E7; background: #FFFFFF">
+        <div style="display: flex; flex-direction: column; gap: 4px"><h3 style="margin: 0; font-size: 17px; font-weight: 600">Business</h3><span style="font-size: 14px; color: #63636B">Several numbers and calendars</span></div>
+        <p style="margin: 0"><span style="font-size: 48px; letter-spacing: -0.04em; font-weight: 600">$149</span><span style="font-size: 15px; color: #63636B">/month</span></p>
+        <span style="font-size: 15px">700 call minutes</span>
+        <a href="#signup" style="display: inline-flex; align-items: center; justify-content: center; height: 42px; border-radius: 10px; border: 1px solid #E4E4E7; background: #FFFFFF; font-size: 14px; font-weight: 500; color: #09090B; text-decoration: none">Choose Business</a>
+      </div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 24px 28px; border-radius: 16px; border: 1px solid #E4E4E7; background: #FFFFFF">
+      <div style="display: flex; flex-direction: column; gap: 6px; max-width: 720px">
+        <h3 style="margin: 0; font-size: 17px; font-weight: 600">Hotels, hospitals and large companies</h3>
+        <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #52525B">From $0.16 a minute, billed by invoice. Department routing, HIPAA mode and your choice of data region.</p>
+      </div>
+      <a href="#contact" style="display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 10px; border: 1px solid #E4E4E7; background: #FFFFFF; font-size: 14px; font-weight: 500; color: #09090B; text-decoration: none">Talk to us<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg></a>
+    </div>
+    <p style="margin: 0; text-align: center; font-size: 14px; color: #63636B">Add-ons: your own voice $15 · CRM connection pack $20 · extra phone number $10 · white-label from $199</p>
+  </section>
+
+  <section aria-label="Trust and safety" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); border-top: 1px solid #E4E4E7; border-bottom: 1px solid #E4E4E7; background: #FFFFFF">
+    <div style="padding: 32px 24px; border-inline-end: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2a9 9 0 0 1 9 9"></path><path d="M13 6a5 5 0 0 1 5 5"></path><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 600">Always says it's an AI</h3>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #52525B">Every call opens by saying so.</p>
+    </div>
+    <div style="padding: 32px 24px; border-inline-end: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 600">Emergencies go to a person</h3>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #52525B">It never gives medical advice and transfers urgent calls.</p>
+    </div>
+    <div style="padding: 32px 24px; border-inline-end: 1px solid #E4E4E7; display: flex; flex-direction: column; gap: 10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 600">HIPAA mode for healthcare</h3>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #52525B">Only vendors with a signed agreement, short retention.</p>
+    </div>
+    <div style="padding: 32px 24px; display: flex; flex-direction: column; gap: 10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path><path d="M2 12h20"></path></svg>
+      <h3 style="margin: 0; font-size: 16px; font-weight: 600">Your data region</h3>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #52525B">Large contracts choose where their data is stored.</p>
+    </div>
+  </section>
+
+  <section id="faq" style="padding: 96px 24px; display: flex; flex-wrap: wrap; gap: 48px">
+    <div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+      <span style="font-family: 'Geist Mono', monospace; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">FAQ</span>
+      <h2 style="margin: 0; font-size: clamp(32px, 4vw, 40px); line-height: 1.1; letter-spacing: -0.035em; font-weight: 600">Questions owners ask</h2>
+      <p style="margin: 0; font-size: 15px; line-height: 1.6; color: #52525B">Something else? <a href="#contact" style="color: {{accent}}">Email us</a>.</p>
+    </div>
+    <div style="flex: 2 1 480px; min-width: 0; display: flex; flex-direction: column; border-top: 1px solid #E4E4E7">
+      <sc-for list="{{faqs}}" as="f" hint-placeholder-count="6">
+        <div style="border-bottom: 1px solid #E4E4E7">
+          <button type="button" aria-expanded="{{f.open}}" onClick="{{f.toggle}}" style="width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 0; border: 0; background: transparent; font-family: inherit; font-size: 16px; font-weight: 500; color: #09090B; text-align: start; cursor: pointer">{{f.q}}<span style="font-family: 'Geist Mono', monospace; font-size: 18px; color: #63636B">{{f.sign}}</span></button>
+          <sc-if value="{{f.open}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 0 0 20px; max-width: 640px; font-size: 15px; line-height: 1.65; color: #52525B">{{f.a}}</p>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding: 0 24px 96px">
+    <div style="position: relative; overflow: hidden; border-radius: 24px; border: 1px solid #E4E4E7; background: #F1F2F6; padding: 72px 24px 0; text-align: center">
+      <h2 style="margin: 0 auto; max-width: 720px; font-size: clamp(34px, 5vw, 56px); line-height: 1.02; letter-spacing: -0.045em; font-weight: 600">Stop missing calls tonight.</h2>
+      <p style="margin: 18px auto 0; max-width: 520px; font-size: 17px; line-height: 1.6; color: #52525B">Set up your receptionist, forward your number, and let it pick up the next call.</p>
+      <div style="margin-top: 28px; display: flex; flex-wrap: wrap; justify-content: center; gap: 12px">
+        <a href="#signup" style="display: inline-flex; align-items: center; height: 46px; padding: 0 20px; border-radius: 12px; background: {{ctaBg}}; color: #FFFFFF; font-size: 15px; font-weight: 500; text-decoration: none">Get started</a>
+        <a href="#pricing" style="display: inline-flex; align-items: center; height: 46px; padding: 0 20px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E4E4E7; color: #09090B; font-size: 15px; font-weight: 500; text-decoration: none">See pricing</a>
+      </div>
+      <div aria-hidden="true" style="position: relative; margin: 56px -24px 0; height: 120px; background: {{accent}}">
+        <div style="position: absolute; top: 0; left: 0; right: 0; display: flex; flex-direction: column">
+          <div style="height: 14px; background-image: conic-gradient(transparent 25%, #F1F2F6 0); background-size: 6px 6px"></div>
+          <div style="height: 14px; background-image: repeating-conic-gradient(#F1F2F6 0 25%, transparent 0 50%); background-size: 6px 6px; background-position: 3px 0"></div>
+          <div style="height: 14px; background-image: conic-gradient(#F1F2F6 25%, transparent 0); background-size: 6px 6px"></div>
+          <div style="height: 14px; background-image: radial-gradient(#F1F2F6 1.4px, transparent 1.5px); background-size: 12px 12px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer style="padding: 48px 24px 32px; border-top: 1px dashed #D9DBE3; display: flex; flex-direction: column; gap: 40px">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px">
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px">
+        <span style="display: inline-flex; align-items: center; gap: 10px; font-weight: 600"><span style="display: inline-flex; width: 26px; height: 26px; border-radius: 7px; background: {{accent}}"></span>AI Receptionist</span>
+        <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #63636B">Every call answered, in 42 languages.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 56px">
+        <nav aria-label="Product" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px"><span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">Product</span><a href="#product" style="text-decoration: none">Features</a><a href="#pricing" style="text-decoration: none">Pricing</a><a href="#languages" style="text-decoration: none">Languages</a></nav>
+        <nav aria-label="Company" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px"><span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">Company</span><a href="#faq" style="text-decoration: none">FAQ</a><a href="#contact" style="text-decoration: none">Contact</a></nav>
+        <nav aria-label="Legal" style="display: flex; flex-direction: column; gap: 10px; font-size: 14px"><span style="font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #63636B">Legal</span><a href="#privacy" style="text-decoration: none">Privacy</a><a href="#terms" style="text-decoration: none">Terms</a></nav>
+      </div>
+    </div>
+    <p style="margin: 0; padding-top: 20px; border-top: 1px solid #E4E4E7; font-size: 13px; color: #63636B">© 2026 AI Receptionist · Callers are always told they're speaking with an AI.</p>
+  </footer>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#3340F0","options":["#3340F0","#4F46E5","#0F62FE","#18181B"]},"cta":{"editor":"enum","default":"Signal blue","options":["Signal blue","Ink black"]},"$preview":{"width":1440,"height":7000}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { open: 0, lang: 'en', step: 0, secs: 0 };
+  }
+  demos() {
+    return {
+      en: { code: 'en', label: 'English', business: 'Rivera Plumbing', dir: 'ltr', outcome: 'Booked · Tomorrow 10:00 am', kind: 'booked', turns: [
+        ['ai', "Thanks for calling Rivera Plumbing. I'm the AI receptionist. How can I help?"],
+        ['caller', 'My kitchen sink is leaking. Can someone come tomorrow?'],
+        ['ai', 'Of course. I have 10 am or 2 pm tomorrow. Which works for you?'],
+        ['caller', "10 am, please. It's Maria Lopez."],
+        ['ai', 'Maria Lopez, tomorrow at 10 am. You are booked. See you then!']
+      ] },
+      fr: { code: 'fr', label: 'Français', business: 'Cabinet dentaire Lumière', dir: 'ltr', outcome: 'Booked · Thu 9:00 am', kind: 'booked', turns: [
+        ['ai', "Cabinet dentaire Lumière, bonjour. Je suis l'assistante IA. Comment puis-je vous aider ?"],
+        ['caller', 'Bonjour, je voudrais un rendez-vous pour un détartrage.'],
+        ['ai', "Bien sûr. J'ai jeudi à 9 h ou vendredi à 14 h. Qu'est-ce qui vous convient ?"],
+        ['caller', "Jeudi à 9 h, c'est parfait. Claire Martin."],
+        ['ai', "C'est noté : Claire Martin, jeudi à 9 h. À jeudi !"]
+      ] },
+      ar: { code: 'ar', label: 'العربية', business: 'فندق النخيل', dir: 'rtl', outcome: 'Booked · Friday night', kind: 'booked', turns: [
+        ['ai', 'مرحباً بك في فندق النخيل، معك المساعد الذكي. كيف يمكنني مساعدتك؟'],
+        ['caller', 'أريد حجز غرفة لشخصين ليلة الجمعة.'],
+        ['ai', 'لدينا غرفة مزدوجة متاحة ليلة الجمعة. هل أؤكد الحجز؟'],
+        ['caller', 'نعم من فضلك، باسم أحمد خالد.'],
+        ['ai', 'تم الحجز باسم أحمد خالد ليلة الجمعة. نراك قريباً!']
+      ] },
+      hi: { code: 'hi-Latn', label: 'Hinglish', business: 'Glow Salon', dir: 'ltr', outcome: 'Booked · Tomorrow 6:30 pm', kind: 'booked', turns: [
+        ['ai', 'Namaste, Glow Salon mein aapka swagat hai. Main AI receptionist hoon. Kaise help karun?'],
+        ['caller', 'Hi, kal shaam haircut ka appointment mil sakta hai?'],
+        ['ai', 'Haan bilkul. Kal 5 baje ya 6:30 baje slot free hai. Kaunsa chalega?'],
+        ['caller', '6:30 perfect hai. Naam Rohan Mehta.'],
+        ['ai', 'Done! Rohan Mehta, kal shaam 6:30 baje. See you!']
+      ] },
+      de: { code: 'de', label: 'Deutsch', business: 'Werkstatt Weber', dir: 'ltr', outcome: 'Transferred · to the workshop lead', kind: 'transferred', turns: [
+        ['ai', 'Werkstatt Weber, guten Tag. Hier spricht die KI-Rezeption. Wie kann ich helfen?'],
+        ['caller', 'Meine Bremsen quietschen seit heute Morgen. Kann sich das heute noch jemand ansehen?'],
+        ['ai', 'Das klingt dringend. Ich verbinde Sie direkt mit unserem Meister.'],
+        ['caller', 'Super, danke.'],
+        ['ai', 'Einen Moment bitte, ich stelle Sie durch.']
+      ] }
+    };
+  }
+  componentDidMount() {
+    this.stepTimer = setInterval(() => {
+      const total = this.demos()[this.state.lang].turns.length;
+      this.setState((s) => (s.step >= total + 1 ? { step: 0, secs: 0 } : { step: s.step + 1 }));
+    }, 2300);
+    this.clock = setInterval(() => {
+      const total = this.demos()[this.state.lang].turns.length;
+      this.setState((s) => (s.step < total ? { secs: s.secs + 1 } : null));
+    }, 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.stepTimer);
+    clearInterval(this.clock);
+  }
+  renderVals() {
+    const accent = this.props.accent ?? '#3340F0';
+    const ink = (this.props.cta ?? 'Signal blue') === 'Ink black';
+    const demos = this.demos();
+    const order = ['en', 'fr', 'ar', 'hi', 'de'];
+    const d = demos[this.state.lang];
+    const total = d.turns.length;
+    const ended = this.state.step >= total;
+    const current = d.turns[Math.min(this.state.step, total - 1)];
+    const aiSpeaking = !ended && current[0] === 'ai';
+    const bubbleBase = 'margin:0;max-width:85%;padding:10px 14px;animation:rise .45s ease-out both;';
+    const visibleTurns = d.turns.slice(0, Math.min(this.state.step + 1, total)).map(([who, text]) => ({
+      text,
+      style: bubbleBase + (who === 'ai'
+        ? 'align-self:flex-start;border-radius:14px 14px 14px 4px;background:#F4F4F5;color:#09090B'
+        : 'align-self:flex-end;border-radius:14px 14px 4px 14px;background:' + accent + ';color:#FFFFFF')
+    }));
+    const waveBars = [];
+    for (let i = 0; i < 40; i++) {
+      const h = 18 + Math.round(46 * Math.abs(Math.sin(i * 0.55) * Math.cos(i * 0.17 + 0.4)));
+      const dur = 700 + ((i * 137) % 600);
+      const delay = (i * 83) % 900;
+      waveBars.push({ style: 'display:block;width:4px;height:' + h + 'px;border-radius:999px;transform-origin:center;background:' + (ended ? '#D4D4D8' : aiSpeaking ? accent : '#A1A1AA') + ';animation:wave ' + dur + 'ms ease-in-out -' + delay + 'ms infinite;animation-play-state:' + (ended ? 'paused' : 'running') });
+    }
+    const mm = String(Math.floor(this.state.secs / 60)).padStart(2, '0');
+    const ss = String(this.state.secs % 60).padStart(2, '0');
+    const langs = order.map((id) => {
+      const selected = this.state.lang === id;
+      return {
+        code: demos[id].code,
+        label: demos[id].label,
+        selected: selected ? 'true' : 'false',
+        pick: () => this.setState({ lang: id, step: 0, secs: 0 }),
+        style: 'height:32px;padding:0 12px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;' + (selected ? 'border:1px solid ' + accent + ';background:#EEF0FE;color:#2A35C9' : 'border:1px solid #E4E4E7;background:#FFFFFF;color:#3F3F46')
+      };
+    });
+    const outcomeStyle = 'align-self:center;margin-top:4px;display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:500;animation:rise .45s ease-out both;' + (d.kind === 'booked' ? 'background:#DCFCE7;color:#166534' : 'background:#EEF0FE;color:#2A35C9');
+    const faqData = [
+      ["Will callers know they're talking to an AI?", 'Yes. Every call opens by saying so. Many places require it, and callers trust a business that is upfront.'],
+      ['Do I need a new phone number?', 'No. Forward the number you already have, or pick a new local number.'],
+      ["What if it doesn't know the answer?", 'It takes a message and emails you straight away, or transfers the caller to a person if you set that up.'],
+      ['Can it book into my calendar?', 'Yes. It checks your availability, reads the details back to the caller, and only then books.'],
+      ['What if I go over my minutes?', 'Calls keep being answered. Extra minutes are $0.20 each, and you get an email when you reach 80% of your plan.'],
+      ['Which languages does it speak?', '42, including English, Spanish, Arabic, Hindi, Chinese and Japanese. It answers in whatever language the caller uses.']
+    ];
+    const faqs = faqData.map(([q, a], i) => {
+      const open = this.state.open === i;
+      return { q, a, open, sign: open ? '−' : '+', toggle: () => this.setState({ open: open ? -1 : i }) };
+    });
+    const greetA = ['Hello', 'Bonjour', 'مرحبا', 'Hallo', 'नमस्ते', 'Hola', 'こんにちは', 'Olá', 'Ciao'];
+    const greetB = ['你好', '안녕하세요', 'Merhaba', 'Привет', 'Xin chào', 'สวัสดี', 'שלום', 'Cześć', 'Hej'];
+    const incomingBase = [
+      { number: '+1 303 555 0142', state: 'Answering' },
+      { number: '+1 720 555 0199', state: 'Answering' },
+      { number: '+1 303 555 0188', state: 'Booking' },
+      { number: '+1 720 555 0161', state: 'Answering' }
+    ];
+    const languages = ['English', 'Spanish', 'French', 'German', 'Portuguese', 'Italian', 'Dutch', 'Russian', 'Chinese', 'Japanese', 'Korean', 'Hindi', 'Urdu', 'Bengali', 'Tamil', 'Telugu', 'Gujarati', 'Kannada', 'Malayalam', 'Marathi', 'Punjabi', 'Thai', 'Vietnamese', 'Indonesian', 'Malay', 'Tagalog', 'Arabic', 'Hebrew', 'Turkish', 'Polish', 'Ukrainian', 'Czech', 'Slovak', 'Romanian', 'Bulgarian', 'Croatian', 'Hungarian', 'Greek', 'Swedish', 'Danish', 'Norwegian', 'Finnish'];
+    return {
+      accent,
+      ctaBg: ink ? '#18181B' : accent,
+      demo: { ...d, outcomeStyle },
+      langs,
+      waveBars,
+      visibleTurns,
+      ended,
+      timer: mm + ':' + ss,
+      speakingLabel: ended ? 'Call ended' : aiSpeaking ? 'Receptionist speaking…' : 'Caller speaking…',
+      greetingsA: greetA.concat(greetA),
+      greetingsB: greetB.concat(greetB),
+      incoming: incomingBase.concat(incomingBase),
+      faqs,
+      languages
+    };
+  }
+}
+</script>
+</body>
+</html>

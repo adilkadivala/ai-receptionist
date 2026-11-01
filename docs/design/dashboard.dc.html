@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dashboard: Overview</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FAFAFA}
+a{color:#09090B}a:hover{color:#3340F0}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #FAFAFA; color: #09090B; font-family: 'Geist', ui-sans-serif, system-ui, sans-serif; display: flex; flex-wrap: wrap; align-items: stretch">
+
+  <aside style="flex: 1 1 240px; max-width: 272px; min-width: 0; box-sizing: border-box; padding: 12px; display: flex; flex-direction: column; gap: 16px">
+    <button type="button" style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px; border: 0; border-radius: 10px; background: transparent; font-family: inherit; text-align: start; cursor: pointer">
+      <span style="display: inline-flex; width: 32px; height: 32px; border-radius: 9px; background: {{accent}}; color: #FFFFFF; align-items: center; justify-content: center; flex-shrink: 0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2a9 9 0 0 1 9 9"></path><path d="M13 6a5 5 0 0 1 5 5"></path><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg></span>
+      <span style="display: flex; flex-direction: column; min-width: 0; flex: 1"><span style="font-size: 14px; font-weight: 600; color: #09090B">Rivera Plumbing</span><span style="font-size: 12px; color: #63636B">Pro plan</span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#63636B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 15 5 5 5-5"></path><path d="m7 9 5-5 5 5"></path></svg>
+    </button>
+
+    <a href="#test-call" style="display: flex; align-items: center; justify-content: center; gap: 8px; height: 38px; border-radius: 10px; background: {{ctaBg}}; color: #FFFFFF; font-size: 14px; font-weight: 500; text-decoration: none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg>Make a test call</a>
+
+    <nav aria-label="Dashboard" style="display: flex; flex-direction: column; gap: 2px">
+      <a href="#overview" aria-current="page" style="display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border-radius: 9px; background: #EFEFF1; font-size: 14px; font-weight: 500; color: #09090B; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"></rect><rect width="7" height="5" x="14" y="3" rx="1"></rect><rect width="7" height="9" x="14" y="12" rx="1"></rect><rect width="7" height="5" x="3" y="16" rx="1"></rect></svg>Overview</a>
+      <a href="#calls" style="display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border-radius: 9px; font-size: 14px; color: #3F3F46; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 2v6h6"></path><path d="m22 2-6 6"></path><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"></path></svg><span style="flex: 1">Calls</span><span style="display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #EEF0FE; color: #2A35C9; font-size: 11px; font-weight: 600; box-sizing: border-box">3</span></a>
+      <a href="#receptionist" style="display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border-radius: 9px; font-size: 14px; color: #3F3F46; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>Receptionist</a>
+      <a href="#numbers" style="display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border-radius: 9px; font-size: 14px; color: #3F3F46; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h16"></path><path d="M4 15h16"></path><path d="M10 3 8 21"></path><path d="M16 3l-2 18"></path></svg>Phone numbers</a>
+      <a href="#billing" style="display: flex; align-items: center; gap: 10px; height: 36px; padding: 0 10px; border-radius: 9px; font-size: 14px; color: #3F3F46; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"></rect><path d="M2 10h20"></path></svg>Billing</a>
+    </nav>
+
+    <div style="flex: 1"></div>
+
+    <nav aria-label="Help and settings" style="display: flex; flex-direction: column; gap: 2px">
+      <a href="#settings" style="display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: 9px; font-size: 14px; color: #3F3F46; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 17H5"></path><path d="M19 7h-9"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>Settings</a>
+      <a href="#help" style="display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: 9px; font-size: 14px; color: #3F3F46; text-decoration: none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg>Help</a>
+    </nav>
+
+    <div style="padding: 14px; border-radius: 12px; border: 1px solid #E4E4E7; background: #FFFFFF; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 13px; font-weight: 500">Minutes this month</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #63636B">61%</span></div>
+      <div role="progressbar" aria-label="Minutes used" aria-valuenow="212" aria-valuemin="0" aria-valuemax="350" style="height: 6px; border-radius: 999px; background: #EFEFF1; overflow: hidden"><div style="width: 61%; height: 100%; border-radius: 999px; background: {{accent}}"></div></div>
+      <span style="font-size: 12px; color: #63636B">212 of 350 used · resets Nov 30</span>
+    </div>
+
+    <button type="button" style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px; border: 0; border-radius: 10px; background: transparent; font-family: inherit; text-align: start; cursor: pointer">
+      <span style="display: inline-flex; width: 32px; height: 32px; border-radius: 999px; background: #E4E4E7; color: #3F3F46; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0">AR</span>
+      <span style="display: flex; flex-direction: column; min-width: 0; flex: 1"><span style="font-size: 13px; font-weight: 500; color: #09090B">Ana Rivera</span><span style="font-size: 12px; color: #63636B">ana@riveraplumbing.com</span></span>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#63636B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+    </button>
+  </aside>
+
+  <main style="flex: 999 1 560px; min-width: 0; margin: 8px; box-sizing: border-box; border-radius: 16px; border: 1px solid #E4E4E7; background: #FFFFFF; box-shadow: 0 1px 2px rgba(9,9,11,0.04); display: flex; flex-direction: column">
+    <header style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid #EFEFF1">
+      <button type="button" aria-label="Toggle sidebar" style="display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: #3F3F46; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M9 3v18"></path></svg></button>
+      <span style="width: 1px; height: 16px; background: #E4E4E7"></span>
+      <h1 style="margin: 0; font-size: 15px; font-weight: 600; flex: 1">Overview</h1>
+      <label style="display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px; border-radius: 10px; border: 1px solid #E4E4E7; background: #FFFFFF; color: #63636B; font-size: 13px; min-width: 200px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input type="search" placeholder="Search calls" aria-label="Search calls" style="flex: 1; min-width: 0; border: 0; outline: 0; font-family: inherit; font-size: 13px; background: transparent; color: #09090B">
+        <span style="font-family: 'Geist Mono', monospace; font-size: 11px; padding: 2px 6px; border-radius: 6px; background: #F4F4F5; color: #63636B">⌘K</span>
+      </label>
+      <button type="button" style="display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid #E4E4E7; background: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 500; color: #09090B; cursor: pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path></svg>Oct 3 – Nov 1</button>
+    </header>
+
+    <div style="padding: 24px 20px; display: flex; flex-direction: column; gap: 20px">
+      <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 4px">
+          <h2 style="margin: 0; font-size: 24px; letter-spacing: -0.025em; font-weight: 600">Good evening, Ana</h2>
+          <p style="margin: 0; font-size: 14px; color: #63636B">Your receptionist answered 18 calls today. 3 need a callback.</p>
+        </div>
+        <span style="display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 13px; font-weight: 500"><span style="width: 6px; height: 6px; border-radius: 999px; background: #16A34A"></span>Answering calls</span>
+      </div>
+
+      <section aria-label="This month" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px">
+        <div style="padding: 18px; border-radius: 14px; border: 1px solid #E4E4E7; background: linear-gradient(180deg, #FFFFFF, #FCFCFD); display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-size: 13px; color: #63636B">Calls answered</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; border: 1px solid #E4E4E7; font-size: 12px; font-weight: 500; color: #166534"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>12.4%</span></div>
+          <span style="font-size: 32px; letter-spacing: -0.035em; font-weight: 600; font-variant-numeric: tabular-nums">1,284</span>
+          <span style="font-size: 13px; color: #63636B">None missed this month</span>
+        </div>
+        <div style="padding: 18px; border-radius: 14px; border: 1px solid #E4E4E7; background: linear-gradient(180deg, #FFFFFF, #FCFCFD); display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-size: 13px; color: #63636B">Minutes used</span><span style="display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; border: 1px solid #E4E4E7; font-family: 'Geist Mono', monospace; font-size: 12px; color: #3F3F46">61%</span></div>
+          <span style="font-size: 32px; letter-spacing: -0.035em; font-weight: 600; font-variant-numeric: tabular-nums">212<span style="font-size: 18px; color: #63636B; letter-spacing: -0.01em"> / 350</span></span>
+          <div role="progressbar" aria-label="Minutes used this month" aria-valuenow="212" aria-valuemin="0" aria-valuemax="350" style="height: 6px; border-radius: 999px; background: #EFEFF1; overflow: hidden"><div style="width: 61%; height: 100%; border-radius: 999px; background: {{accent}}"></div></div>
+        </div>
+        <div style="padding: 18px; border-radius: 14px; border: 1px solid #E4E4E7; background: linear-gradient(180deg, #FFFFFF, #FCFCFD); display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-size: 13px; color: #63636B">Bookings made</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; border: 1px solid #E4E4E7; font-size: 12px; font-weight: 500; color: #166534"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg>8.1%</span></div>
+          <span style="font-size: 32px; letter-spacing: -0.035em; font-weight: 600; font-variant-numeric: tabular-nums">86</span>
+          <span style="font-size: 13px; color: #63636B">1 in 15 calls became a booking</span>
+        </div>
+        <div style="padding: 18px; border-radius: 14px; border: 1px solid #E4E4E7; background: linear-gradient(180deg, #FFFFFF, #FCFCFD); display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px"><span style="font-size: 13px; color: #63636B">Sent to you</span><span style="display: inline-flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px; border-radius: 999px; border: 1px solid #E4E4E7; font-size: 12px; font-weight: 500; color: #92400E"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 17h6v-6"></path><path d="m22 17-8.5-8.5-5 5L2 7"></path></svg>3.2%</span></div>
+          <span style="font-size: 32px; letter-spacing: -0.035em; font-weight: 600; font-variant-numeric: tabular-nums">31</span>
+          <span style="font-size: 13px; color: #63636B">Transfers, mostly urgent repairs</span>
+        </div>
+      </section>
+
+      <section aria-label="Calls over time" style="border-radius: 14px; border: 1px solid #E4E4E7; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+        <div style="display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px">
+          <div style="display: flex; flex-direction: column; gap: 4px">
+            <h3 style="margin: 0; font-size: 15px; font-weight: 600">Calls</h3>
+            <p style="margin: 0; font-size: 13px; color: #63636B">Answered and booked, last 30 days</p>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px">
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #3F3F46"><span style="width: 10px; height: 10px; border-radius: 3px; background: {{accent}}"></span>Answered</span>
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #3F3F46"><span style="width: 10px; height: 10px; border-radius: 3px; background: #A5ACF7"></span>Booked</span>
+            <div style="display: inline-flex; padding: 3px; gap: 2px; border-radius: 10px; background: #F4F4F5">
+              <button type="button" style="height: 28px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; font-family: inherit; font-size: 12px; font-weight: 500; color: #52525B">3 months</button>
+              <button type="button" aria-pressed="true" style="height: 28px; padding: 0 10px; border: 0; border-radius: 8px; background: #FFFFFF; box-shadow: 0 1px 2px rgba(9,9,11,0.08); font-family: inherit; font-size: 12px; font-weight: 500; color: #09090B">30 days</button>
+              <button type="button" style="height: 28px; padding: 0 10px; border: 0; border-radius: 8px; background: transparent; font-family: inherit; font-size: 12px; font-weight: 500; color: #52525B">7 days</button>
+            </div>
+          </div>
+        </div>
+        <svg viewBox="0 0 1000 220" preserveAspectRatio="none" role="img" aria-label="Area chart: answered calls rise from about 30 to 55 a day over the month; bookings follow at about a quarter of that" style="width: 100%; height: 220px; display: block">
+          <defs>
+            <linearGradient id="fillAnswered" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{{accent}}" stop-opacity="0.28"></stop><stop offset="100%" stop-color="{{accent}}" stop-opacity="0.02"></stop></linearGradient>
+            <linearGradient id="fillBooked" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A5ACF7" stop-opacity="0.55"></stop><stop offset="100%" stop-color="#A5ACF7" stop-opacity="0.05"></stop></linearGradient>
+          </defs>
+          <line x1="0" x2="1000" y1="55" y2="55" stroke="#EFEFF1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"></line>
+          <line x1="0" x2="1000" y1="110" y2="110" stroke="#EFEFF1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"></line>
+          <line x1="0" x2="1000" y1="165" y2="165" stroke="#EFEFF1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"></line>
+          <path d="{{chart.answeredArea}}" fill="url(#fillAnswered)"></path>
+          <path d="{{chart.answeredLine}}" fill="none" stroke="{{accent}}" stroke-width="2" vector-effect="non-scaling-stroke"></path>
+          <path d="{{chart.bookedArea}}" fill="url(#fillBooked)"></path>
+          <path d="{{chart.bookedLine}}" fill="none" stroke="#7C85F2" stroke-width="1.5" vector-effect="non-scaling-stroke"></path>
+        </svg>
+        <div aria-hidden="true" style="display: flex; justify-content: space-between; font-family: 'Geist Mono', monospace; font-size: 11px; color: #63636B">
+          <span>Oct 3</span><span>Oct 10</span><span>Oct 17</span><span>Oct 24</span><span>Nov 1</span>
+        </div>
+      </section>
+
+      <section aria-label="Recent calls" style="border-radius: 14px; border: 1px solid #E4E4E7; display: flex; flex-direction: column">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; border-bottom: 1px solid #EFEFF1">
+          <div role="tablist" aria-label="Call outcome" style="display: flex; flex-wrap: wrap; gap: 20px">
+            <button type="button" role="tab" aria-selected="true" style="display: inline-flex; align-items: center; gap: 6px; height: 46px; padding: 0; border: 0; border-bottom: 2px solid {{accent}}; background: transparent; font-family: inherit; font-size: 14px; font-weight: 500; color: #09090B">All calls<span style="font-family: 'Geist Mono', monospace; font-size: 11px; padding: 1px 6px; border-radius: 6px; background: #F4F4F5; color: #3F3F46">1,284</span></button>
+            <button type="button" role="tab" aria-selected="false" style="display: inline-flex; align-items: center; gap: 6px; height: 46px; padding: 0; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #52525B">Booked<span style="font-family: 'Geist Mono', monospace; font-size: 11px; padding: 1px 6px; border-radius: 6px; background: #F4F4F5; color: #3F3F46">86</span></button>
+            <button type="button" role="tab" aria-selected="false" style="display: inline-flex; align-items: center; gap: 6px; height: 46px; padding: 0; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #52525B">Transferred<span style="font-family: 'Geist Mono', monospace; font-size: 11px; padding: 1px 6px; border-radius: 6px; background: #F4F4F5; color: #3F3F46">31</span></button>
+            <button type="button" role="tab" aria-selected="false" style="display: inline-flex; align-items: center; gap: 6px; height: 46px; padding: 0; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #52525B">Messages<span style="font-family: 'Geist Mono', monospace; font-size: 11px; padding: 1px 6px; border-radius: 6px; background: #FEF3C7; color: #92400E">3 new</span></button>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0">
+            <button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border-radius: 9px; border: 1px dashed #D4D4D8; background: #FFFFFF; font-family: inherit; font-size: 13px; color: #3F3F46"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Language</button>
+            <button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border-radius: 9px; border: 1px dashed #D4D4D8; background: #FFFFFF; font-family: inherit; font-size: 13px; color: #3F3F46"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>Date</button>
+            <button type="button" style="display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border-radius: 9px; border: 1px solid #E4E4E7; background: #FFFFFF; font-family: inherit; font-size: 13px; color: #3F3F46"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="M9 3v18"></path><path d="M15 3v18"></path></svg>Columns</button>
+          </div>
+        </div>
+        <div style="overflow-x: auto">
+          <table style="width: 100%; min-width: 860px; border-collapse: collapse; font-size: 14px">
+            <thead>
+              <tr style="text-align: start; color: #63636B; font-size: 12px">
+                <th scope="col" style="width: 36px; padding: 10px 0 10px 16px; font-weight: 500; text-align: start"><input type="checkbox" aria-label="Select all calls"></th>
+                <th scope="col" style="padding: 10px 12px; font-weight: 500; text-align: start">Caller</th>
+                <th scope="col" style="padding: 10px 12px; font-weight: 500; text-align: start">What they needed</th>
+                <th scope="col" style="padding: 10px 12px; font-weight: 500; text-align: start">Language</th>
+                <th scope="col" style="padding: 10px 12px; font-weight: 500; text-align: start">Outcome</th>
+                <th scope="col" style="padding: 10px 12px; font-weight: 500; text-align: end">Length</th>
+                <th scope="col" style="padding: 10px 12px; font-weight: 500; text-align: end">Time</th>
+                <th scope="col" style="width: 44px; padding: 10px 16px 10px 0"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+                <tr style="border-top: 1px solid #EFEFF1">
+                  <td style="padding: 12px 0 12px 16px"><input type="checkbox" aria-label="Select call from {{r.name}}"></td>
+                  <td style="padding: 12px">
+                    <div style="display: flex; align-items: center; gap: 10px">
+                      <span style="display: inline-flex; width: 30px; height: 30px; border-radius: 999px; background: #F4F4F5; color: #3F3F46; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0">{{r.initials}}</span>
+                      <div style="display: flex; flex-direction: column; min-width: 0"><span style="font-weight: 500; white-space: nowrap">{{r.name}}</span><span style="font-family: 'Geist Mono', monospace; font-size: 12px; color: #63636B; white-space: nowrap">{{r.number}}</span></div>
+                    </div>
+                  </td>
+                  <td style="padding: 12px; color: #3F3F46">{{r.summary}}</td>
+                  <td style="padding: 12px"><span style="display: inline-flex; align-items: center; height: 24px; padding: 0 8px; border-radius: 7px; border: 1px solid #E4E4E7; font-size: 12px; color: #3F3F46; white-space: nowrap">{{r.language}}</span></td>
+                  <td style="padding: 12px"><span style="{{r.pillStyle}}"><span style="{{r.dotStyle}}"></span>{{r.outcome}}</span></td>
+                  <td style="padding: 12px; text-align: end; font-family: 'Geist Mono', monospace; font-size: 13px; color: #3F3F46">{{r.length}}</td>
+                  <td style="padding: 12px; text-align: end; font-size: 13px; color: #63636B; white-space: nowrap">{{r.time}}</td>
+                  <td style="padding: 12px 16px 12px 0; text-align: end"><button type="button" aria-label="More actions for {{r.name}}" style="display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: #63636B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></button></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-top: 1px solid #EFEFF1">
+          <span style="font-size: 13px; color: #63636B">Showing 8 of 1,284 calls</span>
+          <div style="display: flex; gap: 8px">
+            <button type="button" disabled="disabled" style="height: 32px; padding: 0 12px; border-radius: 9px; border: 1px solid #E4E4E7; background: #FFFFFF; font-family: inherit; font-size: 13px; color: #A1A1AA">Previous</button>
+            <button type="button" style="height: 32px; padding: 0 12px; border-radius: 9px; border: 1px solid #E4E4E7; background: #FFFFFF; font-family: inherit; font-size: 13px; color: #09090B">Next</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#3340F0","options":["#3340F0","#4F46E5","#0F62FE","#18181B"]},"cta":{"editor":"enum","default":"Signal blue","options":["Signal blue","Ink black"]},"$preview":{"width":1440,"height":1640}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#3340F0';
+    const ink = (this.props.cta ?? 'Signal blue') === 'Ink black';
+    const n = 30;
+    const answered = [];
+    const booked = [];
+    for (let i = 0; i < n; i++) {
+      const a = 30 + i * 0.75 + 7 * Math.sin(i * 0.9) + 4 * Math.cos(i * 2.3);
+      answered.push(a);
+      booked.push(a * (0.24 + 0.05 * Math.sin(i * 1.7)));
+    }
+    const W = 1000;
+    const H = 220;
+    const max = 70;
+    const pts = (arr) => arr.map((v, i) => [(i / (n - 1)) * W, H - (v / max) * (H - 10)]);
+    const line = (p) => p.map((xy, i) => (i === 0 ? 'M' : 'L') + xy[0].toFixed(1) + ' ' + xy[1].toFixed(1)).join(' ');
+    const area = (p) => line(p) + ' L' + W + ' ' + H + ' L0 ' + H + ' Z';
+    const pa = pts(answered);
+    const pb = pts(booked);
+    const pill = (bg, fg) => 'display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;border-radius:999px;background:' + bg + ';color:' + fg + ';font-size:12px;font-weight:500;white-space:nowrap';
+    const dot = (c) => 'width:6px;height:6px;border-radius:999px;background:' + c;
+    const outcomes = {
+      Booked: { pillStyle: pill('#DCFCE7', '#166534'), dotStyle: dot('#16A34A') },
+      Transferred: { pillStyle: pill('#EEF0FE', '#2A35C9'), dotStyle: dot(accent) },
+      'Message taken': { pillStyle: pill('#FEF3C7', '#92400E'), dotStyle: dot('#D97706') },
+      'Spam blocked': { pillStyle: pill('#F4F4F5', '#3F3F46'), dotStyle: dot('#A1A1AA') }
+    };
+    const raw = [
+      ['Maria Lopez', 'ML', '+1 303 555 0142', 'Kitchen sink leak · booked Wed 10:00', 'English', 'Booked', '0:41', '11:42 pm'],
+      ['Jorge Ramírez', 'JR', '+1 720 555 0199', 'Water heater check · booked Thu 9:00', 'Spanish', 'Booked', '1:12', '9:05 pm'],
+      ['Unknown caller', '?', '+1 303 555 0107', 'Burst pipe, water in the basement', 'English', 'Transferred', '0:38', '8:51 pm'],
+      ['Priya Shah', 'PS', '+1 720 555 0133', 'Wants a quote for a bathroom refit', 'Hindi + English', 'Message taken', '1:46', '6:20 pm'],
+      ['Robocall', 'RC', '+1 888 555 0100', 'Extended warranty offer', 'English', 'Spam blocked', '0:04', '5:58 pm'],
+      ['Omar Haddad', 'OH', '+1 303 555 0188', 'Noisy boiler · booked Thu 1:30', 'Arabic', 'Booked', '1:03', '4:12 pm'],
+      ['Lena Fischer', 'LF', '+1 720 555 0161', 'Asked for the owner', 'German', 'Transferred', '0:22', '2:47 pm'],
+      ['Sam Okafor', 'SO', '+1 303 555 0124', 'Question about an invoice', 'English', 'Message taken', '0:57', '11:30 am']
+    ];
+    const rows = raw.map(([name, initials, number, summary, language, outcome, length, time]) => ({ name, initials, number, summary, language, outcome, length, time, ...outcomes[outcome] }));
+    return {
+      accent,
+      ctaBg: ink ? '#18181B' : accent,
+      chart: { answeredLine: line(pa), answeredArea: area(pa), bookedLine: line(pb), bookedArea: area(pb) },
+      rows
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -15,7 +15,8 @@
       "!packages/api-client/src/schema.d.ts",
       "!packages/ui/src/components",
       "!packages/ui/src/hooks",
-      "!packages/ui/src/lib/utils.ts"
+      "!packages/ui/src/lib/utils.ts",
+      "!docs/design"
     ]
   },
   "formatter": {
