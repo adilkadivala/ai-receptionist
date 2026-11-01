@@ -1,3 +1,4 @@
+import { LogoMark } from "@receptionist/ui/blocks/logo";
 import { Separator } from "@receptionist/ui/components/separator";
 import {
   Sidebar,
@@ -14,7 +15,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@receptionist/ui/components/sidebar";
-import { Bot, CreditCard, LayoutDashboard, type LucideIcon, Phone, PhoneCall, PhoneIncoming } from "lucide-react";
+import { Bot, CreditCard, LayoutDashboard, type LucideIcon, Phone, PhoneIncoming } from "lucide-react";
 import type { ReactNode } from "react";
 import { NavLink, Outlet, useLocation } from "react-router";
 
@@ -40,9 +41,7 @@ function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<NavLink to="/" />}>
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <PhoneCall className="size-4" />
-              </span>
+              <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
               <span className="font-heading font-semibold">AI Receptionist</span>
             </SidebarMenuButton>
           </SidebarMenuItem>

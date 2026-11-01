@@ -1,0 +1,15 @@
+{
+  "name": "@receptionist/product",
+  "private": true,
+  "type": "module",
+  "description": "Plans, prices and languages: the product facts both frontends show. Mirrors the README.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3"
+  }
+}

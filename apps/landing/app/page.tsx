@@ -1,3 +1,5 @@
+import { formatUsd, included, languageCount, languages, overagePerMinute, plans } from "@receptionist/product";
+import { PlanCard } from "@receptionist/ui/blocks/plan-card";
 import { Badge } from "@receptionist/ui/components/badge";
 import { buttonVariants } from "@receptionist/ui/components/button";
 import {
@@ -5,7 +7,6 @@ import {
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@receptionist/ui/components/card";
@@ -13,7 +14,7 @@ import { Separator } from "@receptionist/ui/components/separator";
 import { cn } from "@receptionist/ui/lib/utils";
 import { ArrowRight, BriefcaseBusiness, Building, Check, Hospital, Hotel, type LucideIcon, Wrench } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
-import { included, languageCount, languages, overagePerMinute, plans, segments } from "./content";
+import { segments } from "./content";
 
 // Inlined at build time. In production this is the dashboard's own domain, e.g. https://app.example.com.
 const dashboardUrl = process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "http://localhost:5173";
@@ -113,7 +114,7 @@ export default function Home() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
             <h2 className="font-heading text-3xl font-semibold tracking-tight">Simple monthly plans</h2>
             <p className="mt-4 text-muted-foreground">
-              Extra minutes are ${overagePerMinute.toFixed(2)} each. Every plan includes:
+              Extra minutes are {formatUsd(overagePerMinute)} each. Every plan includes:
             </p>
             <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {included.map((item) => (
@@ -124,37 +125,20 @@ export default function Home() {
               ))}
             </ul>
             <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {plans.map((plan) => {
-                const featured = "featured" in plan;
-                return (
-                  <Card key={plan.name} className={cn(featured && "ring-2 ring-primary")}>
-                    <CardHeader>
-                      <CardTitle>{plan.name}</CardTitle>
-                      <CardDescription>{plan.for}</CardDescription>
-                      {featured && (
-                        <CardAction>
-                          <Badge>Most popular</Badge>
-                        </CardAction>
-                      )}
-                    </CardHeader>
-                    <CardContent className="flex-1">
-                      <p>
-                        <span className="font-heading text-4xl font-semibold">${plan.price}</span>
-                        <span className="text-muted-foreground">/month</span>
-                      </p>
-                      <p className="mt-2">{plan.minutes} call minutes included</p>
-                    </CardContent>
-                    <CardFooter>
-                      <a
-                        href={`${signupUrl}?plan=${plan.name.toLowerCase()}`}
-                        className={cn(buttonVariants({ variant: featured ? "default" : "outline" }), "w-full")}
-                      >
-                        Choose {plan.name}
-                      </a>
-                    </CardFooter>
-                  </Card>
-                );
-              })}
+              {plans.map((plan) => (
+                <PlanCard
+                  key={plan.id}
+                  plan={plan}
+                  action={
+                    <a
+                      href={`${signupUrl}?plan=${plan.id}`}
+                      className={cn(buttonVariants({ variant: plan.featured ? "default" : "outline" }), "w-full")}
+                    >
+                      Choose {plan.name}
+                    </a>
+                  }
+                />
+              ))}
             </div>
             <Card className="mt-4">
               <CardHeader>

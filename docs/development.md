@@ -8,7 +8,8 @@
 | `apps/dashboard` | React dashboard; `/api` is proxied to the api | http://localhost:5173 |
 | `apps/server` | Python api, voice and worker | http://localhost:8000 |
 | `packages/api-client` | TypeScript client generated from the api | — |
-| `packages/ui` | shadcn/ui components and theme, shared by both frontends | — |
+| `packages/ui` | shadcn/ui components, shared blocks and theme for both frontends | — |
+| `packages/product` | Plans, prices and languages both frontends show | — |
 
 ## Setup (once)
 
@@ -89,6 +90,11 @@ This runs the shadcn CLI version pinned in the lockfile and writes the component
 import { Button } from "@receptionist/ui/components/button";
 ```
 
+- **Where code goes:**
+  - shadcn's own components: `packages/ui/src/components/`, added with `pnpm ui:add`.
+  - Our pieces that both apps use: `packages/ui/src/blocks/` (for example `Logo`, `PlanCard`), imported from `@receptionist/ui/blocks/<name>`.
+  - Pieces only one app uses: that app's own `components/` folder.
+  - Plans, prices and languages: `@receptionist/product`, never copied into an app.
 - **Check where new files land.** The CLI sometimes writes a hook or helper that a shared component needs into `apps/dashboard/src/hooks/` or `src/lib/`. Move it to `packages/ui/src/hooks/` or `src/lib/`, where the component imports it from.
 - **Don't edit shadcn's files.** Biome skips `packages/ui/src/components/` and `hooks/`, and we leave them as shadcn wrote them, so `pnpm ui:add <name> --diff` shows only upstream changes. Change the look with the tokens in `packages/ui/src/styles/globals.css` (our brand blue is `--primary`) or by passing `className`.
 - **Links that look like buttons** use `<a className={buttonVariants()}>`, not `<Button render={<a />}>`. Base UI's Button always sets `role="button"`, so screen readers would announce the link as a button.

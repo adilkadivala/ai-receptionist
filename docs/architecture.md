@@ -285,10 +285,12 @@ Ai-receptionist/
 │       └── (next) evals/         cases/*.jsonl, simulated callers, sandbox, redteam, run.py; cost money, run nightly
 ├── packages/
 │   ├── api-client/               openapi.json (from the server) → src/schema.d.ts (generated) + createApiClient()
+│   ├── product/                  plans, add-ons, prices and the 42 languages; mirrors the README, used by both apps
 │   └── ui/                       shadcn/ui shared by both apps (Base UI, base-nova style, right-to-left on)
 │       ├── components.json       shadcn settings; each app has its own copy that points here
 │       └── src/
 │           ├── components/       added with `pnpm ui:add <name>`; shadcn's code, not edited by hand or linted
+│           ├── blocks/           our own pieces both apps use, built from components: logo, plan-card
 │           ├── hooks/  lib/utils.ts
 │           └── styles/globals.css   Tailwind, theme tokens (brand blue as primary), system fonts
 ├── infra/

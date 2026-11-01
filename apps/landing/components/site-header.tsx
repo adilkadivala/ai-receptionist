@@ -1,6 +1,6 @@
+import { Logo } from "@receptionist/ui/blocks/logo";
 import { buttonVariants } from "@receptionist/ui/components/button";
 import { cn } from "@receptionist/ui/lib/utils";
-import { PhoneCall } from "lucide-react";
 import { MobileNav } from "./mobile-nav";
 
 const links = [
@@ -13,11 +13,8 @@ export function SiteHeader({ signupUrl }: { signupUrl: string }) {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <a href="/" className="flex items-center gap-2 font-heading font-semibold">
-          <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <PhoneCall className="size-4" />
-          </span>
-          AI Receptionist
+        <a href="/" aria-label="AI Receptionist home">
+          <Logo />
         </a>
         <nav className="hidden items-center gap-1 md:flex">
           {links.map((link) => (

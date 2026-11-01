@@ -20,6 +20,9 @@ importers:
       '@receptionist/api-client':
         specifier: workspace:*
         version: link:../../packages/api-client
+      '@receptionist/product':
+        specifier: workspace:*
+        version: link:../../packages/product
       '@tanstack/react-query':
         specifier: ^5.100.0
         version: 5.104.5(@types/react@19.3.0)(react@19.3.1)
@@ -75,6 +78,9 @@ importers:
 
   apps/landing:
     dependencies:
+      '@receptionist/product':
+        specifier: workspace:*
+        version: link:../../packages/product
       lucide-react:
         specifier: ^1.61.0
         version: 1.61.0(@types/react@19.3.0)(react@19.3.1)
@@ -119,6 +125,12 @@ importers:
       openapi-typescript:
         specifier: ^7.13.0
         version: 7.13.0(typescript@6.0.3)
+      typescript:
+        specifier: ~6.0.3
+        version: 6.0.3
+
+  packages/product:
+    devDependencies:
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
