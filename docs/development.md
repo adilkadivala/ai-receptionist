@@ -99,7 +99,8 @@ import { Button } from "@receptionist/ui/components/button";
 - **Don't edit shadcn's files.** Biome skips `packages/ui/src/components/` and `hooks/`, and we leave them as shadcn wrote them, so `pnpm ui:add <name> --diff` shows only upstream changes. Change the look with the tokens in `packages/ui/src/styles/globals.css` (our brand blue is `--primary`) or by passing `className`.
 - **Links that look like buttons** use `<a className={buttonVariants()}>`, not `<Button render={<a />}>`. Base UI's Button always sets `role="button"`, so screen readers would announce the link as a button.
 - **Right-to-left is on** (`"rtl": true` in each `components.json`), so components use start/end instead of left/right. Arabic, Urdu and Hebrew pages will also need `dir="rtl"` and shadcn's direction setup ([RTL guide](https://ui.shadcn.com/docs/rtl)).
-- **Fonts** are the system stack, which covers every launch script without a download. Don't switch to a Latin-only web font.
+- **Fonts** are Geist and Geist Mono, bundled with `packages/ui`. Browsers download only the alphabets a page uses (Latin, Cyrillic, Vietnamese); Arabic, Hindi, Chinese and the other scripts fall back to system fonts. Keep that fallback in `--font-sans` when changing fonts.
+- **Design:** match the approved mockups in `docs/design/`, and use the Tailwind classes in its README, never the hex values.
 
 ## Changing the database
 

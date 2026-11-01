@@ -115,7 +115,7 @@ Three readers went through the books that fit this product. These are the decisi
 | **worker** | Python | Summaries and emails, knowledge ingest, calendar and CRM sync, usage rollups, retention cleanup, settling `in_flight` actions | Jobs from Postgres (`FOR UPDATE SKIP LOCKED`); one scheduler via a Postgres lock |
 | **Postgres 17 + pgvector** | RDS | All data, search index, queue, locks | Daily backups, point-in-time restore |
 | **packages/api-client** | openapi-typescript, openapi-fetch | Types generated from the api's OpenAPI description, plus a typed client | Built into the dashboard |
-| **packages/ui** | shadcn/ui (Base UI, base-nova style), Tailwind 4 | One set of components (button, card, sidebar…) and theme tokens for both apps, with our brand blue as primary and system fonts for every script. Right-to-left ready for Arabic, Urdu and Hebrew | Imported as TypeScript source; no build step |
+| **packages/ui** | shadcn/ui (Base UI, base-nova style), Tailwind 4 | One set of components (button, card, sidebar…) and theme tokens for both apps, in the approved "Signal" theme (electric blue as primary, one colour per call outcome). Geist covers Latin, Cyrillic and Vietnamese; other scripts fall back to system fonts. Right-to-left ready for Arabic, Urdu and Hebrew | Imported as TypeScript source; no build step |
 
 ---
 
@@ -241,15 +241,24 @@ Ai-receptionist/
 ├── tsconfig.base.json            shared strict TypeScript settings
 ├── apps/
 │   ├── landing/                  Next.js 16 · static export · Tailwind 4 · shadcn/ui      (dev: port 3100)
-│   │   ├── app/                  layout.tsx, page.tsx, content.ts
-│   │   │                         (next) [locale]/ for translated pages, blog/, legal/
-│   │   └── components/           site-header.tsx, mobile-nav.tsx (menu in a side sheet on phones)
+│   │   ├── app/                  layout.tsx, page.tsx, privacy/, terms/, robots, sitemap, og.png, icon.svg
+│   │   │                         (next) [locale]/ for translated pages, blog/
+│   │   ├── components/           header, footer, dither band, pixel field, frame lines, dashboard preview
+│   │   │   ├── sections/         one file per page section: hero, built-for, product, how-it-works, languages, pricing…
+│   │   │   ├── demo/             the live call demo and its waveform (Motion)
+│   │   │   └── tiles/            the six animated product tiles
+│   │   ├── content/              every word on the page, and the five demo call scripts
+│   │   └── lib/                  loop.ts (animation clock that pauses off screen and under reduced motion), site, plans
 │   ├── dashboard/                React 19 · Vite 8 · React Router · TanStack Query · shadcn/ui   (dev: port 5173)
 │   │   └── src/
 │   │       ├── main.tsx  router.tsx
-│   │       ├── layouts/          AppLayout: shadcn Sidebar, collapses to icons; a slide-out sheet on phones
-│   │       ├── pages/            Overview, Calls, Receptionist, Phone numbers, Billing, Signup
-│   │       └── lib/api.ts        the typed api client
+│   │       ├── layouts/          AppLayout: shadcn's dashboard-01 inset sidebar and header; AuthLayout
+│   │       ├── pages/            Overview, Calls, Receptionist, Phone numbers, Billing, Settings, Signup, Log in
+│   │       ├── features/         one folder per area (overview, calls, receptionist, numbers, billing, account):
+│   │       │                     api.ts (TanStack Query hooks), types, components, mocks until the api routes exist
+│   │       ├── components/       the app's own pieces: sidebar, site header, data table, stat card, usage meter…
+│   │       ├── hooks/            use-validated-form, use-stored-state, use-reduced-motion
+│   │       └── lib/              api.ts (the typed api client), format, theme (light, dark, system), validation
 │   └── server/                   Python 3.12 · FastAPI · Pipecat · SQLAlchemy · Alembic   (dev: port 8000)
 │       ├── core/                 shared foundation, no business rules
 │       │   ├── config.py  db.py  models.py      settings, tenant database sessions, tables
@@ -292,11 +301,11 @@ Ai-receptionist/
 │           ├── components/       added with `pnpm ui:add <name>`; shadcn's code, not edited by hand or linted
 │           ├── blocks/           our own pieces both apps use, built from components: logo, plan-card
 │           ├── hooks/  lib/utils.ts
-│           └── styles/globals.css   Tailwind, theme tokens (brand blue as primary), system fonts
+│           └── styles/globals.css   Tailwind, Signal theme tokens (light and dark), Geist fonts
 ├── infra/
 │   ├── compose/                  dev.yml (local Postgres + pgvector)   (next) staging.yml, prod.yml
 │   └── (next) terraform/, caddy/, docker/
-├── docs/                         architecture.md, development.md
+├── docs/                         architecture.md, development.md, design/ (the approved mockups)
 └── .github/workflows/ci.yml      server job (ruff, pytest with Postgres, OpenAPI check)
                                   web job (Biome, typecheck, tests, builds, generated-types check)
 ```
