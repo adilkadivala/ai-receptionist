@@ -25,7 +25,9 @@ export function PlanPicker({
             <FieldContent>
               <FieldTitle>
                 {plan.name}
-                {plan.featured && <Badge variant="secondary">Most popular</Badge>}
+                {plan.featured && (
+                  <Badge className="border-transparent bg-brand-soft text-brand-soft-foreground">Most popular</Badge>
+                )}
               </FieldTitle>
               <FieldDescription>
                 {plan.minutes} minutes a month. {plan.for}.

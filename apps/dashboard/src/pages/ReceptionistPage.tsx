@@ -11,10 +11,8 @@ export function ReceptionistPage() {
   const config = useAgentConfig(agent?.id);
 
   return (
-    <>
-      <PageHeader title="Receptionist">
-        What it says, what it knows, which languages it expects and who it transfers to.
-      </PageHeader>
+    <div className="flex flex-1 flex-col">
+      <PageHeader>What it says, what it knows, which languages it expects and who it transfers to.</PageHeader>
       {(agents.isError || config.isError) && (
         <QueryError
           title="Couldn't load your receptionist"
@@ -24,8 +22,8 @@ export function ReceptionistPage() {
       {config.data ? (
         <ReceptionistForm key={config.data.agent_id} config={config.data} />
       ) : (
-        !agents.isError && !config.isError && <Skeleton className="h-96" />
+        !agents.isError && !config.isError && <Skeleton className="h-96 rounded-xl" />
       )}
-    </>
+    </div>
   );
 }

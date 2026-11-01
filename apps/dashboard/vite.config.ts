@@ -12,5 +12,14 @@ export default defineConfig({
     // so the login cookie works without CORS. Set API_URL when port 8000 is taken by something else.
     proxy: { "/api": process.env.API_URL ?? "http://localhost:8000" },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        // React and its DOM renderer change less often than the app, so browsers keep them cached across deploys.
+        // It also keeps the main chunk under the 500 kB warning now that the shell holds search, help and the menus.
+        codeSplitting: { groups: [{ name: "react", test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/ }] },
+      },
+    },
+  },
   test: { environment: "jsdom", setupFiles: ["src/test-setup.ts"] },
 });

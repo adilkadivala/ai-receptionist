@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Receptionist dashboard</title>
+    <script>
+      // The theme from src/lib/theme.ts, applied before the first paint.
+      var theme = null;
+      try {
+        theme = localStorage.getItem("theme");
+      } catch (_error) {}
+      if (theme === "dark" || (theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches)) {
+        document.documentElement.classList.add("dark");
+        document.documentElement.style.colorScheme = "dark";
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -4,9 +4,10 @@ import { Textarea } from "@receptionist/ui/components/textarea";
 import { Volume2 } from "lucide-react";
 import { useId } from "react";
 import { FormField } from "../../../components/form-field";
+import { SettingsCard } from "../../../components/settings-card";
 import { aiNotice } from "../greeting";
 import { limits } from "../validation";
-import { type SectionProps, SettingsCard } from "./settings-card";
+import type { SectionProps } from "./section-props";
 
 export function GreetingSection({ values, set, errors }: SectionProps) {
   const switchId = useId();

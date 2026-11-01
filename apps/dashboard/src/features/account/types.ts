@@ -43,3 +43,8 @@ export type LoginInput = {
   email: string;
   password: string;
 };
+
+export type ProfileInput = {
+  name: string;
+  email: string;
+};

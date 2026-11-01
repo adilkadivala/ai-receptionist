@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { api } from "../../lib/api";
 import { mockResponse } from "../../lib/mock";
-import { mockPeriodSummary } from "./mocks";
+import type { DateRange } from "../calls/types";
+import { mockPeriodSummary, mockVolume } from "./mocks";
 
 /** The api's own health check: the one real route so far. */
 export function useHealth() {
@@ -15,10 +16,20 @@ export function useHealth() {
   });
 }
 
-export function usePeriodSummary() {
+export function usePeriodSummary(range: DateRange) {
   return useQuery({
-    queryKey: ["overview", "period"],
-    // MOCK: becomes api.GET("/api/overview").
-    queryFn: () => mockResponse(mockPeriodSummary),
+    queryKey: ["overview", "summary", range],
+    // MOCK: becomes api.GET("/api/overview", { params: { query: { range } } }).
+    queryFn: () => mockResponse(mockPeriodSummary(range)),
+    placeholderData: keepPreviousData,
+  });
+}
+
+/** Calls answered and booked per day for the last 90 days. The chart picks its range from these. */
+export function useCallVolume() {
+  return useQuery({
+    queryKey: ["overview", "volume"],
+    // MOCK: becomes api.GET("/api/overview/volume", { params: { query: { days: 90 } } }).
+    queryFn: () => mockResponse(mockVolume()),
   });
 }

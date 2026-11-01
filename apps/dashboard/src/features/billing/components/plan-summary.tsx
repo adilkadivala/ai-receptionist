@@ -1,8 +1,9 @@
 import { PlanCard } from "@receptionist/ui/blocks/plan-card";
+import { Badge } from "@receptionist/ui/components/badge";
 import { buttonVariants } from "@receptionist/ui/components/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@receptionist/ui/components/card";
 import { Skeleton } from "@receptionist/ui/components/skeleton";
 import { QueryError } from "../../../components/query-error";
+import { StatCard } from "../../../components/stat-card";
 import { UsageMeter } from "../../../components/usage-meter";
 import { formatDate, formatNumber } from "../../../lib/format";
 import { usePlanUsage } from "../api";
@@ -15,8 +16,8 @@ export function PlanSummary() {
   if (isPending || !plan || !subscription || !rollup || !usage) {
     return (
       <div className="grid gap-4 md:grid-cols-2">
-        <Skeleton className="h-56" />
-        <Skeleton className="h-56" />
+        <Skeleton className="h-56 rounded-xl" />
+        <Skeleton className="h-56 rounded-xl" />
       </div>
     );
   }
@@ -27,6 +28,7 @@ export function PlanSummary() {
         plan={plan}
         badge="Your plan"
         highlighted
+        className="shadow-xs"
         action={
           <div className="flex w-full flex-wrap items-center justify-between gap-2">
             <span className="text-muted-foreground">Renews {formatDate(subscription.current_period_end)}</span>
@@ -36,24 +38,23 @@ export function PlanSummary() {
           </div>
         }
       />
-      <Card>
-        <CardHeader>
-          <CardTitle>Minutes this period</CardTitle>
-          <CardDescription>
-            {formatDate(rollup.period_start)} to {formatDate(rollup.period_end)}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-1 flex-col gap-4">
-          <p>
-            <span className="font-heading text-4xl font-semibold tabular-nums">{formatNumber(usage.used)}</span>
-            <span className="text-muted-foreground"> of {formatNumber(usage.included)} minutes</span>
-          </p>
-          <UsageMeter usage={usage} />
-          <p className="mt-auto text-muted-foreground">
-            {formatNumber(rollup.calls_count)} calls so far. Blocked spam calls don't use minutes.
-          </p>
-        </CardContent>
-      </Card>
+      <StatCard
+        label={`Minutes, ${formatDate(rollup.period_start)} to ${formatDate(rollup.period_end)}`}
+        value={
+          <>
+            {formatNumber(usage.used)}
+            <span className="text-lg tracking-[-0.01em] text-muted-foreground"> / {formatNumber(usage.included)}</span>
+          </>
+        }
+        badge={
+          <Badge variant="outline" className="h-[22px] px-2 font-mono font-normal text-foreground/80">
+            {usage.percent}%
+          </Badge>
+        }
+        hint={`${formatNumber(rollup.calls_count)} calls so far. Blocked spam calls don't use minutes.`}
+      >
+        <UsageMeter usage={usage} />
+      </StatCard>
     </div>
   );
 }

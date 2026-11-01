@@ -10,9 +10,11 @@ export function ServerStatusCard() {
   const health = useHealth();
 
   return (
-    <Card>
+    <Card className="shadow-xs">
       <CardHeader>
-        <CardTitle>Server status</CardTitle>
+        <CardTitle role="heading" aria-level={2} className="text-[15px] font-semibold">
+          Server status
+        </CardTitle>
         <CardDescription>Whether the dashboard can reach the api, and which provider keys are set.</CardDescription>
       </CardHeader>
       <CardContent>

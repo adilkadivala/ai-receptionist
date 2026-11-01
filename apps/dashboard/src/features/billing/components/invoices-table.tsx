@@ -1,6 +1,5 @@
 import { formatUsd } from "@receptionist/product";
 import { Badge } from "@receptionist/ui/components/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@receptionist/ui/components/card";
 import { cn } from "@receptionist/ui/lib/utils";
 import { ReceiptText } from "lucide-react";
 import { type Column, DataTable } from "../../../components/data-table";
@@ -11,14 +10,19 @@ import { useInvoices } from "../api";
 import type { Invoice, InvoiceStatus } from "../types";
 
 const statuses: Record<InvoiceStatus, { label: string; className: string }> = {
-  paid: { label: "Paid", className: "border-transparent bg-success/10 text-success" },
+  // Status colours belong to call outcomes, so a paid invoice stays neutral.
+  paid: { label: "Paid", className: "text-foreground/80" },
   open: { label: "Due", className: "border-transparent bg-secondary text-secondary-foreground" },
   failed: { label: "Payment failed", className: "border-transparent bg-destructive/10 text-destructive" },
   void: { label: "Void", className: "text-muted-foreground" },
 };
 
 const columns: Column<Invoice>[] = [
-  { id: "number", header: "Invoice", cell: (invoice) => <span className="font-medium">{invoice.number}</span> },
+  {
+    id: "number",
+    header: "Invoice",
+    cell: (invoice) => <span className="font-mono text-[13px] font-medium">{invoice.number}</span>,
+  },
   {
     id: "period",
     header: "Period",
@@ -45,7 +49,8 @@ const columns: Column<Invoice>[] = [
   {
     id: "amount",
     header: "Amount",
-    className: "text-end tabular-nums",
+    className: "text-end",
+    cellClassName: "font-medium tabular-nums",
     cell: (invoice) => formatUsd(invoice.amount_usd),
   },
 ];
@@ -54,17 +59,17 @@ export function InvoicesTable() {
   const invoices = useInvoices();
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle role="heading" aria-level={2}>
+    <section aria-labelledby="invoices-title" className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
+        <h2 id="invoices-title" className="text-[15px] font-semibold">
           Invoices
-        </CardTitle>
-        <CardDescription>One a month, paid with the card on file.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        {invoices.isError ? (
-          <QueryError title="Couldn't load your invoices" onRetry={() => invoices.refetch()} />
-        ) : (
+        </h2>
+        <p className="text-muted-foreground">One a month, paid with the card on file.</p>
+      </div>
+      {invoices.isError ? (
+        <QueryError title="Couldn't load your invoices" onRetry={() => invoices.refetch()} />
+      ) : (
+        <div className="rounded-xl border bg-card shadow-xs">
           <DataTable
             caption="Invoices, newest first."
             columns={columns}
@@ -78,8 +83,8 @@ export function InvoicesTable() {
               </EmptyState>
             }
           />
-        )}
-      </CardContent>
-    </Card>
+        </div>
+      )}
+    </section>
   );
 }

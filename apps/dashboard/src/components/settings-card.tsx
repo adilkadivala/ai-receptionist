@@ -7,16 +7,8 @@ import {
   CardTitle,
 } from "@receptionist/ui/components/card";
 import type { ReactNode } from "react";
-import type { Errors } from "../../../lib/validation";
-import type { AgentSettings } from "../types";
 
-/** What every section of the receptionist form gets from the form. */
-export type SectionProps = {
-  values: AgentSettings;
-  set: <K extends keyof AgentSettings>(key: K, value: AgentSettings[K]) => void;
-  errors: Errors;
-};
-
+/** A titled card holding one group of settings, with an optional action at the end of its header. */
 export function SettingsCard({
   title,
   titleId,
@@ -31,12 +23,12 @@ export function SettingsCard({
   children: ReactNode;
 }) {
   return (
-    <Card>
+    <Card className="shadow-xs">
       <CardHeader>
-        <CardTitle id={titleId} role="heading" aria-level={2}>
+        <CardTitle id={titleId} role="heading" aria-level={2} className="text-[15px] font-semibold">
           {title}
         </CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription className="text-pretty">{description}</CardDescription>
         {action && <CardAction>{action}</CardAction>}
       </CardHeader>
       <CardContent>{children}</CardContent>

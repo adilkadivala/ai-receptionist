@@ -1,8 +1,9 @@
 import { languageCount } from "@receptionist/product";
 import { FieldError } from "@receptionist/ui/components/field";
 import { useId } from "react";
+import { SettingsCard } from "../../../components/settings-card";
 import { LanguagePicker } from "./language-picker";
-import { type SectionProps, SettingsCard } from "./settings-card";
+import type { SectionProps } from "./section-props";
 
 export function LanguagesSection({ values, set, errors }: SectionProps) {
   const id = useId();

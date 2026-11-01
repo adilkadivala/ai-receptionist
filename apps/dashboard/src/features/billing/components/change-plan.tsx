@@ -1,6 +1,5 @@
 import { contractFromPerMinute, formatUsd, included, overagePerMinute, type Plan, plans } from "@receptionist/product";
 import { PlanCard } from "@receptionist/ui/blocks/plan-card";
-import { Alert, AlertDescription, AlertTitle } from "@receptionist/ui/components/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,8 +12,8 @@ import {
 } from "@receptionist/ui/components/alert-dialog";
 import { Button } from "@receptionist/ui/components/button";
 import { Spinner } from "@receptionist/ui/components/spinner";
-import { CircleCheck } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useChangePlan, useSubscription } from "../api";
 
 /** Every self-serve plan, with a confirmation before switching. */
@@ -22,40 +21,31 @@ export function ChangePlan() {
   const subscription = useSubscription();
   const change = useChangePlan();
   const [target, setTarget] = useState<Plan>();
-  const [changedTo, setChangedTo] = useState<Plan>();
   const current = subscription.data?.plan;
 
   function confirm() {
     if (!target) return;
     change.mutate(target.id, {
       onSuccess: () => {
-        setChangedTo(target);
+        toast.success(`You're on ${target.name}`, {
+          description: `${target.minutes} minutes a month from now on. This is sample data: real plan changes arrive with payments.`,
+        });
         setTarget(undefined);
       },
+      onError: () => toast.error("Couldn't change your plan. Nothing was charged."),
     });
   }
 
   return (
     <section id="change-plan" aria-labelledby="change-plan-title" className="flex scroll-mt-20 flex-col gap-4">
-      <div>
-        <h2 id="change-plan-title" className="font-heading text-lg font-semibold">
+      <div className="flex flex-col gap-1">
+        <h2 id="change-plan-title" className="text-[15px] font-semibold">
           Change plan
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-pretty text-muted-foreground">
           Every plan includes {included.join(", ").toLowerCase()}. Extra minutes are {formatUsd(overagePerMinute)} each.
         </p>
       </div>
-
-      {changedTo && (
-        <Alert>
-          <CircleCheck />
-          <AlertTitle>You're on {changedTo.name}</AlertTitle>
-          <AlertDescription>
-            {changedTo.minutes} minutes a month from now on. This is sample data: real plan changes arrive with
-            payments.
-          </AlertDescription>
-        </Alert>
-      )}
 
       <div className="grid gap-4 lg:grid-cols-3">
         {plans.map((plan) => (
@@ -63,6 +53,7 @@ export function ChangePlan() {
             key={plan.id}
             plan={plan}
             highlighted={plan.id === current}
+            className="shadow-xs"
             badge={plan.id === current ? "Your plan" : plan.featured ? "Most popular" : undefined}
             action={
               plan.id === current ? (

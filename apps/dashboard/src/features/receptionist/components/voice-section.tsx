@@ -13,8 +13,9 @@ import { Skeleton } from "@receptionist/ui/components/skeleton";
 import { Mic } from "lucide-react";
 import { useId } from "react";
 import { Link } from "react-router";
+import { SettingsCard } from "../../../components/settings-card";
 import { useVoices } from "../api";
-import { type SectionProps, SettingsCard } from "./settings-card";
+import type { SectionProps } from "./section-props";
 
 const voiceClone = addOns.find((addOn) => addOn.id === "voice-clone");
 

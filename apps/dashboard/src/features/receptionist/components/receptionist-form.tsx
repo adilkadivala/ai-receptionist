@@ -2,6 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from "@receptionist/ui/components
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@receptionist/ui/components/tabs";
 import { CircleX } from "lucide-react";
 import { type ComponentType, useState } from "react";
+import { toast } from "sonner";
 import { SaveBar } from "../../../components/save-bar";
 import { useValidatedForm } from "../../../hooks/use-validated-form";
 import { formatRelative } from "../../../lib/format";
@@ -12,7 +13,7 @@ import { BusinessSection } from "./business-section";
 import { FaqSection } from "./faq-section";
 import { GreetingSection } from "./greeting-section";
 import { LanguagesSection } from "./languages-section";
-import type { SectionProps } from "./settings-card";
+import type { SectionProps } from "./section-props";
 import { TransfersSection } from "./transfers-section";
 import { VoiceSection } from "./voice-section";
 
@@ -47,6 +48,7 @@ export function ReceptionistForm({ config }: { config: AgentConfig }) {
           setBaseline(next);
           form.reset(next);
           setSavedVersion(saved.version);
+          toast.success(`Saved. Version ${saved.version} is live on your calls.`);
         },
       }),
     (errors) => {
@@ -58,16 +60,16 @@ export function ReceptionistForm({ config }: { config: AgentConfig }) {
   const status = dirty
     ? "You have unsaved changes."
     : savedVersion
-      ? `Saved. Version ${savedVersion} is live on your calls.`
+      ? `Version ${savedVersion}, saved just now.`
       : `Version ${config.version}, saved ${formatRelative(config.created_at)}.`;
 
   return (
-    <form ref={form.formRef} onSubmit={onSubmit} noValidate>
-      <Tabs value={tab} onValueChange={(value) => setTab(value as Section)}>
-        <div className="-mx-4 overflow-x-auto overflow-y-hidden px-4 pb-1.5 [scrollbar-width:none] sm:mx-0 sm:px-0">
-          <TabsList variant="line" className="w-max">
+    <form ref={form.formRef} onSubmit={onSubmit} noValidate className="flex flex-1 flex-col">
+      <Tabs value={tab} onValueChange={(value) => setTab(value as Section)} className="mb-6 max-w-5xl">
+        <div className="-mx-4 overflow-x-auto overflow-y-hidden px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
+          <TabsList aria-label="Receptionist settings" className="h-10! w-max rounded-xl p-1">
             {sections.map((section) => (
-              <TabsTrigger key={section.id} value={section.id} className="px-2.5">
+              <TabsTrigger key={section.id} value={section.id} className="rounded-lg px-3 text-[13px]">
                 {section.label}
                 {invalidSections.has(section.id) && (
                   <span className="size-1.5 rounded-full bg-destructive">
@@ -86,7 +88,7 @@ export function ReceptionistForm({ config }: { config: AgentConfig }) {
       </Tabs>
 
       {save.isError && (
-        <Alert variant="destructive" className="mt-4">
+        <Alert variant="destructive" className="mt-4 max-w-5xl">
           <CircleX />
           <AlertTitle>Couldn't save your changes</AlertTitle>
           <AlertDescription>Nothing was changed on your calls. Try again in a moment.</AlertDescription>

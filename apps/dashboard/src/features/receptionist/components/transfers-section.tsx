@@ -4,10 +4,11 @@ import { Input } from "@receptionist/ui/components/input";
 import { PhoneForwarded, Plus, Trash2 } from "lucide-react";
 import { EmptyState } from "../../../components/empty-state";
 import { FormField } from "../../../components/form-field";
+import { SettingsCard } from "../../../components/settings-card";
 import { toE164 } from "../../../lib/validation";
 import type { TransferNumber } from "../types";
 import { limits } from "../validation";
-import { type SectionProps, SettingsCard } from "./settings-card";
+import type { SectionProps } from "./section-props";
 
 export function TransfersSection({ values, set, errors }: SectionProps) {
   const transfers = values.transfer_numbers;

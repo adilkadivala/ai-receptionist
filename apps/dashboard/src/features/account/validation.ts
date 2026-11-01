@@ -1,5 +1,5 @@
 import { check, type Errors, isEmail } from "../../lib/validation";
-import type { LoginInput, SignupInput } from "./types";
+import type { LoginInput, ProfileInput, SignupInput } from "./types";
 
 export const minPasswordLength = 12;
 
@@ -17,5 +17,12 @@ export function validateLogin(input: LoginInput): Errors {
   const errors: Errors = {};
   check(errors, "email", !isEmail(input.email), "Enter the email address you signed up with.");
   check(errors, "password", !input.password, "Enter your password.");
+  return errors;
+}
+
+export function validateProfile(input: ProfileInput): Errors {
+  const errors: Errors = {};
+  check(errors, "name", !input.name.trim(), "Enter your name.");
+  check(errors, "email", !isEmail(input.email), "Enter an email address like name@business.com.");
   return errors;
 }
