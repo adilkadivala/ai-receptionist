@@ -1,8 +1,6 @@
 @import "@receptionist/ui/globals.css";
 
-@layer base {
-  /* Small uppercase labels, as in the Signal mockups. */
-  .label-mono {
-    @apply font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase;
-  }
+/* Small uppercase labels, as in the Signal mockups. */
+@utility label-mono {
+  @apply font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase;
 }

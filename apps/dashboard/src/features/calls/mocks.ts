@@ -4,14 +4,14 @@ import type { Language } from "@receptionist/product";
 import { aiNotice } from "../receptionist/greeting";
 import type { Call, CallOutcome, TranscriptTurn } from "./types";
 
-export const mockOrganizationId = "org_harbor";
+export const mockOrganizationId = "org_rivera";
 export const mockAgentId = "agt_front_desk";
 export const mockMainNumber = { id: "num_main", e164: "+14155550142" };
 
 // Roughly the README's ~$0.031 per call minute, so sample costs look like real ones.
 const sampleCostPerMinute = 0.031;
 
-const greeting = `Thanks for calling Harbor Plumbing & Heating. How can I help? ${aiNotice(true)}`;
+const greeting = `Thanks for calling Rivera Plumbing. How can I help? ${aiNotice(true)}`;
 
 type Scenario = {
   outcome: CallOutcome;
@@ -85,11 +85,11 @@ const scenarios: Scenario[] = [
     weight: 3,
     seconds: [80, 190],
     names: ["Ben Adler", "Sofia Rossi", "Marcus Lee"],
-    summary: "{name} from Bayside Supply wants Maria to call back about invoice 4471.",
+    summary: "{name} from Bayside Supply wants Ana to call back about invoice 4471.",
     turns: [
       ["ai", greeting],
       ["caller", "Hi, it's {name} from Bayside Supply. I need to talk to the owner about last month's invoice."],
-      ["ai", "Maria isn't available right now. I'll take a message and make sure she gets it today. Best number?"],
+      ["ai", "Ana isn't available right now. I'll take a message and make sure she gets it today. Best number?"],
       ["caller", "This number is fine. Tell her it's about invoice 4471."],
       ["ai", "Got it: {first} from Bayside Supply, about invoice 4471, call back on this number."],
       ["caller", "That's it, thanks."],
@@ -222,7 +222,10 @@ function generateCalls(days: number): Call[] {
   const calls: Call[] = [];
 
   for (let day = 0; day < days; day++) {
-    const perDay = between(2, 5);
+    // Quieter at weekends, and a little busier lately as more callers find the number.
+    const weekday = new Date(today.getTime() - day * 86_400_000).getDay();
+    const weekend = weekday === 0 || weekday === 6;
+    const perDay = weekend ? between(1, 3) : between(2, 5) + (day < 45 ? 1 : 0);
     for (let n = 0; n < perDay; n++) {
       const scenario = pickScenario();
       const [name = null, native = name] = pick(scenario.names)?.split("|") ?? [];
@@ -237,7 +240,7 @@ function generateCalls(days: number): Call[] {
           .replaceAll("{first}", first)
           .replaceAll("{native}", native ?? "");
       const line = String(between(0, 99)).padStart(2, "0");
-      const id = `call_${String(day).padStart(2, "0")}${n}`;
+      const id = `call_${String(day).padStart(3, "0")}${n}`;
 
       calls.push({
         id,
@@ -270,4 +273,5 @@ function generateCalls(days: number): Call[] {
   return calls.filter((call) => new Date(call.started_at).getTime() <= Date.now());
 }
 
-export const mockCalls: readonly Call[] = generateCalls(60);
+// A little over three months, so the Overview's "3 months" chart is full.
+export const mockCalls: readonly Call[] = generateCalls(100);
