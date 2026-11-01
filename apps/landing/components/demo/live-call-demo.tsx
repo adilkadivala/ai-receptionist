@@ -6,6 +6,7 @@ import { Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { motion, useInView } from "motion/react";
 import { type ReactNode, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { audioPath, type DemoCall, demoCalls } from "@/content/demo-calls";
+import { useBrowserVoice } from "@/lib/browser-voice";
 import { isAbort, useCallAudio, wait } from "@/lib/call-audio";
 import { usePrefersReducedMotion } from "@/lib/loop";
 import { ease } from "@/lib/motion";
@@ -58,6 +59,13 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+// The demo is always labeled as an example, and says whose voice reads it.
+const captions = {
+  recordings: "Example call, voiced by the same AI voice callers hear. Wording and timing are illustrative.",
+  browser: "Example call. With sound on, your browser's own voice reads it. Wording and timing are illustrative.",
+  none: "Example call. Wording and timing are illustrative.",
+};
+
 const statusLabels: Record<WaveTone, string> = {
   ai: "Receptionist speaking…",
   caller: "Caller speaking…",
@@ -71,9 +79,9 @@ function formatClock(totalSeconds: number): string {
 }
 
 /**
- * The big tile of the product grid: an example call played line by line, in five languages, with the recorded voices
- * when the visitor turns sound on. It runs only while on screen. Under reduced motion the lines still appear, with a
- * fade instead of a rise, and the waveform stands still.
+ * The big tile of the product grid: an example call played line by line, in five languages. With sound on it plays the
+ * Cartesia recordings, or, until they exist, the browser's own voices read it. It runs only while on screen. Under
+ * reduced motion the lines still appear, with a fade instead of a rise, and the waveform stands still.
  */
 export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; className?: string }) {
   const [state, dispatch] = useReducer(reducer, {
@@ -86,6 +94,9 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
   });
   const [sound, setSound] = useState(false);
   const audio = useCallAudio();
+  const browserVoice = useBrowserVoice();
+  // Recordings when they exist; otherwise the browser's voices, where it has any.
+  const voice = hasAudio ? "recordings" : browserVoice.supported ? "browser" : null;
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.3 });
   const reduceMotion = usePrefersReducedMotion();
@@ -99,6 +110,7 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
   stepRef.current = state.step;
 
   const { play, preload } = audio;
+  const { speakLine } = browserVoice;
   // biome-ignore lint/correctness/useExhaustiveDependencies: state.run restarts the call from its first line.
   useEffect(() => {
     if (!running) return;
@@ -107,20 +119,22 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
     const current = callAt(state.call);
 
     async function drive() {
-      if (sound) preload(current.turns.map((_, line) => audioPath(current, line)));
+      if (sound && voice === "recordings") preload(current.turns.map((_, line) => audioPath(current, line)));
       for (let line = stepRef.current; line < current.turns.length; line++) {
         const turn = current.turns[line];
         if (!turn) break;
         dispatch({ type: "step", step: line });
-        if (sound) {
-          // A recording that fails to load falls back to reading time, so the call still plays.
-          await play(audioPath(current, line), turn.speaker, signal).catch((error: unknown) => {
-            if (isAbort(error)) throw error;
-            return wait(readingMs(turn.text), signal);
-          });
-        } else {
-          await wait(readingMs(turn.text), signal);
-        }
+        const spoken =
+          !sound || !voice
+            ? null
+            : voice === "recordings"
+              ? play(audioPath(current, line), turn.speaker, signal)
+              : speakLine(turn.speech ?? turn.text, current.voiceLanguage, turn.speaker, signal);
+        // No voice for the language, or a recording that fails to load: the line waits its reading time instead.
+        await (spoken ?? wait(readingMs(turn.text), signal)).catch((error: unknown) => {
+          if (isAbort(error)) throw error;
+          return wait(readingMs(turn.text), signal);
+        });
         await wait(gapMs, signal);
       }
       dispatch({ type: "step", step: current.turns.length });
@@ -132,7 +146,7 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
       if (!isAbort(error)) reportError(error);
     });
     return () => controller.abort();
-  }, [running, state.call, state.run, sound, play, preload]);
+  }, [running, state.call, state.run, sound, voice, play, preload, speakLine]);
 
   useEffect(() => {
     if (!running || ended) return;
@@ -142,24 +156,26 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
 
   // Sound needs a click, so this only runs from one: the button below or the hero's link.
   const startSound = useCallback(async () => {
-    if (!(await audio.start())) return;
+    if (!voice) return;
+    if (!(await (voice === "recordings" ? audio.start() : browserVoice.start()))) return;
     setSound(true);
     dispatch({ type: "restart" });
-  }, [audio.start]);
+  }, [voice, audio.start, browserVoice.start]);
 
   // Links to #listen ("Hear a live call" in the hero) start the demo with sound: their click allows it.
   useEffect(() => {
-    if (!hasAudio) return;
+    if (!voice) return;
     const onClick = (event: MouseEvent) => {
       if (event.target instanceof Element && event.target.closest('a[href="#listen"]')) void startSound();
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
-  }, [hasAudio, startSound]);
+  }, [voice, startSound]);
 
   function toggleSound() {
     if (!sound) return void startSound();
     audio.stop();
+    browserVoice.stop();
     setSound(false);
   }
 
@@ -184,7 +200,7 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
             <span className="sr-only">Call time </span>
             {formatClock(state.seconds)}
           </span>
-          {hasAudio && (
+          {voice && (
             <button
               type="button"
               onClick={toggleSound}
@@ -247,9 +263,7 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
         ))}
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Example call{hasAudio ? ", voiced by the same AI voice callers hear" : ""}. Wording and timing are illustrative.
-      </p>
+      <p className="text-xs text-muted-foreground">{captions[voice ?? "none"]}</p>
     </div>
   );
 }
