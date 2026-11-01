@@ -1,0 +1,17 @@
+@import "@receptionist/ui/globals.css";
+
+/* Dashboard-only status colours: outcome badges, invoice states and the usage meter. Text-safe (4.5:1) on cards. */
+@theme inline {
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+}
+
+:root {
+  --success: oklch(0.527 0.154 150);
+  --warning: oklch(0.555 0.163 49);
+}
+
+.dark {
+  --success: oklch(0.792 0.209 152);
+  --warning: oklch(0.828 0.189 84);
+}
