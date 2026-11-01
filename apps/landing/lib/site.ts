@@ -15,16 +15,18 @@ export function signupUrl(plan?: string): string {
   return plan ? `${dashboardUrl}/signup?plan=${plan}` : `${dashboardUrl}/signup`;
 }
 
+export const loginUrl = `${dashboardUrl}/login`;
+
 // Placeholder until the sales inbox exists.
 export const salesEmail = "sales@example.com";
+export const contactHref = `mailto:${salesEmail}`;
 
 export type NavLink = { href: string; label: string };
 
 // Absolute paths, so the links also work from /privacy and /terms.
 export const sectionLinks: NavLink[] = [
-  { href: "/#how-it-works", label: "How it works" },
-  { href: "/#features", label: "Features" },
-  { href: "/#who", label: "Who it's for" },
+  { href: "/#product", label: "Product" },
+  { href: "/#how", label: "How it works" },
   { href: "/#languages", label: "Languages" },
   { href: "/#pricing", label: "Pricing" },
   { href: "/#faq", label: "FAQ" },
@@ -33,4 +35,23 @@ export const sectionLinks: NavLink[] = [
 export const legalLinks: NavLink[] = [
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
+];
+
+export const footerLinks: { title: string; links: NavLink[] }[] = [
+  {
+    title: "Product",
+    links: [
+      { href: "/#product", label: "Features" },
+      { href: "/#pricing", label: "Pricing" },
+      { href: "/#languages", label: "Languages" },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/#faq", label: "FAQ" },
+      { href: contactHref, label: "Contact" },
+    ],
+  },
+  { title: "Legal", links: legalLinks },
 ];

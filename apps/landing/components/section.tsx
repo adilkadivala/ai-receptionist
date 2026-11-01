@@ -1,57 +1,66 @@
 import { cn } from "@receptionist/ui/lib/utils";
 import type { ReactNode } from "react";
 
-// Page width and side gutter, shared by every section, the header and the footer.
-export function Container({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cn("mx-auto w-full max-w-6xl px-4 sm:px-6", className)}>{children}</div>;
-}
+// Side gutter inside the framed column: 16 px on phones, 24 px from the sm breakpoint.
+export const gutter = "px-4 sm:px-6";
 
-/** One band of the landing page. `muted` bands alternate with plain ones. */
+/** One band of the page. Bands run edge to edge between the dashed frame lines. */
 export function Section({
   id,
-  muted,
+  label,
   className,
   children,
 }: {
   id?: string;
-  muted?: boolean;
+  label?: string;
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <section id={id} className={cn("scroll-mt-16 py-20 sm:py-28", muted && "border-y bg-muted/40", className)}>
-      <Container>{children}</Container>
+    <section id={id} aria-label={label} className={cn(gutter, "py-24", className)}>
+      {children}
     </section>
   );
 }
 
 // Brand blue for small text. On the dark background plain --primary is under 4.5:1, so it's lifted toward white there.
-export const brandText = "text-primary dark:text-[color-mix(in_oklch,var(--primary),white_25%)]";
+export const brandText = "text-primary dark:text-[color-mix(in_oklch,var(--primary),white_30%)]";
 
-/** Small monospace label above a heading. */
+// Small label: Geist Mono, 12 px, uppercase, wide tracking.
+export const eyebrowClassName = "font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase";
+
 export function Eyebrow({ className, children }: { className?: string; children: ReactNode }) {
-  return (
-    <p className={cn("font-mono text-xs font-medium tracking-wider uppercase", brandText, className)}>{children}</p>
-  );
+  return <p className={cn(eyebrowClassName, className)}>{children}</p>;
 }
 
-/** A section's h2 with an optional eyebrow above and a lead paragraph below. */
+/** A section's h2 with an optional label above and a lead paragraph below. */
 export function SectionHeading({
   eyebrow,
   title,
   description,
+  align = "start",
   className,
+  titleClassName,
 }: {
   eyebrow?: string;
   title: ReactNode;
   description?: ReactNode;
+  align?: "start" | "center";
   className?: string;
+  titleClassName?: string;
 }) {
   return (
-    <div className={cn("max-w-2xl", className)}>
-      {eyebrow && <Eyebrow className="mb-3">{eyebrow}</Eyebrow>}
-      <h2 className="font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl">{title}</h2>
-      {description && <p className="mt-4 text-lg text-pretty text-muted-foreground">{description}</p>}
+    <div className={cn("flex flex-col gap-3.5", align === "center" && "items-center text-center", className)}>
+      {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <h2
+        className={cn(
+          "text-[clamp(2rem,4vw,2.75rem)] leading-[1.08] font-semibold tracking-[-0.035em] text-balance",
+          titleClassName,
+        )}
+      >
+        {title}
+      </h2>
+      {description && <p className="max-w-140 text-base/relaxed text-pretty text-foreground/70">{description}</p>}
     </div>
   );
 }

@@ -5,10 +5,23 @@
   color-scheme: dark;
 }
 
+/* The ring that pulses out of a "live" status dot (components/live-dot.tsx). */
+@keyframes live-ring {
+  from {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  70%,
+  to {
+    opacity: 0;
+    transform: scale(3.3);
+  }
+}
+
 /* Reduced motion: no movement anywhere, including shadcn's accordion and sheet.
    Unlayered, so it wins over Tailwind's layered utilities without !important.
    Animations keep a tiny duration so their end events still fire; transitions go to 0s, because Base UI warns
-   when a panel shows both a transition and an animation. */
+   when a panel shows both a transition and an animation. The Motion loops stop themselves (lib/loop.ts). */
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

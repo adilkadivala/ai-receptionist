@@ -1,65 +1,67 @@
 # DESIGN.md: AI Receptionist landing page
 
+The approved design is **"Signal"** (approved 2026-11-01). The reference is `docs/design/landing.dc.html`; `docs/design/README.md` maps its colours to Tailwind classes. This file records how the landing page applies it.
+
 ## Brief
 - **Subject:** an AI phone receptionist that answers a business's calls 24/7 in 42 languages. It books appointments, takes messages, puts urgent calls through to a person and emails a summary of every call. Customers range from a one-person plumber to a hospital.
 - **Audience:** owners who miss calls while they work (trades, salons, shops), busy professionals, and operations leads at hotels, hospitals and multi-branch companies. They have heard robotic phone bots before. They doubt it will understand their callers' language, book correctly, be honest that it's an AI, and be safe with patients.
-- **One job:** start the self-serve sign-up ("Get started"). Large organizations get one secondary path: "Talk to sales".
+- **One job:** start the self-serve sign-up ("Get started"). Large organizations get one secondary path: "Talk to us".
 
 ## Direction
-A front-desk call log: ruled rows, timestamps in monospace, plain paper surfaces and one blue "line in use" lamp for the thing that matters.
+Signal: neutral greys, one electric blue, hairline borders and tight headlines. The page sits in a framed column of dashed lines; the blue arrives as a solid band whose top edge dithers out of the hero grey in pixels, and the product itself (a dashboard, a live call) is the hero artifact.
 
 ## Type
-| Role | Font | Weights | Why |
+| Role | Font | Weights | Notes |
 |---|---|---|---|
-| Display | System sans (`--font-heading`) | 600 | Fixed by the project: the system stack covers all 42 launch scripts with no download. Voice comes from size and tight tracking, not the face. |
-| Text | System sans (`--font-sans`) | 400, 500 | Same stack, so a page in Hindi or Arabic renders with no fallback jump. |
-| Mono / data | System mono (`font-mono`: ui-monospace, SF Mono, Menlo, Consolas) | 400, 500 | Timestamps, step numbers, eyebrows, prices per minute: the "call log" voice. Also a system font. |
+| Display and text | Geist (`font-sans`) | 400, 500, 600 | Latin only. Arabic, Devanagari, CJK and the other launch scripts fall back to the visitor's system font, so nothing breaks. |
+| Labels and data | Geist Mono (`font-mono`) | 400, 500 | Section labels (12 px, uppercase, +0.08em), timers, step numbers, phone numbers. |
 
-Scale (Tailwind, about 1.25): 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 48 / 60 px.
-- h1: 36 → 48 → 60 px, weight 600, `tracking-tight`, `text-balance`.
-- h2: 30 → 36 px, weight 600, `tracking-tight`.
-- h3: 16–18 px, weight 500.
-- Body 16 px (lead 18 px). Line length 45–75ch (`max-w-prose` or `max-w-2xl`).
+- h1: `clamp(44px, 7vw, 80px)`, semibold, −0.05em, line height 1. The second line is muted.
+- h2: `clamp(32px, 4vw, 44–48px)`, semibold, −0.035 to −0.04em.
+- h3: 15–19 px, semibold.
+- Body 15–18 px, line height 1.6, in `text-foreground/70`. Line length under 75ch.
 
-## Color tokens
-The landing page uses only the shared tokens in `packages/ui/src/styles/globals.css`. It adds no colors of its own; tints come from opacity on a token (`bg-primary/10`, `bg-muted/40`).
+## Colour
+Only the shared tokens in `packages/ui/src/styles/globals.css`, never hex values (the share image in `app/og.png/route.tsx` is the one exception: the image renderer can't read CSS variables).
 
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| `--background` | white | near-black | page |
-| `--card` | white | dark gray | the example call, plan cards |
-| `--muted` (at 40%) | light gray | dark gray | alternating section bands, card footers |
-| `--foreground` | near-black | near-white | body text |
-| `--muted-foreground` | gray (4.7:1 on white) | light gray | secondary text |
-| `--border` | light gray | 10% white | hairlines, ruled rows |
-| `--primary` | brand blue `oklch(0.52 0.18 260)` | brand blue `oklch(0.55 0.18 260)` | the one action color: "Get started", the lamp, icons |
-| `--primary-foreground` | near-white | near-white | text on blue |
+| Use | Class |
+|---|---|
+| Page / cards | `bg-background` / `bg-card` |
+| Hero and final call to action | `bg-hero` |
+| Dashed frame lines | `border-dashed border-frame` |
+| The one accent | `bg-primary`, `text-primary` |
+| Text, secondary text, quiet text | `text-foreground`, `text-foreground/70` (body) and `/80` (UI labels), `text-muted-foreground` |
+| Call outcomes only | booked `success`, transferred `brand-soft`, message taken `warning`, spam `muted` (`components/outcome-pill.tsx`) |
 
-Small blue text (eyebrows, speaker labels, step numbers) uses `brandText` from `components/section.tsx`: plain `--primary` in light mode, and `--primary` mixed 25% toward white in dark mode, where plain blue on near-black is only about 4:1.
+Small blue text (step numbers, the FAQ's email link) uses `brandText` from `components/section.tsx`, which lifts the blue toward white in dark mode, where plain `--primary` on near-black is under 4.5:1.
 
-Dark mode follows the operating system: a small script in `app/layout.tsx` adds the `.dark` class the shared tokens expect.
+Dark mode follows the operating system (a small script in `app/layout.tsx` adds the `.dark` class). The approved look is light; dark uses the shared dark tokens.
 
 ## Space, radius, depth
-- Spacing: Tailwind's 4 px scale. Sections `py-20 sm:py-28`; container `max-w-6xl px-4 sm:px-6` (16 px gutter on phones).
-- Radius: the shared `--radius` family. Cards `rounded-xl`, controls `rounded-lg`, the final call to action `rounded-2xl`.
-- Depth: hairlines and rings first. One shadow level (`shadow-sm`) on the hero's example call; nothing else floats.
+- Column 1248 px (`max-w-312`) between dashed lines. Gutter 16 px on phones, 24 px from `sm`. Sections `py-24`.
+- Radius: 10 px controls, 12 px buttons in the hero, 16 px cards and plan cards, 20 px product tiles and frames, 24 px the final call to action.
+- Depth: hairlines do the work. `shadow-xs` on outline buttons and the demo tile; one soft blue glow on the featured plan.
 
 ## Motion
-- Enter: 500 ms `cubic-bezier(0.22, 1, 0.36, 1)` (ease-out). Only the hero's example call uses it: its lines appear one after another, so the call reads as it happened.
-- UI feedback: shadcn's own 150–200 ms transitions (accordion, sheet, hover).
-- Scrolling to a section is smooth only when motion is allowed.
-- Reduced motion: no movement. `app/landing.css` cuts every animation and transition to near zero.
+All animation is Motion (`motion/react`), in client components; everything else is static and prerendered.
+- Loops (waveform, booking slot, transfer dots, typing summary, marquees, call ticker, robocall) run on a clock from `lib/loop.ts` that advances only while the element is on screen and motion is allowed, so they pause in place.
+- The live call demo adds a line every 2.3 s, shows the outcome for two beats, then moves to the next language. Picking a language replays that one. It has a pause button.
+- Entrances: 450 ms ease-out (`rise` in the design). Only transform and opacity, plus `clip-path` for the typing summary.
+- Reduced motion: nothing moves. Loops show a still frame of their most telling moment, and the demo shows each call whole with its outcome. `MotionConfig reducedMotion="user"` and `usePrefersReducedMotion` (hydration-safe) cover it; `app/landing.css` stops CSS animations.
+
+## Components
+`components/`: `FrameColumn` and `FrameRule` (dashed frame, blue squares where lines cross), `PixelField` (the dithered field behind the header), `DitherBand` (blue band with stepped edge), `DashboardPreview`, `BentoTile`, `OutcomePill`, `LiveDot`, `Section`/`SectionHeading`/`Eyebrow`, the call-to-action links, `demo/` (`LiveCallDemo`, `Waveform`) and `tiles/` (one animated example per feature). Copy and sample data live in `content/`.
 
 ## 5 UX rules for this product
 1. The price of the cheapest plan and the AI notice are visible in the hero, without scrolling.
-2. One label for the main action everywhere: "Get started". Contracts get "Talk to sales".
+2. One label for the main action everywhere: "Get started". Contracts get "Talk to us".
 3. Every claim on the page is backed by the README or `docs/architecture.md`. No testimonials, logos or usage numbers until they're real.
-4. Every example (calls, transcripts) is labeled "Example".
+4. Every example is labeled: the demo says "Example call", the dashboard preview is captioned as sample data.
 5. Plans, prices and languages come from `@receptionist/product`, never typed into the page.
 
 ## Never
-- Cards inside cards, icon tiles above headings, three identical feature cards as the page's structure.
-- Gradients on backgrounds, buttons or text.
-- Web fonts (they would break non-Latin scripts) and emoji as icons.
-- `left`/`right` classes: use `start`/`end` and `ms-`/`me-`; arrows get `rtl:rotate-180`.
-- Filler copy ("Unlock the power of…").
+- A second accent colour, or status colours outside call outcomes.
+- Gradients as decoration (the pixel patterns and fades are the only ones, and they're the motif).
+- Emoji as icons; filler copy ("Unlock the power of…").
+- `left`/`right` classes for layout: use `start`/`end` and `ms-`/`me-`; arrows get `rtl:rotate-180`. (The transfer tile draws its legs left to right and mirrors them as a whole for RTL.)
+- Animation that ignores reduced motion, or keeps running off screen.

@@ -4,6 +4,8 @@ import { languageCount } from "@receptionist/product";
 import type { Metadata } from "next";
 import Script from "next/script";
 import type { ReactNode } from "react";
+import { FrameColumn } from "@/components/frame-lines";
+import { MotionProvider } from "@/components/motion-provider";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { hero } from "@/content/home";
@@ -12,7 +14,7 @@ import { ogImage, siteName, siteUrl } from "@/lib/site";
 const title = `${siteName}: every call answered, in ${languageCount} languages`;
 const description =
   "An AI receptionist that answers your phone 24/7, books appointments, takes messages and transfers urgent calls, for businesses of every size.";
-const images = [{ ...ogImage, alt: `${siteName}: ${hero.title}` }];
+const images = [{ ...ogImage, alt: `${siteName}: ${hero.title} ${hero.subtitle}` }];
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -52,9 +54,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           Skip to content
         </a>
-        <SiteHeader />
-        <main id="main">{children}</main>
-        <SiteFooter />
+        <MotionProvider>
+          <FrameColumn>
+            <SiteHeader />
+            <main id="main">{children}</main>
+            <SiteFooter />
+          </FrameColumn>
+        </MotionProvider>
       </body>
     </html>
   );

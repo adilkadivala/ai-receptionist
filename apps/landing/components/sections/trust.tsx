@@ -1,35 +1,32 @@
-import { BotMessageSquare, Globe, HeartPulse, type LucideIcon, ShieldCheck } from "lucide-react";
-import { type TrustId, trust, trustAlso } from "@/content/home";
-import { CheckList } from "../check-list";
-import { FeatureItem } from "../feature-item";
-import { Section, SectionHeading } from "../section";
+import { Globe, Lock, type LucideIcon, PhoneCall, ShieldCheck } from "lucide-react";
+import { type TrustId, trust } from "@/content/home";
 
 const icons: Record<TrustId, LucideIcon> = {
-  disclosure: BotMessageSquare,
-  medical: HeartPulse,
-  hipaa: ShieldCheck,
+  disclosure: PhoneCall,
+  emergencies: ShieldCheck,
+  hipaa: Lock,
   region: Globe,
 };
 
 export function Trust() {
   return (
-    <Section id="trust">
-      <SectionHeading
-        eyebrow="Trust and safety"
-        title="Honest with callers, careful with their data"
-        description="What every caller can count on, and what hospitals and large companies get on a contract."
-      />
-      <div className="mt-12 grid gap-x-8 gap-y-10 md:grid-cols-2">
-        {trust.map((item) => (
-          <FeatureItem key={item.id} icon={icons[item.id]} title={item.title}>
-            {item.description}
-          </FeatureItem>
-        ))}
-      </div>
-      <CheckList
-        items={trustAlso}
-        className="mt-12 grid gap-x-6 gap-y-2 rounded-xl bg-muted/50 p-5 text-sm sm:grid-cols-2 sm:p-6"
-      />
-    </Section>
+    <section aria-labelledby="trust-title" className="border-y">
+      <h2 id="trust-title" className="sr-only">
+        Trust and safety
+      </h2>
+      {/* gap-px over the border colour draws the lines between cells. */}
+      <ul className="grid gap-px bg-border sm:grid-cols-2 lg:grid-cols-4">
+        {trust.map((item) => {
+          const Icon = icons[item.id];
+          return (
+            <li key={item.id} className="flex flex-col gap-2.5 bg-card px-6 py-8">
+              <Icon aria-hidden className="size-5 text-primary" />
+              <h3 className="font-semibold">{item.title}</h3>
+              <p className="text-sm/relaxed text-pretty text-foreground/70">{item.description}</p>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
