@@ -8,6 +8,7 @@
   "scripts": {
     "dev:landing": "pnpm --filter @receptionist/landing dev",
     "dev:dashboard": "pnpm --filter @receptionist/dashboard dev",
+    "ui:add": "pnpm --filter @receptionist/ui exec shadcn add --cwd ../../apps/dashboard",
     "api:generate": "cd apps/server && uv run python -m scripts.export_openapi ../../packages/api-client/openapi.json && cd ../.. && pnpm --filter @receptionist/api-client generate",
     "check": "biome check .",
     "fix": "biome check --write .",

@@ -108,14 +108,14 @@ Three readers went through the books that fit this product. These are the decisi
 
 | Part | Stack | What it does | Hosting and scale |
 |---|---|---|---|
-| **landing** | Next.js 16 (App Router, static export), Tailwind 4 | Marketing site: product, languages, pricing, later blog, legal pages and pages per language. Needs search ranking and a fast first view, which is why it's Next.js. | `next build` writes plain files to `out/`. Served from S3 + CloudFront or Cloudflare Pages for ~$0–5/month; no server to run |
-| **dashboard** | React 19, Vite 8, React Router, TanStack Query, Tailwind 4 | Sign-up, setup wizard, business info, voice and languages, numbers, call history, billing. It's behind a login, so search ranking doesn't matter and a single-page app is simpler. | `vite build` writes `dist/`, served at `app.<domain>`. `/api` on the same domain goes to the api, so the login cookie needs no CORS |
+| **landing** | Next.js 16 (App Router, static export), Tailwind 4, shadcn/ui | Marketing site: product, languages, pricing, later blog, legal pages and pages per language. Needs search ranking and a fast first view, which is why it's Next.js. | `next build` writes plain files to `out/`. Served from S3 + CloudFront or Cloudflare Pages for ~$0–5/month; no server to run |
+| **dashboard** | React 19, Vite 8, React Router, TanStack Query, Tailwind 4, shadcn/ui | Sign-up, setup wizard, business info, voice and languages, numbers, call history, billing. It's behind a login, so search ranking doesn't matter and a single-page app is simpler. | `vite build` writes `dist/`, served at `app.<domain>`. `/api` on the same domain goes to the api, so the login cookie needs no CORS |
 | **api** | FastAPI | Auth, organizations, agents, numbers, calls, billing, webhooks (Telnyx, Dodo, calendars) | Stateless; add copies when needed |
 | **voice** | FastAPI + Pipecat | Telnyx audio, listen → think → speak, tools, safety gate, per-turn timings, saves the call | Stateless between calls; capped calls per server; drains on deploy |
 | **worker** | Python | Summaries and emails, knowledge ingest, calendar and CRM sync, usage rollups, retention cleanup, settling `in_flight` actions | Jobs from Postgres (`FOR UPDATE SKIP LOCKED`); one scheduler via a Postgres lock |
 | **Postgres 17 + pgvector** | RDS | All data, search index, queue, locks | Daily backups, point-in-time restore |
 | **packages/api-client** | openapi-typescript, openapi-fetch | Types generated from the api's OpenAPI description, plus a typed client | Built into the dashboard |
-| **packages/ui** | Tailwind theme | Brand colours and fonts shared by landing and dashboard | — |
+| **packages/ui** | shadcn/ui (Base UI, base-nova style), Tailwind 4 | One set of components (button, card, sidebar…) and theme tokens for both apps, with our brand blue as primary and system fonts for every script. Right-to-left ready for Arabic, Urdu and Hebrew | Imported as TypeScript source; no build step |
 
 ---
 
@@ -235,18 +235,19 @@ Items marked *(next)* aren't built yet.
 ```text
 Ai-receptionist/
 ├── README.md                     product, languages, stack, costs, pricing, break-even
-├── package.json                  pnpm workspace scripts: dev, check, typecheck, test, build, api:generate
+├── package.json                  pnpm workspace scripts: dev, check, typecheck, test, build, api:generate, ui:add
 ├── pnpm-workspace.yaml           apps/* and packages/*; only installs releases older than 7 days
 ├── biome.json                    lint + format for TypeScript, CSS, JSON (ruff does Python)
 ├── tsconfig.base.json            shared strict TypeScript settings
 ├── apps/
-│   ├── landing/                  Next.js 16 · static export · Tailwind 4      (dev: port 3100)
-│   │   └── app/                  layout.tsx, page.tsx, content.ts
-│   │                             (next) [locale]/ for translated pages, blog/, legal/
-│   ├── dashboard/                React 19 · Vite 8 · React Router · TanStack Query · Tailwind 4   (dev: port 5173)
+│   ├── landing/                  Next.js 16 · static export · Tailwind 4 · shadcn/ui      (dev: port 3100)
+│   │   ├── app/                  layout.tsx, page.tsx, content.ts
+│   │   │                         (next) [locale]/ for translated pages, blog/, legal/
+│   │   └── components/           site-header.tsx, mobile-nav.tsx (menu in a side sheet on phones)
+│   ├── dashboard/                React 19 · Vite 8 · React Router · TanStack Query · shadcn/ui   (dev: port 5173)
 │   │   └── src/
 │   │       ├── main.tsx  router.tsx
-│   │       ├── layouts/          AppLayout (navigation)
+│   │       ├── layouts/          AppLayout: shadcn Sidebar, collapses to icons; a slide-out sheet on phones
 │   │       ├── pages/            Overview, Calls, Receptionist, Phone numbers, Billing, Signup
 │   │       └── lib/api.ts        the typed api client
 │   └── server/                   Python 3.12 · FastAPI · Pipecat · SQLAlchemy · Alembic   (dev: port 8000)
@@ -284,7 +285,12 @@ Ai-receptionist/
 │       └── (next) evals/         cases/*.jsonl, simulated callers, sandbox, redteam, run.py; cost money, run nightly
 ├── packages/
 │   ├── api-client/               openapi.json (from the server) → src/schema.d.ts (generated) + createApiClient()
-│   └── ui/                       theme.css: shared Tailwind colours and fonts
+│   └── ui/                       shadcn/ui shared by both apps (Base UI, base-nova style, right-to-left on)
+│       ├── components.json       shadcn settings; each app has its own copy that points here
+│       └── src/
+│           ├── components/       added with `pnpm ui:add <name>`; shadcn's code, not edited by hand or linted
+│           ├── hooks/  lib/utils.ts
+│           └── styles/globals.css   Tailwind, theme tokens (brand blue as primary), system fonts
 ├── infra/
 │   ├── compose/                  dev.yml (local Postgres + pgvector)   (next) staging.yml, prod.yml
 │   └── (next) terraform/, caddy/, docker/

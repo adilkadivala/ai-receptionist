@@ -20,12 +20,19 @@ function renderPage() {
 test("shows missing provider keys from the api", async () => {
   vi.mocked(api.GET).mockResolvedValue({ data: { ok: true, missing: ["SONIOX_API_KEY"] } } as never);
   renderPage();
-  expect(await screen.findByText("Connected. Missing keys: SONIOX_API_KEY")).toBeDefined();
+  expect(await screen.findByText("Connected, but some provider keys are missing")).toBeDefined();
+  expect(screen.getByText("SONIOX_API_KEY")).toBeDefined();
   expect(api.GET).toHaveBeenCalledWith("/api/health");
+});
+
+test("says when every key is set", async () => {
+  vi.mocked(api.GET).mockResolvedValue({ data: { ok: true, missing: [] } } as never);
+  renderPage();
+  expect(await screen.findByText("Every provider key is set.")).toBeDefined();
 });
 
 test("says so when the api is down", async () => {
   vi.mocked(api.GET).mockResolvedValue({ error: "Bad Gateway" } as never);
   renderPage();
-  expect(await screen.findByText(/Can't reach the api/)).toBeDefined();
+  expect(await screen.findByText("Can't reach the api")).toBeDefined();
 });

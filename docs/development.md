@@ -8,7 +8,7 @@
 | `apps/dashboard` | React dashboard; `/api` is proxied to the api | http://localhost:5173 |
 | `apps/server` | Python api, voice and worker | http://localhost:8000 |
 | `packages/api-client` | TypeScript client generated from the api | — |
-| `packages/ui` | Shared Tailwind theme | — |
+| `packages/ui` | shadcn/ui components and theme, shared by both frontends | — |
 
 ## Setup (once)
 
@@ -46,6 +46,11 @@ pnpm dev:landing
 
 The dashboard's Overview page shows whether it can reach the api and which provider keys are missing.
 
+If port 8000 is taken by another project, run the api on another port and point the dashboard at it:
+```bash
+API_URL=http://localhost:8001 pnpm dev:dashboard
+```
+
 ## Every day
 
 Run the same checks CI runs.
@@ -70,6 +75,25 @@ After adding or changing an api route or its response model, regenerate the dash
 pnpm api:generate
 ```
 This writes `packages/api-client/openapi.json` from the server, then `src/schema.d.ts` from that. Commit both. CI fails if either is out of date. In the dashboard, `api.GET("/api/...")` is then typed end to end.
+
+## UI components
+
+Both frontends use [shadcn/ui](https://ui.shadcn.com) components (built on Base UI) from `packages/ui`.
+
+Add a component:
+```bash
+pnpm ui:add dialog
+```
+This runs the shadcn CLI version pinned in the lockfile and writes the component to `packages/ui/src/components/`. Import it in either app:
+```tsx
+import { Button } from "@receptionist/ui/components/button";
+```
+
+- **Check where new files land.** The CLI sometimes writes a hook or helper that a shared component needs into `apps/dashboard/src/hooks/` or `src/lib/`. Move it to `packages/ui/src/hooks/` or `src/lib/`, where the component imports it from.
+- **Don't edit shadcn's files.** Biome skips `packages/ui/src/components/` and `hooks/`, and we leave them as shadcn wrote them, so `pnpm ui:add <name> --diff` shows only upstream changes. Change the look with the tokens in `packages/ui/src/styles/globals.css` (our brand blue is `--primary`) or by passing `className`.
+- **Links that look like buttons** use `<a className={buttonVariants()}>`, not `<Button render={<a />}>`. Base UI's Button always sets `role="button"`, so screen readers would announce the link as a button.
+- **Right-to-left is on** (`"rtl": true` in each `components.json`), so components use start/end instead of left/right. Arabic, Urdu and Hebrew pages will also need `dir="rtl"` and shadcn's direction setup ([RTL guide](https://ui.shadcn.com/docs/rtl)).
+- **Fonts** are the system stack, which covers every launch script without a download. Don't switch to a Latin-only web font.
 
 ## Changing the database
 

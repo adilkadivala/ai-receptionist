@@ -1,46 +1,104 @@
+import { Separator } from "@receptionist/ui/components/separator";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+  useSidebar,
+} from "@receptionist/ui/components/sidebar";
+import { Bot, CreditCard, LayoutDashboard, type LucideIcon, Phone, PhoneCall, PhoneIncoming } from "lucide-react";
 import type { ReactNode } from "react";
-import { NavLink, Outlet } from "react-router";
+import { NavLink, Outlet, useLocation } from "react-router";
 
-const nav = [
-  { to: "/", label: "Overview" },
-  { to: "/calls", label: "Calls" },
-  { to: "/agent", label: "Receptionist" },
-  { to: "/numbers", label: "Phone numbers" },
-  { to: "/billing", label: "Billing" },
+const nav: { to: string; label: string; icon: LucideIcon }[] = [
+  { to: "/", label: "Overview", icon: LayoutDashboard },
+  { to: "/calls", label: "Calls", icon: PhoneIncoming },
+  { to: "/agent", label: "Receptionist", icon: Bot },
+  { to: "/numbers", label: "Phone numbers", icon: Phone },
+  { to: "/billing", label: "Billing", icon: CreditCard },
 ];
 
-export function AppLayout() {
+function isCurrent(to: string, pathname: string) {
+  return to === "/" ? pathname === "/" : pathname.startsWith(to);
+}
+
+function AppSidebar() {
+  const { pathname } = useLocation();
+  const { setOpenMobile } = useSidebar();
+
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900 md:flex-row">
-      <aside className="shrink-0 border-b border-slate-200 bg-white p-4 md:w-56 md:border-r md:border-b-0">
-        <p className="mb-3 px-3 text-lg font-semibold md:mb-6">AI Receptionist</p>
-        <nav className="flex gap-1 overflow-x-auto md:flex-col">
-          {nav.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === "/"}
-              className={({ isActive }) =>
-                `shrink-0 rounded-lg px-3 py-2 text-sm ${isActive ? "bg-brand-50 font-medium text-brand-700" : "text-slate-600 hover:bg-slate-100"}`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-      </aside>
-      <main className="flex-1 p-4 sm:p-8">
-        <Outlet />
-      </main>
-    </div>
+    <Sidebar collapsible="icon">
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" render={<NavLink to="/" />}>
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <PhoneCall className="size-4" />
+              </span>
+              <span className="font-heading font-semibold">AI Receptionist</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {nav.map((item) => (
+                <SidebarMenuItem key={item.to}>
+                  <SidebarMenuButton
+                    render={<NavLink to={item.to} end={item.to === "/"} onClick={() => setOpenMobile(false)} />}
+                    isActive={isCurrent(item.to, pathname)}
+                    tooltip={item.label}
+                  >
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+
+export function AppLayout() {
+  const { pathname } = useLocation();
+  const current = nav.find((item) => isCurrent(item.to, pathname));
+
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ms-1" />
+          <Separator orientation="vertical" className="me-2 data-vertical:h-4 data-vertical:self-center" />
+          <span className="text-sm font-medium">{current?.label}</span>
+        </header>
+        <div className="flex-1 p-4 sm:p-8">
+          <Outlet />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
 
 export function PageHeader({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <header className="mb-6">
-      <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-      {children && <p className="mt-1 text-slate-600">{children}</p>}
+      <h1 className="font-heading text-2xl font-semibold tracking-tight">{title}</h1>
+      {children && <p className="mt-1 text-muted-foreground">{children}</p>}
     </header>
   );
 }
