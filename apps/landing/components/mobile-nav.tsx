@@ -8,8 +8,9 @@ import { useState } from "react";
 import type { NavLink } from "@/lib/site";
 
 // Below the lg breakpoint the header links move into a side sheet.
-export function MobileNav({ links, signupUrl }: { links: NavLink[]; signupUrl: string }) {
+export function MobileNav({ links, loginUrl, signupUrl }: { links: NavLink[]; loginUrl: string; signupUrl: string }) {
   const [open, setOpen] = useState(false);
+  const linkClassName = cn(buttonVariants({ variant: "ghost", size: "lg" }), "h-11 justify-start text-base");
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -22,15 +23,13 @@ export function MobileNav({ links, signupUrl }: { links: NavLink[]; signupUrl: s
         </SheetHeader>
         <nav aria-label="Main" className="flex flex-col gap-1 px-4">
           {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className={cn(buttonVariants({ variant: "ghost", size: "lg" }), "h-11 justify-start text-base")}
-            >
+            <a key={link.href} href={link.href} onClick={() => setOpen(false)} className={linkClassName}>
               {link.label}
             </a>
           ))}
+          <a href={loginUrl} className={linkClassName}>
+            Log in
+          </a>
           <a href={signupUrl} className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 text-base")}>
             Get started
           </a>

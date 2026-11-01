@@ -1,62 +1,61 @@
-import { addOns, contractFromPerMinute, formatUsd, included, overagePerMinute, plans } from "@receptionist/product";
+import { plans } from "@receptionist/product";
 import { PlanCard } from "@receptionist/ui/blocks/plan-card";
 import { cn } from "@receptionist/ui/lib/utils";
-import { contractFeatures } from "@/content/home";
-import { CheckList } from "../check-list";
-import { ctaClassName, GetStartedLink, TalkToSalesLink } from "../cta-links";
-import { brandText, Eyebrow, Section, SectionHeading } from "../section";
+import { contract, pricingCopy } from "@/content/home";
+import { addOnSummary } from "@/lib/plans";
+import { ContactLink, GetStartedLink } from "../cta-links";
+import { Section, SectionHeading } from "../section";
+
+// Restyles the shared PlanCard to the approved mockup from the outside, so the block (and the dashboard) stay as
+// they are: 28 px padding, 16 px corners, a 17 px name, a 48 px price, the badge in the blue tint, no footer band.
+const planCardClassName = cn(
+  "gap-5 rounded-[16px] text-[15px] [--card-spacing:--spacing(7)]",
+  "**:data-[slot=card-title]:text-[17px] **:data-[slot=card-title]:font-semibold",
+  "**:data-[slot=badge]:h-6 **:data-[slot=badge]:bg-brand-soft **:data-[slot=badge]:px-2.5 **:data-[slot=badge]:text-brand-soft-foreground",
+  "[&_[data-slot=card-content]_.font-heading]:text-5xl [&_[data-slot=card-content]_.font-heading]:tracking-[-0.04em]",
+  "[&_[data-slot=card-content]_p+p]:mt-5",
+  "*:data-[slot=card-footer]:border-t-0 *:data-[slot=card-footer]:bg-transparent *:data-[slot=card-footer]:pt-0",
+);
+
+// The featured plan's soft blue glow.
+const featuredClassName = "shadow-[0_24px_48px_-28px_color-mix(in_oklch,var(--primary)_45%,transparent)]";
 
 export function Pricing() {
   return (
-    <Section id="pricing" muted>
+    <Section id="pricing" className="flex flex-col gap-10 border-t border-dashed border-frame">
       <SectionHeading
+        align="center"
         eyebrow="Pricing"
-        title="Simple monthly plans"
-        description={`Pick a plan by how many call minutes you need. Extra minutes are ${formatUsd(overagePerMinute)} each.`}
+        title={pricingCopy.title}
+        description={pricingCopy.description}
       />
-      <h3 className="sr-only">Every plan includes</h3>
-      <CheckList items={included} className="mt-8 grid gap-x-6 gap-y-2 sm:grid-cols-2 lg:grid-cols-3" />
-
-      <div className="mt-10 grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-3">
         {plans.map((plan) => (
           <PlanCard
             key={plan.id}
             plan={plan}
+            className={cn(planCardClassName, plan.featured && featuredClassName)}
             action={
-              <GetStartedLink plan={plan.id} variant={plan.featured ? "default" : "outline"} className="h-10 w-full">
+              <GetStartedLink
+                plan={plan.id}
+                variant={plan.featured ? "default" : "outline"}
+                size="md"
+                className="w-full shadow-none"
+              >
                 Choose {plan.name}
               </GetStartedLink>
             }
           />
         ))}
       </div>
-
-      <div className="mt-16">
-        <h3 className="text-lg font-medium">Add-ons</h3>
-        <ul className="mt-4 grid gap-px overflow-hidden rounded-xl bg-foreground/10 ring-1 ring-foreground/10 sm:grid-cols-2 lg:grid-cols-4">
-          {addOns.map((addOn) => (
-            <li key={addOn.id} className="bg-card p-5">
-              <p className="font-medium">{addOn.name}</p>
-              <p className={cn("mt-1 font-mono text-sm", brandText)}>
-                {addOn.from && "from "}
-                {formatUsd(addOn.price)}/month
-              </p>
-              <p className="mt-2 text-sm text-pretty text-muted-foreground">{addOn.description}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-16 grid gap-8 rounded-xl bg-card p-6 ring-1 ring-foreground/10 sm:p-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-        <div>
-          <Eyebrow>Hotels, hospitals and large companies</Eyebrow>
-          <h3 className="mt-3 font-heading text-2xl font-semibold tracking-tight">
-            Per minute, from {formatUsd(contractFromPerMinute)}
-          </h3>
-          <CheckList items={contractFeatures} className="mt-5 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2" />
+      <div className="flex flex-wrap items-center justify-between gap-5 rounded-[16px] border bg-card px-5 py-6 sm:px-7">
+        <div className="flex max-w-[720px] flex-col gap-1.5">
+          <h3 className="text-[17px] font-semibold">{contract.title}</h3>
+          <p className="text-[15px]/relaxed text-pretty text-foreground/70">{contract.description}</p>
         </div>
-        <TalkToSalesLink variant="default" className={ctaClassName} />
+        <ContactLink />
       </div>
+      <p className="text-center text-sm text-pretty text-muted-foreground">Monthly add-ons: {addOnSummary}</p>
     </Section>
   );
 }

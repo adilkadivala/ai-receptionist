@@ -1,38 +1,51 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@receptionist/ui/components/accordion";
+import { cn } from "@receptionist/ui/lib/utils";
 import { faq } from "@/content/faq";
-import { salesEmail } from "@/lib/site";
-import { Section, SectionHeading } from "../section";
+import { contactHref } from "@/lib/site";
+import { brandText, Eyebrow, Section } from "../section";
+
+// A plus or minus in Geist Mono in place of shadcn's chevrons, following the trigger's open state.
+const sign = "ms-auto font-mono text-lg font-normal text-muted-foreground";
 
 export function Faq() {
   return (
-    <Section id="faq" muted>
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
-        <SectionHeading
-          eyebrow="FAQ"
-          title="Questions, answered"
-          description={
-            <>
-              Something else on your mind? Email{" "}
-              <a href={`mailto:${salesEmail}`} className="font-medium text-foreground underline underline-offset-4">
-                {salesEmail}
-              </a>
-              .
-            </>
-          }
-          className="lg:sticky lg:top-24 lg:self-start"
-        />
-        {/* hiddenUntilFound keeps closed answers in the page, so search engines and Ctrl+F find them. */}
-        <Accordion hiddenUntilFound className="border-y">
-          {faq.map((item) => (
-            <AccordionItem key={item.question} value={item.question}>
-              <AccordionTrigger className="py-4 text-base">{item.question}</AccordionTrigger>
-              <AccordionContent className="pb-5 text-base text-pretty text-muted-foreground">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+    <Section id="faq" className="flex flex-wrap gap-12">
+      <div className="flex min-w-0 flex-[1_1_280px] flex-col gap-3.5">
+        <Eyebrow>FAQ</Eyebrow>
+        <h2 className="text-[clamp(2rem,4vw,2.5rem)] leading-[1.1] font-semibold tracking-[-0.035em]">
+          Questions owners ask
+        </h2>
+        <p className="text-[15px]/relaxed text-foreground/70">
+          Something else?{" "}
+          <a href={contactHref} className={cn("underline-offset-4 hover:underline", brandText)}>
+            Email us
+          </a>
+          .
+        </p>
       </div>
+      {/* hiddenUntilFound keeps closed answers in the page, so search engines and Ctrl+F find them. */}
+      <Accordion
+        hiddenUntilFound
+        defaultValue={faq.slice(0, 1).map((item) => item.question)}
+        className="min-w-0 flex-[2_1_480px] border-t"
+      >
+        {faq.map((item) => (
+          <AccordionItem key={item.question} value={item.question} className="border-b">
+            <AccordionTrigger className="items-center gap-4 rounded-none py-5 text-base hover:no-underline [&_svg]:hidden!">
+              {item.question}
+              <span aria-hidden className={cn(sign, "group-aria-expanded/accordion-trigger:hidden")}>
+                +
+              </span>
+              <span aria-hidden className={cn(sign, "hidden group-aria-expanded/accordion-trigger:inline")}>
+                −
+              </span>
+            </AccordionTrigger>
+            <AccordionContent className="max-w-160 pb-5 text-[15px]/[1.65] text-pretty text-foreground/70">
+              {item.answer}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </Section>
   );
 }
