@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  countOutcomes,
   defaultFilters,
   filterCalls,
   filtersFromParams,
@@ -7,6 +8,7 @@ import {
   hasFilters,
   pageSize,
   paginate,
+  rangeStart,
 } from "./filter";
 import type { Call, CallFilters } from "./types";
 
@@ -78,6 +80,7 @@ describe("filterCalls", () => {
     expect(ids(filterCalls(calls, filters({ range: "today" }), now))).toEqual(["booking-today"]);
     expect(ids(filterCalls(calls, filters({ range: "7d" }), now))).toEqual(["booking-today", "spanish-3-days"]);
     expect(ids(filterCalls(calls, filters({ range: "30d" }), now))).toHaveLength(3);
+    expect(ids(filterCalls(calls, filters({ range: "90d" }), now))).toHaveLength(4);
   });
 
   test("searches the caller's number however it's typed", () => {
@@ -115,6 +118,37 @@ describe("filters in the URL", () => {
     expect(hasFilters(filters({ page: 3 }))).toBe(false);
     expect(hasFilters(filters({ range: "today" }))).toBe(true);
   });
+
+  test("a page can open on another range, and leaves it out of its links", () => {
+    // The Overview opens on the last 30 days.
+    const overview = filters({ range: "30d" });
+    expect(filtersFromParams(new URLSearchParams(""), overview).range).toBe("30d");
+    expect(filtersFromParams(new URLSearchParams("range=all"), overview).range).toBe("all");
+    expect(filtersToParams(overview, overview).toString()).toBe("");
+    expect(filtersToParams(filters({ range: "all" }), overview).toString()).toBe("range=all");
+    expect(hasFilters(overview, overview)).toBe(false);
+  });
+});
+
+test("rangeStart counts days back from now, and today from midnight", () => {
+  expect(rangeStart("today", now)).toEqual(new Date("2026-11-10T00:00:00"));
+  expect(rangeStart("90d", now)).toEqual(new Date(now.getTime() - 90 * 86_400_000));
+  expect(rangeStart("all", now)).toBeNull();
+});
+
+test("countOutcomes gives each tab its count, ignoring the outcome filter but not the others", () => {
+  expect(countOutcomes(calls, filters({ outcome: "transfer" }), now)).toEqual({
+    all: 4,
+    booking: 2,
+    transfer: 1,
+    spam: 1,
+  });
+  expect(countOutcomes(calls, filters({ range: "7d" }), now)).toEqual({ all: 2, booking: 2 });
+});
+
+test("paginate takes a page size", () => {
+  const items = Array.from({ length: 20 }, (_, index) => index);
+  expect(paginate(items, 2, 8)).toEqual({ items: [8, 9, 10, 11, 12, 13, 14, 15], total: 20, page: 2, page_size: 8 });
 });
 
 test("paginate clamps the page into range", () => {
