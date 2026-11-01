@@ -64,7 +64,7 @@ function invoiceFor(index: number, overMinutes: number): Invoice {
   ];
   return {
     id: `inv_${index}`,
-    number: `HPH-${String(1042 - index).padStart(4, "0")}`,
+    number: `RVP-${String(1042 - index).padStart(4, "0")}`,
     issued_at: end.toISOString(),
     period_start: start.toISOString(),
     period_end: end.toISOString(),

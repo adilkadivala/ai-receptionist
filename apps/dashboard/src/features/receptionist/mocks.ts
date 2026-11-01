@@ -30,9 +30,9 @@ export const mockConfigs: Record<string, AgentConfig> = {
     agent_id: mockAgentId,
     version: 4,
     created_at: ago({ days: 3 }),
-    greeting: "Thanks for calling Harbor Plumbing & Heating. How can I help?",
+    greeting: "Thanks for calling Rivera Plumbing. How can I help?",
     recording_notice: true,
-    business_name: "Harbor Plumbing & Heating",
+    business_name: "Rivera Plumbing",
     business_info:
       "Family-run plumbers in San Francisco since 1998. We fix leaks, clear drains, install and repair water heaters, and handle burst pipes 24/7. We cover San Francisco, Daly City and northern San Mateo County. Drain clearing starts at $135; call-outs are free with any repair.",
     address: "1180 Harrison Street, San Francisco, CA 94103",
