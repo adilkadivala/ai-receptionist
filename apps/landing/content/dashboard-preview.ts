@@ -11,10 +11,10 @@ export const dashboardPreview = {
   tabs: ["Calls", "Overview", "Receptionist", "Phone numbers", "Billing"],
   status: "Answering calls",
   stats: [
-    { label: "Calls answered", value: "128" },
-    { label: "Bookings made", value: "86" },
-    { label: "Sent to you", value: "31" },
-    { label: "Minutes used", value: "212", of: String(pro.minutes) },
+    { label: "Calls answered", value: 128 },
+    { label: "Bookings made", value: 86 },
+    { label: "Sent to you", value: 31 },
+    { label: "Minutes used", value: 212, of: pro.minutes },
   ],
   calls: [
     {

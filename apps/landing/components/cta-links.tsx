@@ -17,6 +17,10 @@ const variants = {
   outline: "bg-card text-foreground shadow-xs",
 };
 
+// Moves 2 px toward where the link goes when the link is hovered.
+const arrowClassName =
+  "transition-transform duration-200 ease-out rtl:rotate-180 group-hover/cta:translate-x-0.5 rtl:group-hover/cta:-translate-x-0.5";
+
 export type CtaProps = {
   className?: string;
   variant?: keyof typeof variants;
@@ -25,7 +29,7 @@ export type CtaProps = {
 };
 
 export function ctaClassName({ variant = "default", size = "lg", className }: CtaProps = {}) {
-  return cn(buttonVariants({ variant }), sizes[size], variants[variant], className);
+  return cn(buttonVariants({ variant }), "group/cta", sizes[size], variants[variant], className);
 }
 
 /** The page's one main action. The label is the same everywhere. */
@@ -38,15 +42,15 @@ export function GetStartedLink({
   return (
     <a href={signupUrl(plan)} className={ctaClassName(props)}>
       {children}
-      {arrow && <ArrowRight aria-hidden className="rtl:rotate-180" />}
+      {arrow && <ArrowRight aria-hidden className={arrowClassName} />}
     </a>
   );
 }
 
-/** Jumps to the live call demo. */
+/** Jumps to the live call demo, which starts with sound when it has recordings. */
 export function HearCallLink(props: CtaProps) {
   return (
-    <a href="#product" className={ctaClassName({ variant: "outline", ...props })}>
+    <a href="#listen" className={ctaClassName({ variant: "outline", ...props })}>
       <Play aria-hidden className="size-3.5 fill-current" />
       Hear a live call
     </a>
@@ -58,7 +62,7 @@ export function ContactLink({ children = "Talk to us", ...props }: CtaProps) {
   return (
     <a href={contactHref} className={ctaClassName({ variant: "outline", size: "md", ...props })}>
       {children}
-      <ArrowRight aria-hidden className="size-[15px] rtl:rotate-180" />
+      <ArrowRight aria-hidden className={cn("size-[15px]", arrowClassName)} />
     </a>
   );
 }

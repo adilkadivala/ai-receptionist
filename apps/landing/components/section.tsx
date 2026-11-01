@@ -1,5 +1,6 @@
 import { cn } from "@receptionist/ui/lib/utils";
 import type { ReactNode } from "react";
+import { Reveal } from "./motion/reveal";
 
 // Side gutter inside the framed column: 16 px on phones, 24 px from the sm breakpoint.
 export const gutter = "px-4 sm:px-6";
@@ -50,7 +51,7 @@ export function SectionHeading({
   titleClassName?: string;
 }) {
   return (
-    <div className={cn("flex flex-col gap-3.5", align === "center" && "items-center text-center", className)}>
+    <Reveal className={cn("flex flex-col gap-3.5", align === "center" && "items-center text-center", className)}>
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
       <h2
         className={cn(
@@ -61,6 +62,6 @@ export function SectionHeading({
         {title}
       </h2>
       {description && <p className="max-w-140 text-base/relaxed text-pretty text-foreground/70">{description}</p>}
-    </div>
+    </Reveal>
   );
 }

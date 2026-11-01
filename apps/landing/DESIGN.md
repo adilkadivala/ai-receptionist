@@ -43,14 +43,17 @@ Dark mode follows the operating system (a small script in `app/layout.tsx` adds 
 - Depth: hairlines do the work. `shadow-xs` on outline buttons and the demo tile; one soft blue glow on the featured plan.
 
 ## Motion
-All animation is Motion (`motion/react`), in client components; everything else is static and prerendered.
-- Loops (waveform, booking slot, transfer dots, typing summary, marquees, call ticker, robocall) run on a clock from `lib/loop.ts` that advances only while the element is on screen and motion is allowed, so they pause in place.
-- The live call demo adds a line every 2.3 s, shows the outcome for two beats, then moves to the next language. Picking a language replays that one. It has a pause button.
-- Entrances: 450 ms ease-out (`rise` in the design). Only transform and opacity, plus `clip-path` for the typing summary.
-- Reduced motion: nothing moves. Loops show a still frame of their most telling moment, and the demo shows each call whole with its outcome. `MotionConfig reducedMotion="user"` and `usePrefersReducedMotion` (hydration-safe) cover it; `app/landing.css` stops CSS animations.
+Animation is Motion (`motion/react`) in client components, plus one CSS entrance for the hero; everything else is static and prerendered.
+- **Easing** (`lib/motion.ts`): `ease.enter` `cubic-bezier(0.22, 1, 0.36, 1)` for anything arriving, `ease.move` `cubic-bezier(0.65, 0, 0.35, 1)` for things moving on screen. Entrances 450–700 ms, state changes 250–600 ms.
+- **Hero:** each piece rises 14 px into place in turn (`.animate-rise` in `app/landing.css`, staggered by `--rise-delay`). It's CSS, so it plays before JavaScript loads. The dashboard preview then tilts flat as it scrolls up (`components/motion/tilt-in.tsx`), and its numbers count up.
+- **Scroll reveals** (`components/motion/reveal.tsx`): section headings, the product tiles, steps, languages, plans, trust items, FAQ and the final call to action rise 18 px and fade in once, groups one after another. In grids drawn with `gap-px` the cell's contents move, never the cell, so the lines between cells don't flash. Without JavaScript a `<noscript>` style in `app/layout.tsx` shows them.
+- **Live call demo:** each line appears from its speaker's side; with sound on, the next line waits for the recording to end and the waveform follows the real voice (`lib/call-audio.ts`, Web Audio). The caller's voice goes through a 300–3,400 Hz telephone filter. Without sound, a line stays as long as it takes to read. After the outcome it moves to the next language; picking one replays it. Pause button, and "Listen" only once the recordings exist (`scripts/demo-audio.ts`). "Hear a live call" in the hero jumps to the demo and turns sound on.
+- **Tiles** cycle through states with `useTicker` (`lib/motion.ts`), only while on screen: the booking stack grows upward a booking at a time, calls route to you (urgent) or stay with the receptionist, summary emails type themselves out, new calls push the feed down, and robocalls are struck out after two real calls get through. The marquees run on the clock in `lib/loop.ts`.
+- **Hover:** the main buttons' arrows move 2 px forward; plan cards lift 4 px.
+- **Reduced motion** keeps things changing but stops them moving: `MotionConfig reducedMotion="user"` drops transforms and keeps fades, so the demo and the tiles still play as dissolves, the hero fades in, and the marquees, waveform and tilt stand still. `app/landing.css` cuts CSS animations to a fade. `usePrefersReducedMotion` is hydration-safe.
 
 ## Components
-`components/`: `FrameColumn` and `FrameRule` (dashed frame, blue squares where lines cross), `PixelField` (the dithered field behind the header), `DitherBand` (blue band with stepped edge), `DashboardPreview`, `BentoTile`, `OutcomePill`, `LiveDot`, `Section`/`SectionHeading`/`Eyebrow`, the call-to-action links, `demo/` (`LiveCallDemo`, `Waveform`) and `tiles/` (one animated example per feature). Copy and sample data live in `content/`.
+`components/`: `FrameColumn` and `FrameRule` (dashed frame, blue squares where lines cross), `PixelField` (the dithered field behind the header), `DitherBand` (blue band with stepped edge), `DashboardPreview`, `BentoTile`, `OutcomePill`, `LiveDot`, `Section`/`SectionHeading`/`Eyebrow`, the call-to-action links, `motion/` (`Reveal`, `RevealGroup`/`RevealItem`, `CountUp`, `TiltIn`), `demo/` (`LiveCallDemo`, `Waveform`) and `tiles/` (one animated example per feature: `BookingStack`, `CallRouting`, `TypingSummary`, `Marquee`, `CallTicker`, `BlockedCall`). Copy and sample data live in `content/`; the demo's recordings in `public/demo-audio/`.
 
 ## 5 UX rules for this product
 1. The price of the cheapest plan and the AI notice are visible in the hero, without scrolling.
@@ -65,3 +68,4 @@ All animation is Motion (`motion/react`), in client components; everything else 
 - Emoji as icons; filler copy ("Unlock the power of…").
 - `left`/`right` classes for layout: use `start`/`end` and `ms-`/`me-`; arrows get `rtl:rotate-180`. (The transfer tile draws its legs left to right and mirrors them as a whole for RTL.)
 - Animation that ignores reduced motion, or keeps running off screen.
+- Sound that starts without a click.

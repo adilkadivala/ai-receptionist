@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev --port 3100",
     "build": "next build",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit",
+    "demo-audio": "node scripts/demo-audio.ts"
   },
   "dependencies": {
     "@receptionist/product": "workspace:*",

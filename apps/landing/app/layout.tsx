@@ -45,6 +45,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     // The theme script changes the class before React hydrates.
     <html lang="en" className="motion-safe:scroll-smooth" suppressHydrationWarning>
       <body className="antialiased">
+        <noscript>
+          <style>{"[data-reveal]{opacity:1!important;transform:none!important}"}</style>
+        </noscript>
         <Script id="theme" strategy="beforeInteractive">
           {themeScript}
         </Script>

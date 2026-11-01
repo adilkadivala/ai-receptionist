@@ -245,10 +245,13 @@ Ai-receptionist/
 │   │   │                         (next) [locale]/ for translated pages, blog/
 │   │   ├── components/           header, footer, dither band, pixel field, frame lines, dashboard preview
 │   │   │   ├── sections/         one file per page section: hero, built-for, product, how-it-works, languages, pricing…
-│   │   │   ├── demo/             the live call demo and its waveform (Motion)
+│   │   │   ├── motion/           scroll reveals, count-up numbers, the preview's tilt (Motion)
+│   │   │   ├── demo/             the live call demo and its waveform, which follows the recorded voice
 │   │   │   └── tiles/            the six animated product tiles
 │   │   ├── content/              every word on the page, and the five demo call scripts
-│   │   └── lib/                  loop.ts (animation clock that pauses off screen and under reduced motion), site, plans
+│   │   ├── lib/                  motion.ts (easing, tile stepper), loop.ts (marquee clock), call-audio.ts (Web Audio), site, plans
+│   │   ├── public/demo-audio/    the demo's recordings, one per line
+│   │   └── scripts/demo-audio.ts records them with Cartesia (needs CARTESIA_API_KEY)
 │   ├── dashboard/                React 19 · Vite 8 · React Router · TanStack Query · shadcn/ui   (dev: port 5173)
 │   │   └── src/
 │   │       ├── main.tsx  router.tsx

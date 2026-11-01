@@ -1,6 +1,7 @@
 import { cn } from "@receptionist/ui/lib/utils";
 import { dashboardPreview } from "@/content/dashboard-preview";
 import { LiveDot } from "./live-dot";
+import { CountUp } from "./motion/count-up";
 import { OutcomePill } from "./outcome-pill";
 
 const { business, page, tabs, status, stats, calls } = dashboardPreview;
@@ -48,7 +49,7 @@ export function DashboardPreview() {
               <div key={stat.label} className="flex flex-col gap-1.5 rounded-[12px] border p-3.5">
                 <dt className="text-xs text-muted-foreground">{stat.label}</dt>
                 <dd className="text-2xl font-semibold tracking-[-0.03em]">
-                  {stat.value}
+                  <CountUp value={stat.value} />
                   {stat.of && (
                     <span className="text-sm font-normal tracking-normal text-muted-foreground"> / {stat.of}</span>
                   )}

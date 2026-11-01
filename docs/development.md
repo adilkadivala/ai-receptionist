@@ -102,6 +102,18 @@ import { Button } from "@receptionist/ui/components/button";
 - **Fonts** are Geist and Geist Mono, bundled with `packages/ui`. Browsers download only the alphabets a page uses (Latin, Cyrillic, Vietnamese); Arabic, Hindi, Chinese and the other scripts fall back to system fonts. Keep that fallback in `--font-sans` when changing fonts.
 - **Design:** match the approved mockups in `docs/design/`, and use the Tailwind classes in its README, never the hex values.
 
+## Recording the landing page's demo voices
+
+The live call demo on the landing page plays recordings of each line, made with Cartesia, the voice real callers hear. The recordings are committed in `apps/landing/public/demo-audio/`, so the site never needs the key; the "Listen" button only appears once every line has one.
+
+After changing a line in `apps/landing/content/demo-calls.ts`, delete its file in `public/demo-audio/` (or pass `--force` to redo them all) and run:
+
+```bash
+pnpm --filter @receptionist/landing demo-audio
+```
+
+It reads `CARTESIA_API_KEY` from `apps/server/.env`. The voices it picked are saved in `apps/landing/scripts/demo-voices.json`; edit the IDs there to change one. The whole demo is about 2,000 characters, well under $1.
+
 ## Changing the database
 
 1. Edit `apps/server/core/models.py`.

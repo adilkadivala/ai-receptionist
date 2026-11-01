@@ -18,6 +18,25 @@
   }
 }
 
+/* The hero's entrance (components/sections/hero.tsx): each piece rises into place after its --rise-delay. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
 /* Reduced motion: no movement anywhere, including shadcn's accordion and sheet.
    Unlayered, so it wins over Tailwind's layered utilities without !important.
    Animations keep a tiny duration so their end events still fire; transitions go to 0s, because Base UI warns
@@ -30,5 +49,11 @@
     animation-iteration-count: 1;
     transition-duration: 0s;
     scroll-behavior: auto;
+  }
+
+  /* The hero still fades in, without rising. */
+  .animate-rise {
+    animation-name: fade-in;
+    animation-duration: 0.6s;
   }
 }

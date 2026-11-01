@@ -7,19 +7,30 @@ export type DemoCall = {
   id: string;
   /** BCP 47 tag for the call, e.g. "hi-Latn" for Hindi written in Latin letters. */
   lang: string;
+  /** The language the voice speaks, as Cartesia names it (scripts/demo-audio.ts). */
+  voiceLanguage: string;
   /** The language's own name, on its button. */
   label: string;
   business: string;
   dir: "ltr" | "rtl";
   /** Shown in English, as the dashboard would show it. */
   outcome: { kind: Outcome; label: string };
-  turns: { speaker: "ai" | "caller"; text: string }[];
+  /** `speech`, when set, is what the voice reads instead of `text`. */
+  turns: { speaker: Speaker; text: string; speech?: string }[];
 };
+
+export type Speaker = "ai" | "caller";
+
+/** Where scripts/demo-audio.ts saves each line's recording, under public/. */
+export function audioPath(call: DemoCall, line: number): string {
+  return `/demo-audio/${call.id}-${line}.mp3`;
+}
 
 export const demoCalls: readonly DemoCall[] = [
   {
     id: "en",
     lang: "en",
+    voiceLanguage: "en",
     label: "English",
     business: "Rivera Plumbing",
     dir: "ltr",
@@ -35,6 +46,7 @@ export const demoCalls: readonly DemoCall[] = [
   {
     id: "fr",
     lang: "fr",
+    voiceLanguage: "fr",
     label: "Français",
     business: "Cabinet dentaire Lumière",
     dir: "ltr",
@@ -53,6 +65,7 @@ export const demoCalls: readonly DemoCall[] = [
   {
     id: "ar",
     lang: "ar",
+    voiceLanguage: "ar",
     label: "العربية",
     business: "فندق النخيل",
     dir: "rtl",
@@ -68,6 +81,7 @@ export const demoCalls: readonly DemoCall[] = [
   {
     id: "hi",
     lang: "hi-Latn",
+    voiceLanguage: "hi",
     label: "Hinglish",
     business: "Glow Salon",
     dir: "ltr",
@@ -76,16 +90,30 @@ export const demoCalls: readonly DemoCall[] = [
       {
         speaker: "ai",
         text: "Namaste, Glow Salon mein aapka swagat hai. Main AI receptionist hoon. Kaise help karun?",
+        speech: "नमस्ते, Glow Salon में आपका स्वागत है। मैं AI receptionist हूँ। कैसे help करूँ?",
       },
-      { speaker: "caller", text: "Hi, kal shaam haircut ka appointment mil sakta hai?" },
-      { speaker: "ai", text: "Haan bilkul. Kal 5 baje ya 6:30 baje slot free hai. Kaunsa chalega?" },
-      { speaker: "caller", text: "6:30 perfect hai. Naam Rohan Mehta." },
-      { speaker: "ai", text: "Done! Rohan Mehta, kal shaam 6:30 baje. See you!" },
+      {
+        speaker: "caller",
+        text: "Hi, kal shaam haircut ka appointment mil sakta hai?",
+        speech: "Hi, कल शाम haircut का appointment मिल सकता है?",
+      },
+      {
+        speaker: "ai",
+        text: "Haan bilkul. Kal 5 baje ya 6:30 baje slot free hai. Kaunsa chalega?",
+        speech: "हाँ बिल्कुल। कल पाँच बजे या साढ़े छह बजे slot free है। कौन सा चलेगा?",
+      },
+      { speaker: "caller", text: "6:30 perfect hai. Naam Rohan Mehta.", speech: "साढ़े छह perfect है। नाम रोहन मेहता।" },
+      {
+        speaker: "ai",
+        text: "Done! Rohan Mehta, kal shaam 6:30 baje. See you!",
+        speech: "Done! रोहन मेहता, कल शाम साढ़े छह बजे। See you!",
+      },
     ],
   },
   {
     id: "de",
     lang: "de",
+    voiceLanguage: "de",
     label: "Deutsch",
     business: "Werkstatt Weber",
     dir: "ltr",
