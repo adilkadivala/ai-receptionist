@@ -1,34 +1,76 @@
+"use client";
+
 import { cn } from "@receptionist/ui/lib/utils";
-import { dashboardPreview } from "@/content/dashboard-preview";
+import { motion } from "motion/react";
+import { type KeyboardEvent, useRef, useState } from "react";
+import { dashboardPreview, type PreviewPage, previewPages } from "@/content/dashboard-preview";
+import { previewPageViews } from "./dashboard-preview-pages";
 import { LiveDot } from "./live-dot";
-import { CountUp } from "./motion/count-up";
-import { OutcomePill } from "./outcome-pill";
 
-const { business, page, tabs, status, stats, calls } = dashboardPreview;
+const { business, firstPage, status } = dashboardPreview;
 
-// The two middle columns drop below the sm breakpoint so the table fits a phone without scrolling sideways.
-const wideOnly = "hidden sm:table-cell";
-
-/** The hero's product shot: the dashboard's tab bar and overview page, drawn in HTML with sample data. */
+/**
+ * The hero's product shot: the dashboard's tab bar and one of its pages, drawn in HTML with sample data. The tabs
+ * work (click, or the arrow keys once one has focus) and swap the page below with a quick crossfade. Every page is
+ * laid out in the same grid cell, so the frame is as tall as the tallest and the hero never jumps.
+ */
 export function DashboardPreview() {
+  const [current, setCurrent] = useState<PreviewPage>(firstPage);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // The tabs pattern: arrows move to the next or previous tab and show it, Home and End jump to the ends.
+  function onKeyDown(event: KeyboardEvent, index: number) {
+    const last = previewPages.length - 1;
+    const next = { ArrowRight: index + 1, ArrowLeft: index - 1, Home: 0, End: last }[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    const target = (next + previewPages.length) % previewPages.length;
+    const page = previewPages[target];
+    if (page) setCurrent(page);
+    tabs.current[target]?.focus();
+  }
+
   return (
     <figure>
-      <figcaption className="sr-only">Example of the dashboard's overview page, with sample data.</figcaption>
+      <figcaption className="sr-only">Example of the dashboard, with sample data. Pick a page to see it.</figcaption>
       <div
-        aria-hidden
+        role="tablist"
+        aria-label="Dashboard pages"
         className="inline-flex flex-wrap justify-center gap-0.5 rounded-[12px] bg-card p-1 shadow-[0_8px_24px_-12px_color-mix(in_oklch,var(--foreground)_35%,transparent)]"
       >
-        {tabs.map((tab) => (
-          <span
-            key={tab}
-            className={cn(
-              "inline-flex h-8 items-center rounded-[9px] px-3 text-[13px] text-foreground/70",
-              tab === page && "bg-hero font-medium text-foreground",
-            )}
-          >
-            {tab}
-          </span>
-        ))}
+        {previewPages.map((page, index) => {
+          const selected = page === current;
+          return (
+            <button
+              key={page}
+              ref={(element) => {
+                tabs.current[index] = element;
+              }}
+              type="button"
+              role="tab"
+              id={`preview-tab-${index}`}
+              aria-selected={selected}
+              aria-controls={`preview-page-${index}`}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => setCurrent(page)}
+              onKeyDown={(event) => onKeyDown(event, index)}
+              className={cn(
+                "relative inline-flex h-8 items-center rounded-[9px] px-3 text-[13px] text-foreground/70 transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50",
+                selected && "font-medium text-foreground",
+              )}
+            >
+              {/* The highlight slides from tab to tab. */}
+              {selected && (
+                <motion.span
+                  layoutId="preview-tab"
+                  transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                  className="absolute inset-0 rounded-[9px] bg-hero"
+                />
+              )}
+              <span className="relative">{page}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="mx-auto mt-7 max-w-[1060px] rounded-t-[20px] border border-b-0 border-primary-foreground/30 bg-primary-foreground/15 p-2.5 pb-0">
@@ -36,7 +78,7 @@ export function DashboardPreview() {
           <div className="flex items-center justify-between gap-3 border-b border-border/60 px-[18px] py-3.5">
             <p className="flex items-center gap-2.5">
               <span className="text-sm font-semibold">{business}</span>
-              <span className="hidden text-[13px] text-muted-foreground sm:inline">{page}</span>
+              <span className="hidden text-[13px] text-muted-foreground sm:inline">{current}</span>
             </p>
             <span className="inline-flex h-6.5 shrink-0 items-center gap-1.5 rounded-full bg-success-soft px-2.5 text-xs font-medium whitespace-nowrap text-success-foreground">
               <LiveDot />
@@ -44,55 +86,26 @@ export function DashboardPreview() {
             </span>
           </div>
 
-          <dl className="grid grid-cols-2 gap-2.5 px-[18px] py-4 lg:grid-cols-4">
-            {stats.map((stat) => (
-              <div key={stat.label} className="flex flex-col gap-1.5 rounded-[12px] border p-3.5">
-                <dt className="text-xs text-muted-foreground">{stat.label}</dt>
-                <dd className="text-2xl font-semibold tracking-[-0.03em]">
-                  <CountUp value={stat.value} />
-                  {stat.of && (
-                    <span className="text-sm font-normal tracking-normal text-muted-foreground"> / {stat.of}</span>
+          <div className="grid">
+            {previewPages.map((page, index) => {
+              const View = previewPageViews[page];
+              const active = page === current;
+              return (
+                <div
+                  key={page}
+                  role="tabpanel"
+                  id={`preview-page-${index}`}
+                  aria-labelledby={`preview-tab-${index}`}
+                  tabIndex={active ? 0 : -1}
+                  className={cn(
+                    "col-start-1 row-start-1 outline-none transition-[opacity,visibility] duration-300 ease-out focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:ring-inset",
+                    active ? "visible opacity-100" : "invisible opacity-0",
                   )}
-                </dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className="px-[18px] pb-[18px]">
-            <table className="w-full border-collapse text-[13px]">
-              <thead>
-                <tr className="text-xs text-muted-foreground">
-                  <th scope="col" className="py-2 text-start font-medium">
-                    Caller
-                  </th>
-                  <th scope="col" className={cn("p-2 text-start font-medium", wideOnly)}>
-                    What they needed
-                  </th>
-                  <th scope="col" className={cn("p-2 text-start font-medium", wideOnly)}>
-                    Language
-                  </th>
-                  <th scope="col" className="p-2 text-start font-medium">
-                    Outcome
-                  </th>
-                  <th scope="col" className="py-2 text-end font-medium">
-                    Time
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {calls.map((call) => (
-                  <tr key={call.caller} className="border-t border-border/60">
-                    <td className="py-2.5 font-medium">{call.caller}</td>
-                    <td className={cn("px-2 py-2.5 text-foreground/80", wideOnly)}>{call.need}</td>
-                    <td className={cn("px-2 py-2.5 text-foreground/80", wideOnly)}>{call.language}</td>
-                    <td className="px-2 py-2.5">
-                      <OutcomePill outcome={call.outcome} />
-                    </td>
-                    <td className="py-2.5 text-end whitespace-nowrap text-muted-foreground">{call.time}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                >
+                  <View />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

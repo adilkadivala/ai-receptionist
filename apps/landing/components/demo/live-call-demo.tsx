@@ -61,7 +61,8 @@ function reducer(state: State, action: Action): State {
 // The demo is always labeled as an example, and says whose voice reads it.
 const captions = {
   recordings: "Example call, voiced by the same AI voice callers hear. Wording and timing are illustrative.",
-  browser: "Example call. With sound on, your browser's own voice reads it. Wording and timing are illustrative.",
+  browser:
+    "Example call. With sound on, your browser's own voices read it, in the languages it has a voice for. Wording and timing are illustrative.",
   none: "Example call. Wording and timing are illustrative.",
 };
 
@@ -70,6 +71,9 @@ const statusLabels: Record<WaveTone, string> = {
   caller: "Caller speaking…",
   idle: "Call ended",
 };
+
+// "ar" → "Arabic", for saying which language the browser can't speak.
+const languageNames = new Intl.DisplayNames(["en"], { type: "language" });
 
 function formatClock(totalSeconds: number): string {
   const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
@@ -180,6 +184,12 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
 
   // Past the last line nobody is speaking.
   const tone: WaveTone = call.turns[state.step]?.speaker ?? "idle";
+  // With sound on, a language the browser has no voice for plays as text only, and says so.
+  const voiceless = (language: string) => sound && voice === "browser" && !browserVoice.hasVoice(language);
+  const status =
+    voiceless(call.voiceLanguage) && tone !== "idle"
+      ? `This browser has no ${languageNames.of(call.voiceLanguage)} voice`
+      : statusLabels[tone];
 
   return (
     <div
@@ -237,6 +247,7 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
         <legend className="sr-only">Call language</legend>
         {demoCalls.map((item, index) => {
           const selected = index === state.call;
+          const muted = voiceless(item.voiceLanguage);
           return (
             <button
               key={item.id}
@@ -245,13 +256,19 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
               aria-pressed={selected}
               onClick={() => dispatch({ type: "pick", call: index })}
               className={cn(
-                "h-8 rounded-full border px-3 text-[13px] font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+                "inline-flex h-8 items-center gap-1.5 rounded-full border px-3 text-[13px] font-medium transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
                 selected
                   ? "border-primary bg-brand-soft text-brand-soft-foreground"
                   : "bg-card text-foreground/80 hover:bg-muted",
               )}
             >
               {item.label}
+              {muted && (
+                <>
+                  <VolumeX aria-hidden className="size-3 opacity-60" />
+                  <span className="sr-only"> (no voice in this browser)</span>
+                </>
+              )}
             </button>
           );
         })}
@@ -259,7 +276,7 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
 
       <div className="flex flex-col items-center gap-2.5 rounded-[14px] bg-muted/60 px-3 py-[18px]">
         <Waveform tone={tone} playing={running && !ended && !reduceMotion} analyser={sound ? audio.analyser : null} />
-        <span className="font-mono text-xs text-foreground/70">{statusLabels[tone]}</span>
+        <span className="font-mono text-xs text-foreground/70">{status}</span>
       </div>
 
       {/* Every call is laid out in the same grid cell, so the tile is as tall as the longest one and never jumps. */}

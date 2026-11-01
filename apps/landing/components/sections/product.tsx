@@ -79,6 +79,7 @@ export function Product() {
             {...tiles.languages}
             pattern="grid"
             stageClassName={cn(rowThree, "px-0 sm:px-0")}
+            patternClassName="blur-[1.5px]"
             aside={
               <span className="text-[28px] leading-none font-semibold tracking-[-0.04em] text-primary">
                 <CountUp value={languageCount} />

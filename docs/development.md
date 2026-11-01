@@ -104,7 +104,7 @@ import { Button } from "@receptionist/ui/components/button";
 
 ## Recording the landing page's demo voices
 
-The live call demo on the landing page plays recordings of each line, made with Cartesia, the voice real callers hear. The recordings are committed in `apps/landing/public/demo-audio/`, so the site never needs the key. Until every line has one, the demo reads its lines with the visitor's browser voices instead, which sound different on every system; the recordings replace them automatically once they're there.
+The live call demo on the landing page plays recordings of each line, made with Cartesia, the voice real callers hear. The recordings are committed in `apps/landing/public/demo-audio/`, so the site never needs the key. Until every line has one, the demo reads its lines with the visitor's browser voices instead, which sound different on every system and are missing for some languages (Chrome has no Arabic voice, so that call plays as text only and says so); the recordings replace them automatically once they're there.
 
 After changing a line in `apps/landing/content/demo-calls.ts`, delete its file in `public/demo-audio/` (or pass `--force` to redo them all) and run:
 

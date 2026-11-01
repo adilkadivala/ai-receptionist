@@ -24,10 +24,13 @@ function loadVoices(): Promise<SpeechSynthesisVoice[]> {
   });
 }
 
+// A voice's language without its region: "ar-SA" → "ar".
+const languageOf = (voice: SpeechSynthesisVoice) => voice.lang.toLowerCase().split(/[-_]/)[0] ?? "";
+
 /** A voice for each side of the call in `language` ("fr"), two different ones when the browser has them. */
 function pickVoices(voices: SpeechSynthesisVoice[], language: string) {
   const matching = voices
-    .filter((voice) => voice.lang.toLowerCase().split(/[-_]/)[0] === language)
+    .filter((voice) => languageOf(voice) === language)
     .sort((a, b) => Number(naturalVoice.test(b.name)) - Number(naturalVoice.test(a.name)));
   const [ai, other] = matching;
   return ai ? { ai, caller: other ?? ai } : null;
@@ -71,15 +74,16 @@ function speak(text: string, voice: SpeechSynthesisVoice, pitch: number, signal:
 /** Reads the live call demo aloud with the browser's built-in voices. `start()` must run from a click. */
 export function useBrowserVoice() {
   const voices = useRef<SpeechSynthesisVoice[]>([]);
-  // Whether the browser has any voice at all (many Linux browsers have none). Known only in the browser, so it stays
-  // false through hydration and in the prerendered page.
-  const [supported, setSupported] = useState(false);
+  // The languages the browser has a voice for ("en", "fr"…). Chrome, for one, has none for Arabic, and many Linux
+  // browsers have none at all. Known only in the browser, so it stays empty through hydration and in the prerendered
+  // page.
+  const [languages, setLanguages] = useState<ReadonlySet<string>>(() => new Set());
 
   useEffect(() => {
     if (!("speechSynthesis" in window)) return;
     const update = () => {
       voices.current = speechSynthesis.getVoices();
-      setSupported(voices.current.length > 0);
+      setLanguages(new Set(voices.current.map(languageOf)));
     };
     void loadVoices().then(update);
     speechSynthesis.addEventListener("voiceschanged", update);
@@ -115,5 +119,9 @@ export function useBrowserVoice() {
 
   useEffect(() => () => void (typeof speechSynthesis !== "undefined" && speechSynthesis.cancel()), []);
 
-  return { supported, start, speakLine, stop };
+  /** Whether the browser has any voice at all, and one for `language`. */
+  const supported = languages.size > 0;
+  const hasVoice = useCallback((language: string) => languages.has(language), [languages]);
+
+  return { supported, hasVoice, start, speakLine, stop };
 }

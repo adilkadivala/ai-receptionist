@@ -1,15 +1,8 @@
 // Shared timing for the landing page's looping animations. Each loop is driven by a clock that only advances
-// while its element is on screen and the visitor allows motion, so loops pause in place instead of jumping.
-import {
-  cancelFrame,
-  type FrameData,
-  frame,
-  type MotionValue,
-  useInView,
-  useMotionValue,
-  useTransform,
-} from "motion/react";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+// while its owner says it should play (on screen, and usually only when the visitor allows motion), so loops pause
+// in place instead of jumping.
+import { cancelFrame, type FrameData, frame, type MotionValue, useMotionValue, useTransform } from "motion/react";
+import { useEffect, useSyncExternalStore } from "react";
 
 const reducedMotionQuery = "(prefers-reduced-motion: reduce)";
 
@@ -29,14 +22,6 @@ export function usePrefersReducedMotion(): boolean {
     () => window.matchMedia(reducedMotionQuery).matches,
     () => false,
   );
-}
-
-/** Whether a loop should run: its element is on screen and the visitor hasn't asked for reduced motion. */
-export function usePlaying<T extends Element>() {
-  const ref = useRef<T>(null);
-  const inView = useInView(ref);
-  const reduceMotion = usePrefersReducedMotion();
-  return { ref, playing: inView && !reduceMotion };
 }
 
 /**

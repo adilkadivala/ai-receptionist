@@ -16,6 +16,7 @@ export function StageCell({
   align = "start",
   className,
   stageClassName,
+  patternClassName,
   children,
 }: {
   title: ReactNode;
@@ -26,6 +27,8 @@ export function StageCell({
   align?: "start" | "center";
   className?: string;
   stageClassName?: string;
+  /** E.g. a blur, to soften the pattern behind busy examples. */
+  patternClassName?: string;
   children: ReactNode;
 }) {
   return (
@@ -36,7 +39,7 @@ export function StageCell({
           stageClassName,
         )}
       >
-        <Pattern kind={pattern} />
+        <Pattern kind={pattern} className={patternClassName} />
         <div className="relative">{children}</div>
       </div>
       <div

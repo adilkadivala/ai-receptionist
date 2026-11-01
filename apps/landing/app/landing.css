@@ -113,6 +113,11 @@
     scroll-behavior: auto;
   }
 
+  /* The desk objects lie still. Their class outranks `*` above, so they need their own rule. */
+  .animate-bob {
+    animation: none;
+  }
+
   /* The hero still fades in, without rising. */
   .animate-rise {
     animation-name: fade-in;
