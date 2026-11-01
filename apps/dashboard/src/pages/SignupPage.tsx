@@ -1,25 +1,23 @@
-import { Badge } from "@receptionist/ui/components/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@receptionist/ui/components/card";
-import { useSearchParams } from "react-router";
+import { Link } from "react-router";
+import { SignupForm } from "../features/account/components/signup-form";
+import { AuthLayout } from "../layouts/AuthLayout";
 
 export function SignupPage() {
-  const [params] = useSearchParams();
-  const plan = params.get("plan") ?? "starter";
-
   return (
-    <main className="flex min-h-svh items-center justify-center bg-muted/40 p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="text-xl">Create your account</CardTitle>
-          <CardDescription>
-            Plan:{" "}
-            <Badge variant="secondary" className="capitalize">
-              {plan}
-            </Badge>
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-muted-foreground">Sign-up arrives with login in build step 6.</CardContent>
-      </Card>
-    </main>
+    <AuthLayout
+      title="Create your account"
+      description="Pick a plan and tell us about your business. You'll set up your receptionist next."
+      className="w-full max-w-lg"
+      footer={
+        <>
+          Already have an account?{" "}
+          <Link to="/login" className="font-medium text-primary underline-offset-4 hover:underline">
+            Log in
+          </Link>
+        </>
+      }
+    >
+      <SignupForm />
+    </AuthLayout>
   );
 }

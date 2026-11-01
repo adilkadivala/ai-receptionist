@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { afterEach, expect, test, vi } from "vitest";
 import { api } from "../lib/api";
 import { OverviewPage } from "./OverviewPage";
@@ -12,7 +13,10 @@ function renderPage() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   render(
     <QueryClientProvider client={client}>
-      <OverviewPage />
+      {/* The page links to calls, so it needs a router. */}
+      <MemoryRouter>
+        <OverviewPage />
+      </MemoryRouter>
     </QueryClientProvider>,
   );
 }
