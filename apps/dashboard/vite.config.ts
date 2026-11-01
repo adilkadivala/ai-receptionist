@@ -12,5 +12,5 @@ export default defineConfig({
     // so the login cookie works without CORS. Set API_URL when port 8000 is taken by something else.
     proxy: { "/api": process.env.API_URL ?? "http://localhost:8000" },
   },
-  test: { environment: "jsdom" },
+  test: { environment: "jsdom", setupFiles: ["src/test-setup.ts"] },
 });
