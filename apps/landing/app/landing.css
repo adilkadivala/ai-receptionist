@@ -1,25 +1,7 @@
-/* Landing-only global rules. Theme tokens live in @receptionist/ui/globals.css; the ones here are derived from them. */
+/* Landing-only global rules. Theme tokens, the blueprint ink, the depth levels, .animate-rise and the reduced-motion
+   rule live in @receptionist/ui/globals.css; the ones here are derived from them. */
 
 :root {
-  /* The blueprint the hero and the final call to action are drawn on: Signal blue taken halfway to black. */
-  --ink: color-mix(in oklch, var(--primary) 50%, black);
-  /* Lines drawn on the blueprint. */
-  --ink-line: color-mix(in oklch, var(--primary-foreground) 9%, transparent);
-  /* The two depth levels (DESIGN.md): small objects resting on the sheet, and cards standing off it. Both carry
-     their own hairline, so they need no border. Use them as shadow-(--raised) and shadow-(--float). */
-  --raised:
-    0 0 0 1px color-mix(in oklch, var(--foreground) 7%, transparent),
-    0 1px 2px color-mix(in oklch, var(--foreground) 6%, transparent),
-    0 3px 8px -2px color-mix(in oklch, var(--foreground) 9%, transparent);
-  --float:
-    0 0 0 1px color-mix(in oklch, var(--foreground) 6%, transparent),
-    0 2px 4px -1px color-mix(in oklch, var(--foreground) 6%, transparent),
-    0 12px 24px -8px color-mix(in oklch, var(--foreground) 13%, transparent),
-    0 32px 56px -24px color-mix(in oklch, var(--foreground) 20%, transparent);
-  /* A tray that objects sit in, pressed into the sheet. */
-  --tray:
-    inset 0 1px 3px color-mix(in oklch, var(--foreground) 9%, transparent),
-    inset 0 0 0 1px color-mix(in oklch, var(--foreground) 6%, transparent);
   /* The trust medals (components/medal.tsx): a domed disc, the dish pressed into it, and the icon engraved there. */
   --medal:
     inset 0 1.5px 0 white,
@@ -33,19 +15,6 @@
 /* Scrollbars and form controls follow the theme that layout.tsx picks from the OS. */
 .dark {
   color-scheme: dark;
-  /* A little deeper on the near-black page, where the lighter dark-mode blue would glare. */
-  --ink: color-mix(in oklch, var(--primary) 42%, black);
-  --raised:
-    inset 0 1px 0 color-mix(in oklch, white 6%, transparent), 0 0 0 1px color-mix(in oklch, white 9%, transparent),
-    0 2px 6px -1px color-mix(in oklch, black 50%, transparent);
-  --float:
-    inset 0 1px 0 color-mix(in oklch, white 7%, transparent),
-    0 0 0 1px color-mix(in oklch, white 9%, transparent),
-    0 12px 24px -8px color-mix(in oklch, black 55%, transparent),
-    0 32px 56px -24px color-mix(in oklch, black 60%, transparent);
-  --tray:
-    inset 0 1px 3px color-mix(in oklch, black 45%, transparent),
-    inset 0 0 0 1px color-mix(in oklch, white 7%, transparent);
   --medal:
     inset 0 1px 0 color-mix(in oklch, white 12%, transparent),
     inset 0 -10px 16px color-mix(in oklch, black 30%, transparent),
@@ -69,25 +38,6 @@
   }
 }
 
-/* The hero's entrance (components/sections/hero.tsx): each piece rises into place after its --rise-delay. */
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-}
-
-.animate-rise {
-  animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: var(--rise-delay, 0ms);
-}
-
 /* The hero's desk objects bob gently, each on its own --bob-duration. `translate` adds to their tilt and parallax. */
 @keyframes bob {
   50% {
@@ -99,28 +49,9 @@
   animation: bob var(--bob-duration, 7s) ease-in-out infinite;
 }
 
-/* Reduced motion: no movement anywhere, including shadcn's accordion and sheet.
-   Unlayered, so it wins over Tailwind's layered utilities without !important.
-   Animations keep a tiny duration so their end events still fire; transitions go to 0s, because Base UI warns
-   when a panel shows both a transition and an animation. The Motion loops stop themselves (lib/loop.ts). */
+/* Under reduced motion they lie still. The catch-all rule in globals.css can't stop them: this class outranks `*`. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  ::before,
-  ::after {
-    animation-duration: 0.01ms;
-    animation-iteration-count: 1;
-    transition-duration: 0s;
-    scroll-behavior: auto;
-  }
-
-  /* The desk objects lie still. Their class outranks `*` above, so they need their own rule. */
   .animate-bob {
     animation: none;
-  }
-
-  /* The hero still fades in, without rising. */
-  .animate-rise {
-    animation-name: fade-in;
-    animation-duration: 0.6s;
   }
 }

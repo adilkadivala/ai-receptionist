@@ -1,6 +1,7 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@receptionist/ui/components/sheet";
 import { useState } from "react";
 import { useLocation, useMatch, useNavigate } from "react-router";
+import { FrameRule } from "../../../components/frame-rule";
 import { QueryError } from "../../../components/query-error";
 import { formatDateTime, formatPhone } from "../../../lib/format";
 import { useCall } from "../api";
@@ -34,9 +35,12 @@ function CallSheetBody({ id }: { id: string }) {
 
   return (
     <>
-      <SheetHeader className="border-b pe-12">
-        <SheetTitle>{call.data ? (call.data.caller_name ?? formatPhone(call.data.from_number)) : "Call"}</SheetTitle>
+      <SheetHeader className="relative pe-12">
+        <SheetTitle className="text-base font-semibold tracking-[-0.01em]">
+          {call.data ? (call.data.caller_name ?? formatPhone(call.data.from_number)) : "Call"}
+        </SheetTitle>
         <SheetDescription>{call.data ? formatDateTime(call.data.started_at) : " "}</SheetDescription>
+        <FrameRule />
       </SheetHeader>
       <div className="flex-1 overflow-y-auto p-4">
         {call.isPending && <CallDetailSkeleton />}

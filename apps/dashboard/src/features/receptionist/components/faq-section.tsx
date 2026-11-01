@@ -6,6 +6,7 @@ import { MessageCircleQuestion, Plus, Trash2 } from "lucide-react";
 import { EmptyState } from "../../../components/empty-state";
 import { FormField } from "../../../components/form-field";
 import { SettingsCard } from "../../../components/settings-card";
+import { resting } from "../../../components/surfaces";
 import type { FaqEntry } from "../types";
 import { limits } from "../validation";
 import type { SectionProps } from "./section-props";
@@ -25,7 +26,14 @@ export function FaqSection({ values, set, errors }: SectionProps) {
     );
 
   const addButton = (
-    <Button type="button" variant="outline" size="sm" onClick={add} disabled={faqs.length >= limits.faqs}>
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      className={resting}
+      onClick={add}
+      disabled={faqs.length >= limits.faqs}
+    >
       <Plus data-icon="inline-start" />
       Add question
     </Button>
@@ -38,13 +46,13 @@ export function FaqSection({ values, set, errors }: SectionProps) {
       action={faqs.length > 0 && addButton}
     >
       {faqs.length === 0 ? (
-        <EmptyState icon={MessageCircleQuestion} title="No questions yet" action={addButton} className="border py-8">
+        <EmptyState icon={MessageCircleQuestion} title="No questions yet" action={addButton} className="py-8">
           Add the questions callers ask most, like prices, areas you cover or parking.
         </EmptyState>
       ) : (
         <ol className="flex flex-col gap-3">
           {faqs.map((faq, index) => (
-            <li key={faq.id} className="flex flex-col gap-4 rounded-lg border p-4">
+            <li key={faq.id} className="flex flex-col gap-4 rounded-[14px] border p-4">
               <FormField label="Question" error={errors[`faqs.${index}.question`]}>
                 {(control) => (
                   <Input

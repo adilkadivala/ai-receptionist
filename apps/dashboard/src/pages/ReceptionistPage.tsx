@@ -22,7 +22,7 @@ export function ReceptionistPage() {
       {config.data ? (
         <ReceptionistForm key={config.data.agent_id} config={config.data} />
       ) : (
-        !agents.isError && !config.isError && <Skeleton className="h-96 rounded-xl" />
+        !agents.isError && !config.isError && <Skeleton className="h-96 rounded-[16px]" />
       )}
     </div>
   );

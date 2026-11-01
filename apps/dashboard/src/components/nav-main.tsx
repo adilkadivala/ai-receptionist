@@ -7,6 +7,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@receptionist/ui/components/sidebar";
+import { cn } from "@receptionist/ui/lib/utils";
 import { Bot, CreditCard, Hash, LayoutDashboard, type LucideIcon, PhoneIncoming } from "lucide-react";
 import { NavLink, useLocation } from "react-router";
 import { useCallsToday } from "../features/calls/api";
@@ -23,6 +24,9 @@ export function isCurrent(to: string, pathname: string) {
   return to === "/" ? pathname === "/" : pathname.startsWith(to);
 }
 
+// On the blueprint, pages are white at 75%; the current one is full white on clear glass with its own hairline.
+export const navItemClassName = "text-sidebar-foreground/75 data-active:inset-ring data-active:inset-ring-(--ink-line)";
+
 /** The dashboard's pages. Calls carries today's messages, the calls most likely to need a callback. */
 export function NavMain() {
   const { pathname } = useLocation();
@@ -38,7 +42,7 @@ export function NavMain() {
               <SidebarMenuButton
                 render={<NavLink to={item.to} end={item.to === "/"} onClick={() => setOpenMobile(false)} />}
                 isActive={isCurrent(item.to, pathname)}
-                className="h-9"
+                className={cn("h-9", navItemClassName)}
               >
                 <item.icon />
                 <span>
@@ -53,7 +57,7 @@ export function NavMain() {
               {item.to === "/calls" && messages > 0 && (
                 <SidebarMenuBadge
                   aria-hidden
-                  className="top-2! rounded-full bg-brand-soft px-1.5 text-[11px] font-semibold text-brand-soft-foreground peer-hover/menu-button:text-brand-soft-foreground peer-data-active/menu-button:text-brand-soft-foreground"
+                  className="top-2! rounded-full bg-primary-foreground px-1.5 font-mono text-[11px] font-medium text-(color:--ink) peer-hover/menu-button:text-(color:--ink) peer-data-active/menu-button:text-(color:--ink)"
                 >
                   {messages}
                 </SidebarMenuBadge>

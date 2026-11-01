@@ -24,7 +24,7 @@ export function BusinessSwitcher() {
   const plan = findPlan(useSubscription().data?.plan);
   const { isMobile, setOpenMobile } = useSidebar();
 
-  if (!account.data) return <Skeleton className="h-12 rounded-lg" />;
+  if (!account.data) return <Skeleton className="h-12 rounded-lg bg-sidebar-accent" />;
   const { organization } = account.data;
 
   return (
@@ -34,12 +34,12 @@ export function BusinessSwitcher() {
           <DropdownMenuTrigger
             render={<SidebarMenuButton size="lg" className="rounded-lg data-popup-open:bg-sidebar-accent" />}
           >
-            <LogoMark />
+            <LogoMark className="shadow-[inset_0_1px_0_color-mix(in_oklch,white_25%,transparent)]" />
             <span className="grid flex-1 text-start leading-tight">
-              <span className="truncate font-semibold">{organization.name}</span>
-              <span className="truncate text-xs text-muted-foreground">{plan ? `${plan.name} plan` : " "}</span>
+              <span className="truncate font-semibold tracking-[-0.01em]">{organization.name}</span>
+              <span className="truncate text-xs text-sidebar-foreground/60">{plan ? `${plan.name} plan` : " "}</span>
             </span>
-            <ChevronsUpDown className="ms-auto text-muted-foreground" />
+            <ChevronsUpDown className="ms-auto text-sidebar-foreground/60" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" side={isMobile ? "bottom" : "right"} className="min-w-60">
             <DropdownMenuGroup>

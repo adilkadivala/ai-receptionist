@@ -29,7 +29,7 @@ export function OpeningHours({
   const update = (day: Weekday, patch: Partial<DayHours>) => onChange({ ...hours, [day]: { ...hours[day], ...patch } });
 
   return (
-    <ul className="flex flex-col divide-y rounded-lg border">
+    <ul className="flex flex-col divide-y rounded-[14px] border">
       {weekdays.map((day) => {
         const { open, from, to } = hours[day];
         const error = errors[`hours.${day}`];

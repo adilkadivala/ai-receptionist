@@ -10,6 +10,7 @@ const date = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short"
 const shortDate = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short" });
 const time = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" });
 const monthYear = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" });
+const longDate = new Intl.DateTimeFormat(undefined, { weekday: "long", day: "numeric", month: "long" });
 const relative = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
 
 export function formatDateTime(iso: string): string {
@@ -40,6 +41,11 @@ export function formatCallTime(iso: string, now = new Date()): string {
 
 function capitalize(text: string) {
   return text.charAt(0).toLocaleUpperCase() + text.slice(1);
+}
+
+/** "Sunday, November 1", for the Overview's label. */
+export function formatLongDate(value: Date): string {
+  return longDate.format(value);
 }
 
 export function formatMonth(iso: string): string {

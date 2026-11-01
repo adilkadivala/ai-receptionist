@@ -5,6 +5,8 @@ import { ReceiptText } from "lucide-react";
 import { type Column, DataTable } from "../../../components/data-table";
 import { EmptyState } from "../../../components/empty-state";
 import { QueryError } from "../../../components/query-error";
+import { SectionTitle } from "../../../components/section-title";
+import { raised } from "../../../components/surfaces";
 import { formatDate } from "../../../lib/format";
 import { useInvoices } from "../api";
 import type { Invoice, InvoiceStatus } from "../types";
@@ -60,16 +62,11 @@ export function InvoicesTable() {
 
   return (
     <section aria-labelledby="invoices-title" className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h2 id="invoices-title" className="text-[15px] font-semibold">
-          Invoices
-        </h2>
-        <p className="text-muted-foreground">One a month, paid with the card on file.</p>
-      </div>
+      <SectionTitle id="invoices-title" title="Invoices" description="One a month, paid with the card on file." />
       {invoices.isError ? (
         <QueryError title="Couldn't load your invoices" onRetry={() => invoices.refetch()} />
       ) : (
-        <div className="rounded-xl border bg-card shadow-xs">
+        <div className={cn(raised, "overflow-hidden")}>
           <DataTable
             caption="Invoices, newest first."
             columns={columns}

@@ -5,6 +5,7 @@ import { PhoneForwarded, Plus, Trash2 } from "lucide-react";
 import { EmptyState } from "../../../components/empty-state";
 import { FormField } from "../../../components/form-field";
 import { SettingsCard } from "../../../components/settings-card";
+import { resting } from "../../../components/surfaces";
 import { toE164 } from "../../../lib/validation";
 import type { TransferNumber } from "../types";
 import { limits } from "../validation";
@@ -29,6 +30,7 @@ export function TransfersSection({ values, set, errors }: SectionProps) {
       type="button"
       variant="outline"
       size="sm"
+      className={resting}
       onClick={add}
       disabled={transfers.length >= limits.transferNumbers}
     >
@@ -44,13 +46,13 @@ export function TransfersSection({ values, set, errors }: SectionProps) {
       action={transfers.length > 0 && addButton}
     >
       {transfers.length === 0 ? (
-        <EmptyState icon={PhoneForwarded} title="No transfer numbers" action={addButton} className="border py-8">
+        <EmptyState icon={PhoneForwarded} title="No transfer numbers" action={addButton} className="py-8">
           Without one, the receptionist takes a message instead of transferring, even for emergencies.
         </EmptyState>
       ) : (
         <ol className="flex flex-col gap-3">
           {transfers.map((transfer, index) => (
-            <li key={transfer.id} className="grid gap-4 rounded-lg border p-4 sm:grid-cols-2">
+            <li key={transfer.id} className="grid gap-4 rounded-[14px] border p-4 sm:grid-cols-2">
               <FormField label="Who picks up" error={errors[`transfer_numbers.${index}.label`]}>
                 {(control) => (
                   <Input

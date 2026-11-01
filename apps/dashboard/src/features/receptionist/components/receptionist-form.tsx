@@ -66,10 +66,19 @@ export function ReceptionistForm({ config }: { config: AgentConfig }) {
   return (
     <form ref={form.formRef} onSubmit={onSubmit} noValidate className="flex flex-1 flex-col">
       <Tabs value={tab} onValueChange={(value) => setTab(value as Section)} className="mb-6 max-w-5xl">
-        <div className="-mx-4 overflow-x-auto overflow-y-hidden px-4 [scrollbar-width:none] sm:mx-0 sm:px-0">
-          <TabsList aria-label="Receptionist settings" className="h-10! w-max rounded-xl p-1">
+        {/* The tab bar the landing page draws for the dashboard: white, resting on the sheet, the current tab in grey.
+            The vertical padding keeps its shadow inside the scroller. */}
+        <div className="-mx-4 -my-2 overflow-x-auto overflow-y-hidden px-4 py-2 [scrollbar-width:none] sm:mx-0 sm:px-0">
+          <TabsList
+            aria-label="Receptionist settings"
+            className="h-10! w-max rounded-[12px] bg-card p-1 shadow-(--raised)"
+          >
             {sections.map((section) => (
-              <TabsTrigger key={section.id} value={section.id} className="rounded-lg px-3 text-[13px]">
+              <TabsTrigger
+                key={section.id}
+                value={section.id}
+                className="rounded-[9px] px-3 text-[13px] text-foreground/70 data-active:bg-hero group-data-[variant=default]/tabs-list:data-active:shadow-none"
+              >
                 {section.label}
                 {invalidSections.has(section.id) && (
                   <span className="size-1.5 rounded-full bg-destructive">

@@ -1,6 +1,8 @@
+import { cn } from "@receptionist/ui/lib/utils";
 import { toast } from "sonner";
 import { PageHeader } from "../components/page-header";
 import { QueryError } from "../components/query-error";
+import { floating } from "../components/surfaces";
 import { usePhoneNumbers } from "../features/numbers/api";
 import { AddNumberDialog } from "../features/numbers/components/add-number-dialog";
 import { NumbersTable } from "../features/numbers/components/numbers-table";
@@ -34,7 +36,7 @@ export function NumbersPage() {
       {numbers.isError ? (
         <QueryError title="Couldn't load your numbers" onRetry={() => numbers.refetch()} />
       ) : (
-        <section aria-label="Phone numbers" className="rounded-xl border bg-card shadow-xs">
+        <section aria-label="Phone numbers" className={cn(floating, "overflow-hidden")}>
           <NumbersTable numbers={numbers.data} agents={agents.data ?? []} loading={numbers.isPending} />
         </section>
       )}

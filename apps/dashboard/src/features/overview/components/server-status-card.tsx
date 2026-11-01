@@ -1,8 +1,10 @@
 import { Alert, AlertDescription, AlertTitle } from "@receptionist/ui/components/alert";
 import { Badge } from "@receptionist/ui/components/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@receptionist/ui/components/card";
 import { Skeleton } from "@receptionist/ui/components/skeleton";
+import { cn } from "@receptionist/ui/lib/utils";
 import { CircleCheck, CircleX, TriangleAlert } from "lucide-react";
+import { SectionTitle } from "../../../components/section-title";
+import { raised } from "../../../components/surfaces";
 import { useHealth } from "../api";
 
 /** Whether the dashboard can reach the api, and which provider keys the server still needs. */
@@ -10,14 +12,13 @@ export function ServerStatusCard() {
   const health = useHealth();
 
   return (
-    <Card className="shadow-xs">
-      <CardHeader>
-        <CardTitle role="heading" aria-level={2} className="text-[15px] font-semibold">
-          Server status
-        </CardTitle>
-        <CardDescription>Whether the dashboard can reach the api, and which provider keys are set.</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <section aria-labelledby="server-status-title" className={cn(raised, "flex flex-col gap-4 p-5")}>
+      <SectionTitle
+        id="server-status-title"
+        title="Server status"
+        description="Whether the dashboard can reach the api, and which provider keys are set."
+      />
+      <div>
         {health.isPending && <Skeleton className="h-14 w-full" />}
         {health.isError && (
           <Alert variant="destructive">
@@ -51,7 +52,7 @@ export function ServerStatusCard() {
               </AlertDescription>
             </Alert>
           ))}
-      </CardContent>
-    </Card>
+      </div>
+    </section>
   );
 }

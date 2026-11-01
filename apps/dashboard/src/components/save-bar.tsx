@@ -16,7 +16,7 @@ export function SaveBar({
   onDiscard: () => void;
 }) {
   return (
-    <div className="sticky bottom-0 z-10 -mx-4 mt-auto -mb-5 border-t bg-card/95 px-4 py-3 backdrop-blur-sm lg:-mx-6 lg:-mb-6 lg:px-6 md:rounded-b-2xl">
+    <div className="sticky bottom-0 z-10 -mx-4 mt-auto -mb-5 border-t bg-background/90 px-4 py-3 backdrop-blur-sm lg:-mx-6 lg:-mb-6 lg:px-6 md:rounded-b-[20px]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p role="status" className="text-sm text-muted-foreground">
           {status}

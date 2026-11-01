@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { SignupForm } from "../features/account/components/signup-form";
-import { AuthLayout } from "../layouts/AuthLayout";
+import { AuthLayout, authLinkClassName } from "../layouts/AuthLayout";
 
 export function SignupPage() {
   return (
@@ -12,7 +12,7 @@ export function SignupPage() {
       footer={
         <>
           Already have an account?{" "}
-          <Link to="/login" className="font-medium text-primary underline-offset-4 hover:underline">
+          <Link to="/login" className={authLinkClassName}>
             Log in
           </Link>
         </>

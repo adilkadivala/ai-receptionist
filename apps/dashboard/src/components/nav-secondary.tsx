@@ -10,7 +10,7 @@ import { Settings2 } from "lucide-react";
 import type { ComponentProps } from "react";
 import { NavLink, useLocation } from "react-router";
 import { HelpSheet } from "./help-sheet";
-import { isCurrent } from "./nav-main";
+import { isCurrent, navItemClassName } from "./nav-main";
 
 /** Settings and Help, at the foot of the sidebar's navigation. */
 export function NavSecondary(props: ComponentProps<typeof SidebarGroup>) {
@@ -25,6 +25,7 @@ export function NavSecondary(props: ComponentProps<typeof SidebarGroup>) {
             <SidebarMenuButton
               render={<NavLink to="/settings" onClick={() => setOpenMobile(false)} />}
               isActive={isCurrent("/settings", pathname)}
+              className={navItemClassName}
             >
               <Settings2 />
               <span>Settings</span>

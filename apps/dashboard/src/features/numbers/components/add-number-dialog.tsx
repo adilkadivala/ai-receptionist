@@ -18,6 +18,7 @@ import { Spinner } from "@receptionist/ui/components/spinner";
 import { Info, Plus } from "lucide-react";
 import { useState } from "react";
 import { FormField } from "../../../components/form-field";
+import { resting } from "../../../components/surfaces";
 import { useValidatedForm } from "../../../hooks/use-validated-form";
 import type { Agent } from "../../receptionist/types";
 import { useAddNumber, useNumberCountries } from "../api";
@@ -152,7 +153,7 @@ export function AddNumberDialog({
           )}
 
           <DialogFooter>
-            <DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose>
+            <DialogClose render={<Button type="button" variant="outline" className={resting} />}>Cancel</DialogClose>
             <Button type="submit" disabled={add.isPending}>
               {add.isPending && <Spinner data-icon="inline-start" />}
               Add number

@@ -1,14 +1,13 @@
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@receptionist/ui/components/card";
+import { Eyebrow } from "@receptionist/ui/blocks/drafting";
+import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@receptionist/ui/components/card";
+import { cn } from "@receptionist/ui/lib/utils";
 import type { ReactNode } from "react";
+import { raised } from "./surfaces";
 
-/** A titled card holding one group of settings, with an optional action at the end of its header. */
+/**
+ * One group of settings resting on the sheet, titled like a landing page section (a bracketed blue label) with an
+ * optional action at the end of its header.
+ */
 export function SettingsCard({
   title,
   titleId,
@@ -23,12 +22,12 @@ export function SettingsCard({
   children: ReactNode;
 }) {
   return (
-    <Card className="shadow-xs">
-      <CardHeader>
-        <CardTitle id={titleId} role="heading" aria-level={2} className="text-[15px] font-semibold">
+    <Card className={cn(raised, "gap-5 [--card-spacing:--spacing(5)]")}>
+      <CardHeader className="gap-2">
+        <Eyebrow as="h2" id={titleId}>
           {title}
-        </CardTitle>
-        <CardDescription className="text-pretty">{description}</CardDescription>
+        </Eyebrow>
+        <CardDescription className="text-pretty text-foreground/70">{description}</CardDescription>
         {action && <CardAction>{action}</CardAction>}
       </CardHeader>
       <CardContent>{children}</CardContent>

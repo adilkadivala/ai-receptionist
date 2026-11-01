@@ -1,5 +1,6 @@
 import { Button } from "@receptionist/ui/components/button";
 import { formatNumber } from "../lib/format";
+import { resting } from "./surfaces";
 
 /** The table's footer: "Showing 21–40 of 143 calls" with Previous and Next. */
 export function Pager({
@@ -31,10 +32,10 @@ export function Pager({
       </p>
       {total > pageSize && (
         <div className="flex gap-2">
-          <Button variant="outline" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
+          <Button variant="outline" className={resting} disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
             Previous
           </Button>
-          <Button variant="outline" disabled={last >= total} onClick={() => onPageChange(page + 1)}>
+          <Button variant="outline" className={resting} disabled={last >= total} onClick={() => onPageChange(page + 1)}>
             Next
           </Button>
         </div>

@@ -8,7 +8,7 @@ export function BillingPage() {
   return (
     <>
       <PageHeader>Your plan, minutes used this month and invoices.</PageHeader>
-      <div className="flex flex-col gap-10">
+      <div className="flex flex-col gap-12">
         <PlanSummary />
         <ChangePlan />
         <AddOnsList />

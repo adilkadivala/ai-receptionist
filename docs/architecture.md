@@ -243,7 +243,7 @@ Ai-receptionist/
 │   ├── landing/                  Next.js 16 · static export · Tailwind 4 · shadcn/ui      (dev: port 3100)
 │   │   ├── app/                  layout.tsx, page.tsx, privacy/, terms/, robots, sitemap, og.png, icon.svg
 │   │   │                         (next) [locale]/ for translated pages, blog/
-│   │   ├── components/           header, footer, blueprint panel and desk objects, drafting details, stage cells, medals
+│   │   ├── components/           header, footer, desk objects, stage cells, medals (the blueprint and drafting details come from packages/ui)
 │   │   │   ├── sections/         one file per page section: hero, built-for, product, how-it-works, languages, pricing…
 │   │   │   ├── motion/           scroll reveals, count-up numbers, the preview's tilt (Motion)
 │   │   │   ├── demo/             the live call demo and its waveform, which follows the recorded voice
@@ -255,11 +255,13 @@ Ai-receptionist/
 │   ├── dashboard/                React 19 · Vite 8 · React Router · TanStack Query · shadcn/ui   (dev: port 5173)
 │   │   └── src/
 │   │       ├── main.tsx  router.tsx
-│   │       ├── layouts/          AppLayout: shadcn's dashboard-01 inset sidebar and header; AuthLayout
+│   │       ├── layouts/          AppLayout: dashboard-01's sidebar on blueprint ink beside the page as a light sheet;
+│   │       │                     AuthLayout: sign-up and login on the blueprint, like the landing's hero
 │   │       ├── pages/            Overview, Calls, Receptionist, Phone numbers, Billing, Settings, Signup, Log in
 │   │       ├── features/         one folder per area (overview, calls, receptionist, numbers, billing, account):
 │   │       │                     api.ts (TanStack Query hooks), types, components, mocks until the api routes exist
-│   │       ├── components/       the app's own pieces: sidebar, site header, data table, stat card, usage meter…
+│   │       ├── components/       the app's own pieces: sidebar and its blueprint mat, site header, section title, stat cell,
+│   │       │                     empty state on a patterned stage, data table, usage meter; surfaces.ts (the depth levels)
 │   │       ├── hooks/            use-validated-form, use-stored-state, use-reduced-motion
 │   │       └── lib/              api.ts (the typed api client), format, theme (light, dark, system), validation
 │   └── server/                   Python 3.12 · FastAPI · Pipecat · SQLAlchemy · Alembic   (dev: port 8000)
@@ -302,9 +304,11 @@ Ai-receptionist/
 │       ├── components.json       shadcn settings; each app has its own copy that points here
 │       └── src/
 │           ├── components/       added with `pnpm ui:add <name>`; shadcn's code, not edited by hand or linted
-│           ├── blocks/           our own pieces both apps use, built from components: logo, plan-card
+│           ├── blocks/           our own pieces both apps use, built from components: logo, plan-card, blueprint,
+│           │                     drafting (stage patterns, hatched bands, bracketed labels)
 │           ├── hooks/  lib/utils.ts
-│           └── styles/globals.css   Tailwind, Signal theme tokens (light and dark), Geist fonts
+│           └── styles/globals.css   Tailwind, Signal theme tokens (light and dark), Geist fonts, the blueprint ink and the
+│                                    two depth levels mixed from them, the rise entrance, the reduced-motion rule
 ├── infra/
 │   ├── compose/                  dev.yml (local Postgres + pgvector)   (next) staging.yml, prod.yml
 │   └── (next) terraform/, caddy/, docker/

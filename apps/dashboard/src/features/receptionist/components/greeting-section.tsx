@@ -1,3 +1,4 @@
+import { Pattern } from "@receptionist/ui/blocks/drafting";
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@receptionist/ui/components/field";
 import { Switch } from "@receptionist/ui/components/switch";
 import { Textarea } from "@receptionist/ui/components/textarea";
@@ -47,12 +48,17 @@ export function GreetingSection({ values, set, errors }: SectionProps) {
           </FieldContent>
         </Field>
 
-        <figure className="flex flex-col gap-2 rounded-lg bg-muted p-4">
-          <figcaption className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+        {/* The greeting stands on a patterned stage as a speech bubble, like the landing page's call demo. */}
+        <figure className="relative flex flex-col gap-3 overflow-hidden rounded-[14px] bg-hero p-5">
+          <Pattern kind="chevron" />
+          <figcaption className="relative flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <Volume2 aria-hidden className="size-3.5" />
             What callers hear
           </figcaption>
-          <blockquote dir="auto" className="text-pretty">
+          <blockquote
+            dir="auto"
+            className="relative max-w-[60ch] rounded-[14px] rounded-es-[4px] bg-card px-4 py-3 text-pretty shadow-(--raised)"
+          >
             {values.greeting.trim() || "…"}{" "}
             <span className="text-muted-foreground">{aiNotice(values.recording_notice)}</span>
           </blockquote>

@@ -11,8 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@receptionist/ui/components/dropdown-menu";
 import { Input } from "@receptionist/ui/components/input";
+import { cn } from "@receptionist/ui/lib/utils";
 import { Columns3, Plus, Search, X } from "lucide-react";
 import { useEffect, useId, useState } from "react";
+import { resting } from "../../../components/surfaces";
 import { type OptionalColumn, optionalColumns } from "../columns";
 
 /** Search that waits for a pause in typing before it asks for results, and follows the URL when it changes. */
@@ -50,7 +52,7 @@ export function CallSearchField({ value, onChange }: { value: string; onChange: 
   );
 }
 
-/** A dashed "+ Language" chip that becomes "Language: Spanish ×" once chosen. */
+/** A dashed "+ Language" resting that becomes "Language: Spanish ×" once chosen. */
 export function LanguageFilter({
   value,
   onChange,
@@ -123,7 +125,7 @@ export function ColumnsMenu({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" className="text-foreground/80" />}>
+      <DropdownMenuTrigger render={<Button variant="outline" className={cn("text-foreground/80", resting)} />}>
         <Columns3 data-icon="inline-start" />
         Columns
       </DropdownMenuTrigger>

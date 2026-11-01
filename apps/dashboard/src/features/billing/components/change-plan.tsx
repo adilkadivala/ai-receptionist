@@ -12,8 +12,11 @@ import {
 } from "@receptionist/ui/components/alert-dialog";
 import { Button } from "@receptionist/ui/components/button";
 import { Spinner } from "@receptionist/ui/components/spinner";
+import { cn } from "@receptionist/ui/lib/utils";
 import { useState } from "react";
 import { toast } from "sonner";
+import { SectionTitle } from "../../../components/section-title";
+import { resting } from "../../../components/surfaces";
 import { useChangePlan, useSubscription } from "../api";
 
 /** Every self-serve plan, with a confirmation before switching. */
@@ -38,14 +41,11 @@ export function ChangePlan() {
 
   return (
     <section id="change-plan" aria-labelledby="change-plan-title" className="flex scroll-mt-20 flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <h2 id="change-plan-title" className="text-[15px] font-semibold">
-          Change plan
-        </h2>
-        <p className="text-pretty text-muted-foreground">
-          Every plan includes {included.join(", ").toLowerCase()}. Extra minutes are {formatUsd(overagePerMinute)} each.
-        </p>
-      </div>
+      <SectionTitle
+        id="change-plan-title"
+        title="Change plan"
+        description={`Every plan includes ${included.join(", ").toLowerCase()}. Extra minutes are ${formatUsd(overagePerMinute)} each.`}
+      />
 
       <div className="grid gap-4 lg:grid-cols-3">
         {plans.map((plan) => (
@@ -53,17 +53,16 @@ export function ChangePlan() {
             key={plan.id}
             plan={plan}
             highlighted={plan.id === current}
-            className="shadow-xs"
             badge={plan.id === current ? "Your plan" : plan.featured ? "Most popular" : undefined}
             action={
               plan.id === current ? (
-                <Button variant="outline" className="w-full" disabled>
+                <Button variant="outline" className={cn("w-full", resting)} disabled>
                   Current plan
                 </Button>
               ) : (
                 <Button
                   variant={plan.featured ? "default" : "outline"}
-                  className="w-full"
+                  className={cn("w-full", !plan.featured && resting)}
                   disabled={!current}
                   onClick={() => setTarget(plan)}
                 >
@@ -75,7 +74,7 @@ export function ChangePlan() {
         ))}
       </div>
 
-      <p className="text-muted-foreground">
+      <p className="text-foreground/70">
         Hotels, hospitals and large companies: custom contracts from {formatUsd(contractFromPerMinute)} a minute, billed
         by invoice.
       </p>
@@ -90,7 +89,7 @@ export function ChangePlan() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className={resting}>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={confirm} disabled={change.isPending}>
               {change.isPending && <Spinner data-icon="inline-start" />}
               Switch plan

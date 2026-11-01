@@ -2,7 +2,7 @@ import { Badge } from "@receptionist/ui/components/badge";
 import { Skeleton } from "@receptionist/ui/components/skeleton";
 import { Link } from "react-router";
 import { PageHeader } from "../../../components/page-header";
-import { formatNumber } from "../../../lib/format";
+import { formatLongDate, formatNumber } from "../../../lib/format";
 import { useAccount } from "../../account/api";
 import { useCallsToday } from "../../calls/api";
 import { usePhoneNumbers } from "../../numbers/api";
@@ -35,7 +35,7 @@ function AnsweringStatus() {
   );
 }
 
-/** "Good evening, Ana", today's calls in a sentence, and whether the receptionist is answering. */
+/** Today's date, "Good evening, Ana", today's calls in a sentence, and whether the receptionist is answering. */
 export function Greeting() {
   const account = useAccount();
   const today = useCallsToday().data;
@@ -43,6 +43,7 @@ export function Greeting() {
 
   return (
     <PageHeader
+      eyebrow={formatLongDate(new Date())}
       title={firstName ? `Good ${partOfDay(new Date().getHours())}, ${firstName}` : <Skeleton className="h-8 w-56" />}
       actions={<AnsweringStatus />}
     >

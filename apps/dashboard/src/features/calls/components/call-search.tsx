@@ -37,11 +37,11 @@ export function CallSearch() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="hidden h-8 w-56 items-center gap-2 rounded-lg border bg-background px-2.5 text-sm text-muted-foreground shadow-xs transition-colors outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:flex lg:w-64 dark:bg-input/30"
+        className="hidden h-8 w-56 items-center gap-2 rounded-lg border border-transparent bg-card px-2.5 text-sm text-muted-foreground shadow-(--raised) transition-colors outline-none hover:bg-muted focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:flex lg:w-64 dark:border-input dark:bg-input/30"
       >
         <Search aria-hidden className="size-4" />
         <span className="flex-1 text-start">Search calls</span>
-        <kbd className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
+        <kbd className="rounded-md bg-hero px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
           {isMac ? "⌘K" : "Ctrl K"}
         </kbd>
       </button>

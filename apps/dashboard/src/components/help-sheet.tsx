@@ -13,6 +13,7 @@ import { CircleHelp } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { Link } from "react-router";
 import { useSubscription } from "../features/billing/api";
+import { navItemClassName } from "./nav-main";
 
 function InlineLink({ to, onNavigate, children }: { to: string; onNavigate: () => void; children: ReactNode }) {
   return (
@@ -34,7 +35,7 @@ export function HelpSheet() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={<SidebarMenuButton />}>
+      <SheetTrigger render={<SidebarMenuButton className={navItemClassName} />}>
         <CircleHelp />
         <span>Help</span>
       </SheetTrigger>

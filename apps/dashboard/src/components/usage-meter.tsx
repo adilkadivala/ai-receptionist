@@ -10,14 +10,19 @@ const barColor = {
   over: "[&_[data-slot=progress-indicator]]:bg-destructive",
 };
 
-/** The minutes bar on its own: blue, amber when the plan is nearly used up, red once it's over. */
-export function UsageBar({ usage, className }: { usage: Usage; className?: string }) {
+// On the blueprint the bar is drawn in white, since blue on blue doesn't read.
+const onInkColor =
+  "[&_[data-slot=progress-indicator]]:bg-primary-foreground [&_[data-slot=progress-track]]:bg-primary-foreground/15";
+
+/** The minutes bar on its own: blue (white on the blueprint), amber when the plan is nearly used up, red once over. */
+export function UsageBar({ usage, onInk, className }: { usage: Usage; onInk?: boolean; className?: string }) {
   return (
     <Progress
       value={usage.percent}
       aria-label={`${formatNumber(usage.used)} of ${formatNumber(usage.included)} minutes used`}
       className={cn(
         "[&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-track]]:h-1.5",
+        onInk && onInkColor,
         barColor[usage.status],
         className,
       )}

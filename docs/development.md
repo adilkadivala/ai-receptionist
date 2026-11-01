@@ -92,7 +92,7 @@ import { Button } from "@receptionist/ui/components/button";
 
 - **Where code goes:**
   - shadcn's own components: `packages/ui/src/components/`, added with `pnpm ui:add`.
-  - Our pieces that both apps use: `packages/ui/src/blocks/` (for example `Logo`, `PlanCard`), imported from `@receptionist/ui/blocks/<name>`.
+  - Our pieces that both apps use: `packages/ui/src/blocks/` (for example `Logo`, `PlanCard`, `Blueprint`, `Pattern`), imported from `@receptionist/ui/blocks/<name>`.
   - Pieces only one app uses: that app's own `components/` folder.
   - Plans, prices and languages: `@receptionist/product`, never copied into an app.
 - **Check where new files land.** The CLI sometimes writes a hook or helper that a shared component needs into `apps/dashboard/src/hooks/` or `src/lib/`. Move it to `packages/ui/src/hooks/` or `src/lib/`, where the component imports it from.

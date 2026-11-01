@@ -15,7 +15,7 @@ export function SettingsPage() {
     <div className="flex max-w-4xl flex-col gap-4">
       <PageHeader>Your profile, how the dashboard looks, and where your business's data lives.</PageHeader>
       {account.isError && <QueryError title="Couldn't load your account" onRetry={() => account.refetch()} />}
-      {account.isPending && <Skeleton className="h-48 rounded-xl" />}
+      {account.isPending && <Skeleton className="h-48 rounded-[16px]" />}
       {account.data && <ProfileForm user={account.data.user} />}
       <AppearanceSettings />
       {account.data && (

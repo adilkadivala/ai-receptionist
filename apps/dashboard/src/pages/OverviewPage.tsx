@@ -1,3 +1,4 @@
+import { HatchBand } from "@receptionist/ui/blocks/drafting";
 import { DateRangePicker } from "../components/date-range-picker";
 import { HeaderActions } from "../components/header-slot";
 import { CallLog } from "../features/calls/components/call-log";
@@ -21,8 +22,10 @@ export function OverviewPage() {
         <DateRangePicker value={filters.range} onValueChange={(range) => update({ range })} />
       </HeaderActions>
       <Greeting />
-      <div className="flex flex-col gap-5">
-        <SectionCards range={filters.range} />
+      {/* As on the landing page, a hatched band leads into the band of numbers. */}
+      <HatchBand className="-mx-4 h-6 lg:-mx-6" />
+      <SectionCards range={filters.range} />
+      <div className="mt-6 flex flex-col gap-6">
         <CallsChart />
         <CallLog label="Recent calls" filters={filters} defaults={overviewDefaults} onChange={update} pageSize={8} />
         <ServerStatusCard />

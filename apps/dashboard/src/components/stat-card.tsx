@@ -1,13 +1,14 @@
 import { Badge } from "@receptionist/ui/components/badge";
-import { Card, CardAction, CardContent, CardDescription, CardHeader } from "@receptionist/ui/components/card";
 import { Skeleton } from "@receptionist/ui/components/skeleton";
 import { cn } from "@receptionist/ui/lib/utils";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
+import { resting } from "./surfaces";
 
 /**
- * dashboard-01's section card: a label, a badge, one big number and a line on what it's counted against.
- * `children` sits under the number, e.g. a usage bar.
+ * One number an owner checks, drawn as a cell of the landing page's hairline grid: a label, a resting, one big number and
+ * a line on what it's counted against. `children` sits under the number, e.g. a usage bar. It has no frame of its own:
+ * place it in a grid drawn with gap-px, or give it one with `className`.
  */
 export function StatCard({
   label,
@@ -15,6 +16,7 @@ export function StatCard({
   badge,
   hint,
   loading,
+  className,
   children,
 }: {
   label: string;
@@ -22,29 +24,28 @@ export function StatCard({
   badge?: ReactNode;
   hint?: ReactNode;
   loading?: boolean;
+  className?: string;
   children?: ReactNode;
 }) {
   return (
-    <Card className="gap-3 bg-linear-to-b from-card to-muted/25 py-4.5 shadow-xs [--card-spacing:--spacing(4.5)] dark:to-card">
-      <CardHeader>
-        <CardDescription className="text-[13px]">{label}</CardDescription>
-        {badge && !loading && <CardAction>{badge}</CardAction>}
-      </CardHeader>
-      <CardContent className="flex flex-1 flex-col gap-3">
-        {loading ? (
-          <>
-            <Skeleton className="h-9 w-24" />
-            <Skeleton className="h-4 w-40" />
-          </>
-        ) : (
-          <>
-            <p className="text-[32px] leading-none font-semibold tracking-[-0.035em] tabular-nums">{value}</p>
-            {children}
-            {hint && <p className="mt-auto text-[13px] text-muted-foreground">{hint}</p>}
-          </>
-        )}
-      </CardContent>
-    </Card>
+    <div className={cn("flex flex-col gap-3 px-4 py-5 lg:px-6", className)}>
+      <div className="flex min-h-[22px] flex-wrap items-start justify-between gap-x-3 gap-y-1.5">
+        <p className="text-[13px] text-muted-foreground">{label}</p>
+        {badge && !loading && badge}
+      </div>
+      {loading ? (
+        <>
+          <Skeleton className="h-8 w-24" />
+          <Skeleton className="h-4 w-40" />
+        </>
+      ) : (
+        <>
+          <p className="text-[32px] leading-none font-semibold tracking-[-0.035em] tabular-nums">{value}</p>
+          {children}
+          {hint && <p className="mt-auto text-[13px] text-muted-foreground">{hint}</p>}
+        </>
+      )}
+    </div>
   );
 }
 
@@ -58,7 +59,7 @@ export function TrendBadge({ change, against }: { change: number | null; against
   return (
     <Badge
       variant="outline"
-      className={cn("h-[22px] px-2 tabular-nums", up ? "text-success-foreground" : "text-warning-foreground")}
+      className={cn("h-[22px] px-2 tabular-nums", resting, up ? "text-success-foreground" : "text-warning-foreground")}
     >
       <Icon aria-hidden data-icon="inline-start" />
       <span className="sr-only">{up ? "Up" : "Down"} </span>

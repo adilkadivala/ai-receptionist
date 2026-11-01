@@ -10,10 +10,12 @@ import {
 } from "@receptionist/ui/components/field";
 import { RadioGroup, RadioGroupItem } from "@receptionist/ui/components/radio-group";
 import { Skeleton } from "@receptionist/ui/components/skeleton";
+import { cn } from "@receptionist/ui/lib/utils";
 import { Mic } from "lucide-react";
 import { useId } from "react";
 import { Link } from "react-router";
 import { SettingsCard } from "../../../components/settings-card";
+import { resting } from "../../../components/surfaces";
 import { useVoices } from "../api";
 import type { SectionProps } from "./section-props";
 
@@ -59,7 +61,7 @@ export function VoiceSection({ values, set, errors }: SectionProps) {
         {errors.voice_id && <FieldError>{errors.voice_id}</FieldError>}
 
         {voiceClone && (
-          <div className="flex flex-wrap items-center gap-3 rounded-lg border border-dashed p-4">
+          <div className="flex flex-wrap items-center gap-3 rounded-[14px] border border-dashed border-frame p-4">
             <Mic aria-hidden className="size-5 shrink-0 text-muted-foreground" />
             <div className="min-w-0 flex-1">
               <p className="font-medium">
@@ -67,7 +69,7 @@ export function VoiceSection({ values, set, errors }: SectionProps) {
               </p>
               <p className="text-muted-foreground">{voiceClone.description}</p>
             </div>
-            <Link to="/billing#add-ons" className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <Link to="/billing#add-ons" className={cn(buttonVariants({ variant: "outline", size: "sm" }), resting)}>
               See add-ons
             </Link>
           </div>

@@ -12,6 +12,7 @@ import {
 } from "@receptionist/ui/components/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@receptionist/ui/components/sidebar";
 import { Skeleton } from "@receptionist/ui/components/skeleton";
+import { cn } from "@receptionist/ui/lib/utils";
 import { CreditCard, EllipsisVertical, LogOut, Settings2 } from "lucide-react";
 import { Link } from "react-router";
 import { useAccount } from "../features/account/api";
@@ -24,11 +25,11 @@ export function NavUser() {
   const { theme, setTheme } = useTheme();
   const { isMobile, setOpenMobile } = useSidebar();
 
-  if (!account.data) return <Skeleton className="h-12 rounded-lg" />;
+  if (!account.data) return <Skeleton className="h-12 rounded-lg bg-sidebar-accent" />;
   const { user } = account.data;
-  const avatar = (
+  const avatar = (fallbackClassName?: string) => (
     <Avatar className="size-8">
-      <AvatarFallback className="text-xs font-semibold">{initials(user.name)}</AvatarFallback>
+      <AvatarFallback className={cn("text-xs font-semibold", fallbackClassName)}>{initials(user.name)}</AvatarFallback>
     </Avatar>
   );
 
@@ -39,17 +40,17 @@ export function NavUser() {
           <DropdownMenuTrigger
             render={<SidebarMenuButton size="lg" className="rounded-lg data-popup-open:bg-sidebar-accent" />}
           >
-            {avatar}
+            {avatar("bg-sidebar-accent text-sidebar-foreground")}
             <span className="grid flex-1 text-start leading-tight">
               <span className="truncate text-[13px] font-medium">{user.name}</span>
-              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+              <span className="truncate text-xs text-sidebar-foreground/60">{user.email}</span>
             </span>
-            <EllipsisVertical className="ms-auto text-muted-foreground" />
+            <EllipsisVertical className="ms-auto text-sidebar-foreground/60" />
           </DropdownMenuTrigger>
           <DropdownMenuContent side={isMobile ? "top" : "right"} align="end" className="min-w-56">
             <DropdownMenuGroup>
               <DropdownMenuLabel className="flex items-center gap-2 py-1.5">
-                {avatar}
+                {avatar()}
                 <span className="grid leading-tight">
                   <span className="truncate font-medium text-foreground">{user.name}</span>
                   <span className="truncate font-normal">{user.email}</span>

@@ -8,6 +8,7 @@ import {
 } from "@receptionist/ui/components/popover";
 import { cn } from "@receptionist/ui/lib/utils";
 import { FlaskConical } from "lucide-react";
+import { resting } from "../components/surfaces";
 
 // MOCK: remove once every hook in src/features/*/api.ts calls the api.
 /** Says plainly that what's on screen is sample data, until the api routes exist. */
@@ -15,7 +16,12 @@ export function SampleDataBadge({ className }: { className?: string }) {
   return (
     <Popover>
       <PopoverTrigger
-        className={cn(badgeVariants({ variant: "outline" }), "h-6 cursor-pointer text-muted-foreground", className)}
+        className={cn(
+          badgeVariants({ variant: "outline" }),
+          resting,
+          "h-6 cursor-pointer text-muted-foreground",
+          className,
+        )}
       >
         <FlaskConical data-icon="inline-start" />
         <span className="max-sm:sr-only">Sample data</span>

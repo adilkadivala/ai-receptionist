@@ -1,5 +1,18 @@
 @import "@receptionist/ui/globals.css";
 
+/* The sidebar is drawn on blueprint ink, like the landing page's hero (DESIGN.md), so shadcn's sidebar tokens are
+   mixed from the ink and the white drawn on it. The page lies on the same ink as a light sheet. */
+:root {
+  --sidebar: var(--ink);
+  --sidebar-foreground: var(--primary-foreground);
+  --sidebar-primary: var(--primary-foreground);
+  --sidebar-primary-foreground: var(--ink);
+  --sidebar-accent: color-mix(in oklch, var(--primary-foreground) 10%, transparent);
+  --sidebar-accent-foreground: var(--primary-foreground);
+  --sidebar-border: var(--ink-line);
+  --sidebar-ring: color-mix(in oklch, var(--primary-foreground) 45%, transparent);
+}
+
 /* Small uppercase labels, as in the Signal mockups. */
 @utility label-mono {
   @apply font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase;

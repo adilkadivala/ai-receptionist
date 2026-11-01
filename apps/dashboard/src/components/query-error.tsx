@@ -2,6 +2,7 @@ import { Alert, AlertAction, AlertDescription, AlertTitle } from "@receptionist/
 import { Button } from "@receptionist/ui/components/button";
 import { CircleX } from "lucide-react";
 import type { ReactNode } from "react";
+import { resting } from "./surfaces";
 
 /** What to show when a query fails, with a retry. */
 export function QueryError({
@@ -20,7 +21,7 @@ export function QueryError({
       <AlertDescription>{children}</AlertDescription>
       {onRetry && (
         <AlertAction>
-          <Button size="sm" variant="outline" onClick={onRetry}>
+          <Button size="sm" variant="outline" className={resting} onClick={onRetry}>
             Try again
           </Button>
         </AlertAction>

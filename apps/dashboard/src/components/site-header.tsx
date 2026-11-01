@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useMatches, useNavigation } from "react-router";
 import { CallSearch } from "../features/calls/components/call-search";
 import { SampleDataBadge } from "../layouts/SampleDataBadge";
+import { FrameRule } from "./frame-rule";
 
 export type RouteHandle = { title: string };
 
@@ -24,20 +25,21 @@ export function usePageTitle() {
 
 /**
  * dashboard-01's header: sidebar toggle and the page's title, then search and the page's own controls, which pages
- * put into `slotRef` with HeaderActions.
+ * put into `slotRef` with HeaderActions. A dashed guide line runs under it, as on the landing page.
  */
 export function SiteHeader({ slotRef }: { slotRef: (element: HTMLDivElement | null) => void }) {
   const title = usePageTitle();
   const navigation = useNavigation();
 
   return (
-    <header className="relative flex h-(--header-height) shrink-0 items-center gap-2 border-b px-4 lg:px-5">
+    <header className="relative flex h-(--header-height) shrink-0 items-center gap-2 px-4 lg:px-5">
       <SidebarTrigger className="-ms-1.5" />
       <Separator orientation="vertical" className="me-1 data-vertical:h-4 data-vertical:self-center" />
-      <h1 className="min-w-0 flex-1 truncate text-[15px] font-semibold">{title}</h1>
+      <h1 className="min-w-0 flex-1 truncate text-[15px] font-semibold tracking-[-0.01em]">{title}</h1>
       <SampleDataBadge />
       <CallSearch />
       <div ref={slotRef} className="contents" />
+      <FrameRule />
       {navigation.state === "loading" && (
         <div
           role="progressbar"

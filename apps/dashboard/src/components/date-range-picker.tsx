@@ -8,10 +8,12 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@receptionist/ui/components/dropdown-menu";
+import { cn } from "@receptionist/ui/lib/utils";
 import { Calendar } from "lucide-react";
 import { dateRanges, rangeStart } from "../features/calls/filter";
 import type { DateRange } from "../features/calls/types";
 import { formatShortDate } from "../lib/format";
+import { resting } from "./surfaces";
 
 /** "Oct 3 – Nov 1" for a range ending today; nothing for "all". */
 export function rangeSpan(range: DateRange, now = new Date()) {
@@ -36,7 +38,13 @@ export function DateRangePicker({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="outline" aria-label={`Date range: ${current?.label}`} className="tabular-nums" />}
+        render={
+          <Button
+            variant="outline"
+            aria-label={`Date range: ${current?.label}`}
+            className={cn("tabular-nums", resting)}
+          />
+        }
       >
         <Calendar data-icon="inline-start" />
         <span className="hidden lg:inline">{span ?? current?.label}</span>

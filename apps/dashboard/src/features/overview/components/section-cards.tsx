@@ -1,6 +1,8 @@
 import { Badge } from "@receptionist/ui/components/badge";
+import { cn } from "@receptionist/ui/lib/utils";
 import { QueryError } from "../../../components/query-error";
 import { StatCard, TrendBadge } from "../../../components/stat-card";
+import { resting } from "../../../components/surfaces";
 import { UsageBar, usageMessage } from "../../../components/usage-meter";
 import { formatNumber, formatShortDate } from "../../../lib/format";
 import { usePlanUsage } from "../../billing/api";
@@ -16,7 +18,10 @@ function previousLabel(range: DateRange) {
   return label.replace(/^Last/, "the previous");
 }
 
-/** The four numbers an owner checks first. Calls follow the header's date range; minutes are the billing month. */
+/**
+ * The four numbers an owner checks first, as a band of cells split by hairlines that runs edge to edge across the
+ * sheet, like the landing page's product grid. Calls follow the header's date range; minutes are the billing month.
+ */
 export function SectionCards({ range }: { range: DateRange }) {
   const summary = usePeriodSummary(range);
   const { usage, rollup, plan, isPending: usagePending } = usePlanUsage();
@@ -31,7 +36,7 @@ export function SectionCards({ range }: { range: DateRange }) {
     <section
       aria-label={dateRanges.find((option) => option.value === range)?.label}
       aria-busy={summary.isPlaceholderData}
-      className="grid grid-cols-1 gap-3 transition-opacity aria-busy:opacity-60 @xl/main:grid-cols-2 @3xl/main:grid-cols-4"
+      className="-mx-4 grid grid-cols-2 gap-px border-b bg-border transition-opacity aria-busy:opacity-60 *:bg-background lg:-mx-6 @3xl/main:grid-cols-4"
     >
       <StatCard
         label="Calls answered"
@@ -61,7 +66,7 @@ export function SectionCards({ range }: { range: DateRange }) {
         }
         badge={
           usage && (
-            <Badge variant="outline" className="h-[22px] px-2 font-mono font-normal text-foreground/80">
+            <Badge variant="outline" className={cn("h-[22px] px-2 font-mono font-normal text-foreground/80", resting)}>
               {usage.percent}%
             </Badge>
           )

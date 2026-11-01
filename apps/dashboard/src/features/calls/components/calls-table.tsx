@@ -1,6 +1,8 @@
 import { Avatar, AvatarFallback } from "@receptionist/ui/components/avatar";
+import { cn } from "@receptionist/ui/lib/utils";
 import type { ReactNode } from "react";
 import { type Column, DataTable } from "../../../components/data-table";
+import { resting } from "../../../components/surfaces";
 import { formatCallTime, formatDuration, formatPhone, initials } from "../../../lib/format";
 import type { Call } from "../types";
 import { CallLink } from "./call-link";
@@ -52,7 +54,7 @@ const columns: Column<Call>[] = [
     className: "hidden md:table-cell",
     cell: (call) =>
       call.language ? (
-        <span className="inline-flex h-6 items-center rounded-md border px-2 text-xs text-foreground/80">
+        <span className={cn("inline-flex h-6 items-center rounded-md px-2 text-xs text-foreground/80", resting)}>
           {call.language}
         </span>
       ) : (

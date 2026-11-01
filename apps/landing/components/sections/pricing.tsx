@@ -8,20 +8,10 @@ import { FrameRule } from "../frame-lines";
 import { Reveal, RevealGroup, RevealItem } from "../motion/reveal";
 import { Section, SectionHeading } from "../section";
 
-// Restyles the shared PlanCard to the approved mockup from the outside, so the block (and the dashboard) stay as
-// they are: 28 px padding, 16 px corners, a 17 px name, a 48 px price, the badge in the blue tint, no footer band.
-const planCardClassName = cn(
-  "h-full gap-5 rounded-[16px] text-[15px] shadow-(--float) [--card-spacing:--spacing(7)]",
-  "transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1",
-  "**:data-[slot=card-title]:text-[17px] **:data-[slot=card-title]:font-semibold",
-  "**:data-[slot=badge]:h-6 **:data-[slot=badge]:bg-brand-soft **:data-[slot=badge]:px-2.5 **:data-[slot=badge]:text-brand-soft-foreground",
-  "[&_[data-slot=card-content]_.font-heading]:text-5xl [&_[data-slot=card-content]_.font-heading]:tracking-[-0.04em]",
-  "[&_[data-slot=card-content]_p+p]:mt-5",
-  "*:data-[slot=card-footer]:border-t-0 *:data-[slot=card-footer]:bg-transparent *:data-[slot=card-footer]:pt-0",
-);
+// The shared PlanCard is drawn to the approved mockup; here it also lifts on hover.
+const planCardClassName = "h-full transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1";
 
-// The others rest on their own shadow; the featured plan keeps the shared blue ring and adds a soft blue glow.
-const plainClassName = "ring-0";
+// The featured plan keeps the shared blue ring and swaps its shadow for a soft blue glow.
 const featuredClassName =
   "shadow-[0_2px_4px_-1px_color-mix(in_oklch,var(--primary)_20%,transparent),0_28px_56px_-24px_color-mix(in_oklch,var(--primary)_50%,transparent)]";
 
@@ -40,7 +30,7 @@ export function Pricing() {
           <RevealItem key={plan.id}>
             <PlanCard
               plan={plan}
-              className={cn(planCardClassName, plan.featured ? featuredClassName : plainClassName)}
+              className={cn(planCardClassName, plan.featured && featuredClassName)}
               action={
                 <GetStartedLink
                   plan={plan.id}

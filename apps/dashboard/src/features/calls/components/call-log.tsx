@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import { EmptyState } from "../../../components/empty-state";
 import { Pager } from "../../../components/pager";
 import { QueryError } from "../../../components/query-error";
+import { floating, resting } from "../../../components/surfaces";
 import { useStoredState } from "../../../hooks/use-stored-state";
 import { formatNumber } from "../../../lib/format";
 import { useCalls, useCallsToday } from "../api";
@@ -39,7 +40,7 @@ function OutcomeTabs({ counts, current }: { counts: OutcomeCounts | undefined; c
     <TabsList
       variant="line"
       aria-label="Call outcome"
-      className="-mb-px h-auto gap-5 overflow-x-auto overflow-y-hidden p-0 [scrollbar-width:none]"
+      className="-mb-px h-auto justify-start gap-5 overflow-x-auto overflow-y-hidden p-0 [scrollbar-width:none]"
     >
       <TabsTrigger value="all" className="h-12 flex-none px-0 after:bottom-0! after:bg-primary">
         All calls <CountChip>{count(counts?.all)}</CountChip>
@@ -59,8 +60,9 @@ function OutcomeTabs({ counts, current }: { counts: OutcomeCounts | undefined; c
 }
 
 /**
- * The call table with its outcome tabs, filters and pages, as on dashboard-01. The Overview shows the newest few;
- * the Calls page adds search. Filters belong to the page (in its URL), so this takes them as props.
+ * The call table with its outcome tabs, filters and pages, as on dashboard-01, on a card standing off the sheet. The
+ * Overview shows the newest few; the Calls page adds search. Filters belong to the page (in its URL), so this takes
+ * them as props.
  */
 export function CallLog({
   label,
@@ -87,7 +89,7 @@ export function CallLog({
       icon={SearchX}
       title="No calls match"
       action={
-        <Button variant="outline" onClick={() => onChange(defaults)}>
+        <Button variant="outline" className={resting} onClick={() => onChange(defaults)}>
           Clear filters
         </Button>
       }
@@ -99,7 +101,7 @@ export function CallLog({
       icon={PhoneIncoming}
       title="No calls yet"
       action={
-        <Link to="/numbers" className={buttonVariants({ variant: "outline" })}>
+        <Link to="/numbers" className={cn(buttonVariants({ variant: "outline" }), resting)}>
           Check your phone numbers
         </Link>
       }
@@ -109,7 +111,7 @@ export function CallLog({
   );
 
   return (
-    <section aria-label={label} className="flex min-w-0 flex-col rounded-xl border bg-card shadow-xs">
+    <section aria-label={label} className={cn(floating, "flex min-w-0 flex-col overflow-hidden")}>
       <Tabs
         value={filters.outcome || "all"}
         onValueChange={(value) => onChange({ outcome: value === "all" ? "" : (value as CallOutcome) })}
