@@ -3,6 +3,7 @@ import { Separator } from "@receptionist/ui/components/separator";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -16,8 +17,9 @@ import {
   useSidebar,
 } from "@receptionist/ui/components/sidebar";
 import { Bot, CreditCard, LayoutDashboard, type LucideIcon, Phone, PhoneIncoming } from "lucide-react";
-import type { ReactNode } from "react";
-import { NavLink, Outlet, useLocation } from "react-router";
+import { NavLink, Outlet, useLocation, useNavigation } from "react-router";
+import { AccountMenu } from "./AccountMenu";
+import { SampleDataBadge } from "./SampleDataBadge";
 
 const nav: { to: string; label: string; icon: LucideIcon }[] = [
   { to: "/", label: "Overview", icon: LayoutDashboard },
@@ -40,7 +42,7 @@ function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" render={<NavLink to="/" />}>
+            <SidebarMenuButton size="lg" render={<NavLink to="/" onClick={() => setOpenMobile(false)} />}>
               <LogoMark className="bg-sidebar-primary text-sidebar-primary-foreground" />
               <span className="font-heading font-semibold">AI Receptionist</span>
             </SidebarMenuButton>
@@ -67,6 +69,9 @@ function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <AccountMenu />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
@@ -74,30 +79,33 @@ function AppSidebar() {
 
 export function AppLayout() {
   const { pathname } = useLocation();
+  const navigation = useNavigation();
   const current = nav.find((item) => isCurrent(item.to, pathname));
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
+        <header className="relative flex h-14 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger className="-ms-1" />
           <Separator orientation="vertical" className="me-2 data-vertical:h-4 data-vertical:self-center" />
           <span className="text-sm font-medium">{current?.label}</span>
+          <SampleDataBadge className="ms-auto" />
+          {navigation.state === "loading" && (
+            <div
+              role="progressbar"
+              aria-label="Loading page"
+              className="absolute inset-x-0 -bottom-px h-0.5 animate-pulse bg-primary"
+            />
+          )}
         </header>
+        {/* SidebarInset is the page's <main>. */}
         <div className="flex-1 p-4 sm:p-8">
-          <Outlet />
+          <div className="mx-auto w-full max-w-6xl">
+            <Outlet />
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
-  );
-}
-
-export function PageHeader({ title, children }: { title: string; children?: ReactNode }) {
-  return (
-    <header className="mb-6">
-      <h1 className="font-heading text-2xl font-semibold tracking-tight">{title}</h1>
-      {children && <p className="mt-1 text-muted-foreground">{children}</p>}
-    </header>
   );
 }

@@ -1,4 +1,4 @@
-import "@receptionist/ui/globals.css";
+import "./styles.css";
 import { TooltipProvider } from "@receptionist/ui/components/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";

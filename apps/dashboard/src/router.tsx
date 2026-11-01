@@ -1,23 +1,44 @@
 import { createBrowserRouter } from "react-router";
+import { PageLoader } from "./components/page-loader";
 import { AppLayout } from "./layouts/AppLayout";
-import { AgentPage } from "./pages/AgentPage";
-import { BillingPage } from "./pages/BillingPage";
-import { CallsPage } from "./pages/CallsPage";
-import { NumbersPage } from "./pages/NumbersPage";
-import { OverviewPage } from "./pages/OverviewPage";
-import { SignupPage } from "./pages/SignupPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { RouteErrorPage } from "./pages/RouteErrorPage";
 
+// Each page is its own chunk, loaded on first visit. The layout and the error pages stay in the main bundle, so the
+// sidebar shows at once and errors can always render.
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
+    errorElement: <RouteErrorPage />,
+    HydrateFallback: PageLoader,
     children: [
-      { index: true, element: <OverviewPage /> },
-      { path: "calls", element: <CallsPage /> },
-      { path: "agent", element: <AgentPage /> },
-      { path: "numbers", element: <NumbersPage /> },
-      { path: "billing", element: <BillingPage /> },
+      { index: true, lazy: () => import("./pages/OverviewPage").then((m) => ({ Component: m.OverviewPage })) },
+      {
+        path: "calls",
+        lazy: () => import("./pages/CallsPage").then((m) => ({ Component: m.CallsPage })),
+        // The call detail opens in a sheet over the list, so /calls/:id renders the list too.
+        children: [{ path: ":id" }],
+      },
+      {
+        path: "agent",
+        lazy: () => import("./pages/ReceptionistPage").then((m) => ({ Component: m.ReceptionistPage })),
+      },
+      { path: "numbers", lazy: () => import("./pages/NumbersPage").then((m) => ({ Component: m.NumbersPage })) },
+      { path: "billing", lazy: () => import("./pages/BillingPage").then((m) => ({ Component: m.BillingPage })) },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
-  { path: "/signup", element: <SignupPage /> },
+  {
+    path: "/signup",
+    errorElement: <RouteErrorPage />,
+    HydrateFallback: PageLoader,
+    lazy: () => import("./pages/SignupPage").then((m) => ({ Component: m.SignupPage })),
+  },
+  {
+    path: "/login",
+    errorElement: <RouteErrorPage />,
+    HydrateFallback: PageLoader,
+    lazy: () => import("./pages/LoginPage").then((m) => ({ Component: m.LoginPage })),
+  },
 ]);
