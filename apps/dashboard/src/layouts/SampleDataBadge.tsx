@@ -14,9 +14,11 @@ import { FlaskConical } from "lucide-react";
 export function SampleDataBadge({ className }: { className?: string }) {
   return (
     <Popover>
-      <PopoverTrigger className={cn(badgeVariants({ variant: "outline" }), "h-6 cursor-pointer", className)}>
+      <PopoverTrigger
+        className={cn(badgeVariants({ variant: "outline" }), "h-6 cursor-pointer text-muted-foreground", className)}
+      >
         <FlaskConical data-icon="inline-start" />
-        Sample data
+        <span className="max-sm:sr-only">Sample data</span>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72">
         <PopoverTitle>You're looking at sample data</PopoverTitle>

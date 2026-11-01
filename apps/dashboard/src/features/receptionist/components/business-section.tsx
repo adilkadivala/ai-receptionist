@@ -3,9 +3,10 @@ import { Input } from "@receptionist/ui/components/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@receptionist/ui/components/select";
 import { Textarea } from "@receptionist/ui/components/textarea";
 import { FormField } from "../../../components/form-field";
+import { SettingsCard } from "../../../components/settings-card";
 import { limits } from "../validation";
 import { OpeningHours } from "./opening-hours";
-import { type SectionProps, SettingsCard } from "./settings-card";
+import type { SectionProps } from "./section-props";
 
 const timeZones = Intl.supportedValuesOf("timeZone").map((zone) => ({ value: zone, label: zone.replaceAll("_", " ") }));
 

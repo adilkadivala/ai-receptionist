@@ -39,7 +39,7 @@ export type Call = {
   caller_name: string | null;
 };
 
-export type DateRange = "today" | "7d" | "30d" | "all";
+export type DateRange = "today" | "7d" | "30d" | "90d" | "all";
 
 export type CallFilters = {
   q: string;
@@ -49,9 +49,21 @@ export type CallFilters = {
   page: number;
 };
 
+/** Calls per outcome for the current filters, ignoring the outcome filter, so each tab can show its count. */
+export type OutcomeCounts = { all: number } & Partial<Record<CallOutcome, number>>;
+
 export type CallPage = {
   items: Call[];
   total: number;
   page: number;
   page_size: number;
+  outcome_counts: OutcomeCounts;
+};
+
+/** Today so far: the greeting on the Overview and the badge on Calls in the sidebar. */
+export type CallsToday = {
+  /** Every call except blocked spam. */
+  answered: number;
+  /** Messages taken today. Until calls have a read state, these are the ones that may still need a callback. */
+  messages: number;
 };

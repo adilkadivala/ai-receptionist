@@ -7,6 +7,8 @@ const dateTime = new Intl.DateTimeFormat(undefined, {
   minute: "2-digit",
 });
 const date = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short", year: "numeric" });
+const shortDate = new Intl.DateTimeFormat(undefined, { day: "numeric", month: "short" });
+const time = new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" });
 const monthYear = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" });
 const relative = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
 
@@ -16,6 +18,28 @@ export function formatDateTime(iso: string): string {
 
 export function formatDate(iso: string): string {
   return date.format(new Date(iso));
+}
+
+/** "Oct 3", for ranges and chart axes. */
+export function formatShortDate(value: string | Date): string {
+  return shortDate.format(new Date(value));
+}
+
+/** When a call came in, as a ledger shows it: "4:12 PM" today, "Yesterday, 4:12 PM", then "Oct 28, 4:12 PM". */
+export function formatCallTime(iso: string, now = new Date()): string {
+  const at = new Date(iso);
+  const days = Math.round(
+    (new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() -
+      new Date(at.getFullYear(), at.getMonth(), at.getDate()).getTime()) /
+      86_400_000,
+  );
+  if (days === 0) return time.format(at);
+  if (days === 1) return `${capitalize(relative.format(-1, "day"))}, ${time.format(at)}`;
+  return dateTime.format(at);
+}
+
+function capitalize(text: string) {
+  return text.charAt(0).toLocaleUpperCase() + text.slice(1);
 }
 
 export function formatMonth(iso: string): string {
@@ -53,4 +77,15 @@ export function formatPhone(e164: string | null): string {
 
 export function formatNumber(value: number): string {
   return value.toLocaleString();
+}
+
+/** "Ana Rivera" → "AR". */
+export function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
 }

@@ -1,3 +1,4 @@
+import { Toaster } from "@receptionist/ui/components/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
@@ -13,6 +14,7 @@ function renderForm() {
       <MemoryRouter>
         <ReceptionistForm config={config} />
       </MemoryRouter>
+      <Toaster />
     </QueryClientProvider>,
   );
   return config;
@@ -33,7 +35,9 @@ test("won't save an invalid greeting, then saves once it's fixed", async () => {
   expect(screen.queryByText("Write a greeting of at least 10 characters.")).toBeNull();
 
   fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+  // A toast confirms the save, and the save bar keeps saying which version is live.
   expect(await screen.findByText(`Saved. Version ${config.version + 1} is live on your calls.`)).toBeDefined();
+  expect(screen.getByText(`Version ${config.version + 1}, saved just now.`)).toBeDefined();
 });
 
 test("Discard puts back the saved settings", () => {

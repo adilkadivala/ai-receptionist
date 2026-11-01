@@ -59,7 +59,7 @@ export function useTheme() {
   const theme = useSyncExternalStore(subscribe, readChoice, () => "system" as const);
   const resolvedTheme = useSyncExternalStore(
     subscribe,
-    () => (document.documentElement.classList.contains("dark") ? "dark" : "light"),
+    (): "dark" | "light" => (document.documentElement.classList.contains("dark") ? "dark" : "light"),
     () => "light" as const,
   );
   return { theme, resolvedTheme, setTheme };

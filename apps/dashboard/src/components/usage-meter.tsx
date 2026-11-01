@@ -10,31 +10,43 @@ const barColor = {
   over: "[&_[data-slot=progress-indicator]]:bg-destructive",
 };
 
-/** Minutes used against the plan, with what happens next: minutes left, a pace warning, or the overage charge. */
-export function UsageMeter({ usage, className }: { usage: Usage; className?: string }) {
-  const { used, included, remaining, percent, overMinutes, overCost, projected, status } = usage;
+/** The minutes bar on its own: blue, amber when the plan is nearly used up, red once it's over. */
+export function UsageBar({ usage, className }: { usage: Usage; className?: string }) {
+  return (
+    <Progress
+      value={usage.percent}
+      aria-label={`${formatNumber(usage.used)} of ${formatNumber(usage.included)} minutes used`}
+      className={cn(
+        "[&_[data-slot=progress-indicator]]:rounded-full [&_[data-slot=progress-track]]:h-1.5",
+        barColor[usage.status],
+        className,
+      )}
+    />
+  );
+}
 
+/** What happens next with the minutes: how many are left, a pace warning, or the overage charge. */
+export function usageMessage({ remaining, overMinutes, overCost, projected, included, status }: Usage) {
+  if (status === "over")
+    return `${formatNumber(overMinutes)} minutes over: ${formatUsd(overCost)} extra at ${formatUsd(overagePerMinute)} a minute.`;
+  if (status === "near")
+    return `Only ${formatNumber(remaining)} minutes left.${projected > included ? ` At this pace you'll use about ${formatNumber(projected)}.` : ""}`;
+  return `${formatNumber(remaining)} minutes left this month.`;
+}
+
+/** The bar with its message underneath. */
+export function UsageMeter({ usage, className }: { usage: Usage; className?: string }) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      <Progress
-        value={percent}
-        aria-label={`${formatNumber(used)} of ${formatNumber(included)} minutes used`}
-        className={barColor[status]}
-      />
-      <p className={cn("text-muted-foreground", status === "over" && "text-destructive")}>
-        {status === "over" ? (
-          <>
-            {formatNumber(overMinutes)} minutes over: {formatUsd(overCost)} extra at {formatUsd(overagePerMinute)} a
-            minute.
-          </>
-        ) : status === "near" ? (
-          <span className="text-warning">
-            Only {formatNumber(remaining)} minutes left.
-            {projected > included && ` At this pace you'll use about ${formatNumber(projected)}.`}
-          </span>
-        ) : (
-          <>{formatNumber(remaining)} minutes left this month.</>
+      <UsageBar usage={usage} />
+      <p
+        className={cn(
+          "text-muted-foreground",
+          usage.status === "near" && "text-warning-foreground",
+          usage.status === "over" && "text-destructive",
         )}
+      >
+        {usageMessage(usage)}
       </p>
     </div>
   );

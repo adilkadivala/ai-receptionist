@@ -7,7 +7,7 @@ import { PlanSummary } from "../features/billing/components/plan-summary";
 export function BillingPage() {
   return (
     <>
-      <PageHeader title="Billing">Your plan, minutes used this month and invoices.</PageHeader>
+      <PageHeader>Your plan, minutes used this month and invoices.</PageHeader>
       <div className="flex flex-col gap-10">
         <PlanSummary />
         <ChangePlan />

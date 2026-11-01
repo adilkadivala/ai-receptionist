@@ -5,6 +5,7 @@ import { AuthLayout } from "../layouts/AuthLayout";
 export function LoginPage() {
   return (
     <AuthLayout
+      eyebrow="Welcome back"
       title="Log in"
       description="See your calls and change what your receptionist says."
       footer={

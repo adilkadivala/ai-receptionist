@@ -5,9 +5,10 @@ import { Textarea } from "@receptionist/ui/components/textarea";
 import { MessageCircleQuestion, Plus, Trash2 } from "lucide-react";
 import { EmptyState } from "../../../components/empty-state";
 import { FormField } from "../../../components/form-field";
+import { SettingsCard } from "../../../components/settings-card";
 import type { FaqEntry } from "../types";
 import { limits } from "../validation";
-import { type SectionProps, SettingsCard } from "./settings-card";
+import type { SectionProps } from "./section-props";
 
 export function FaqSection({ values, set, errors }: SectionProps) {
   const faqs = values.faqs;
