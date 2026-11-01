@@ -43,7 +43,7 @@ function Email({ email, writing }: { email: SummaryEmail; writing: boolean }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8, transition: { duration: 0.3, ease: ease.move } }}
       transition={{ duration: 0.45, ease: ease.enter }}
-      className="col-start-1 row-start-1 flex min-h-[132px] flex-col gap-2 rounded-[12px] border bg-card p-3.5 text-xs shadow-xs"
+      className="col-start-1 row-start-1 flex min-h-[132px] flex-col gap-2 rounded-[14px] bg-card p-4 text-xs shadow-(--float)"
     >
       <div className="flex justify-between gap-2 text-muted-foreground">
         <span>AI Receptionist</span>

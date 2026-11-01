@@ -95,7 +95,7 @@ export function CallRouting() {
               exit={{ opacity: 0, y: 6, transition: { duration: 0.2 } }}
               transition={{ duration: 0.35, ease: ease.enter }}
               className={cn(
-                "inline-flex h-7 items-center gap-1.5 rounded-full border bg-card px-2.5 whitespace-nowrap shadow-xs",
+                "inline-flex h-7 items-center gap-1.5 rounded-full bg-card px-2.5 whitespace-nowrap shadow-(--raised)",
                 call?.urgent ? "font-medium text-foreground" : "text-foreground/80",
               )}
             >
@@ -218,7 +218,7 @@ function Destination({
       animate={active ? { scale: [1, 1.08, 1] } : { scale: 1 }}
       transition={{ duration: 0.35, ease: ease.move }}
       className={cn(
-        "absolute top-[126px] inline-flex h-[30px] items-center gap-1.5 rounded-full px-2.5 font-medium transition-opacity duration-300",
+        "absolute top-[126px] inline-flex h-[30px] items-center gap-1.5 rounded-full px-2.5 font-medium shadow-(--raised) transition-opacity duration-300",
         !active && "opacity-60",
         className,
       )}

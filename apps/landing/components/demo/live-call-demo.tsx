@@ -10,7 +10,6 @@ import { useBrowserVoice } from "@/lib/browser-voice";
 import { isAbort, useCallAudio, wait } from "@/lib/call-audio";
 import { usePrefersReducedMotion } from "@/lib/loop";
 import { ease } from "@/lib/motion";
-import { tileClassName } from "../bento-tile";
 import { LiveDot } from "../live-dot";
 import { OutcomePill } from "../outcome-pill";
 import { Waveform, type WaveTone } from "./waveform";
@@ -183,7 +182,14 @@ export function LiveCallDemo({ hasAudio, className }: { hasAudio: boolean; class
   const tone: WaveTone = call.turns[state.step]?.speaker ?? "idle";
 
   return (
-    <div ref={ref} id="listen" className={cn(tileClassName, "min-h-[560px] scroll-mt-6 gap-4 shadow-xs", className)}>
+    <div
+      ref={ref}
+      id="listen"
+      className={cn(
+        "flex min-h-[560px] scroll-mt-6 flex-col gap-4 rounded-[20px] bg-card p-5 shadow-(--float)",
+        className,
+      )}
+    >
       <h3 className="sr-only">Example call</h3>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2.5">

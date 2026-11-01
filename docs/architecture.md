@@ -243,7 +243,7 @@ Ai-receptionist/
 │   ├── landing/                  Next.js 16 · static export · Tailwind 4 · shadcn/ui      (dev: port 3100)
 │   │   ├── app/                  layout.tsx, page.tsx, privacy/, terms/, robots, sitemap, og.png, icon.svg
 │   │   │                         (next) [locale]/ for translated pages, blog/
-│   │   ├── components/           header, footer, dither band, pixel field, frame lines, dashboard preview
+│   │   ├── components/           header, footer, blueprint panel and desk objects, drafting details, stage cells, medals
 │   │   │   ├── sections/         one file per page section: hero, built-for, product, how-it-works, languages, pricing…
 │   │   │   ├── motion/           scroll reveals, count-up numbers, the preview's tilt (Motion)
 │   │   │   ├── demo/             the live call demo and its waveform, which follows the recorded voice

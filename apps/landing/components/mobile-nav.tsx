@@ -8,13 +8,27 @@ import { useState } from "react";
 import type { NavLink } from "@/lib/site";
 
 // Below the lg breakpoint the header links move into a side sheet.
-export function MobileNav({ links, loginUrl, signupUrl }: { links: NavLink[]; loginUrl: string; signupUrl: string }) {
+export function MobileNav({
+  links,
+  loginUrl,
+  signupUrl,
+  triggerClassName,
+}: {
+  links: NavLink[];
+  loginUrl: string;
+  signupUrl: string;
+  triggerClassName?: string;
+}) {
   const [open, setOpen] = useState(false);
   const linkClassName = cn(buttonVariants({ variant: "ghost", size: "lg" }), "h-11 justify-start text-base");
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger render={<Button variant="ghost" size="icon-lg" className="lg:hidden" aria-label="Open menu" />}>
+      <SheetTrigger
+        render={
+          <Button variant="ghost" size="icon-lg" className={cn("lg:hidden", triggerClassName)} aria-label="Open menu" />
+        }
+      >
         <Menu />
       </SheetTrigger>
       <SheetContent side="right">

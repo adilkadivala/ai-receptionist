@@ -6,15 +6,16 @@ import type { LegalSection } from "@/content/legal";
 import { contactHref, salesEmail } from "@/lib/site";
 import { PixelField } from "./pixel-field";
 import { gutter } from "./section";
+import { SiteHeader } from "./site-header";
 
 /** A legal page that is still a draft: a clear notice at the top, then the sections. */
 export function DraftLegalPage({ title, sections }: { title: string; sections: LegalSection[] }) {
   return (
     <>
-      {/* pt-18 leaves room for the header, which lies over this band. */}
-      <div className={cn("relative border-b border-dashed border-frame bg-hero pt-18", gutter)}>
+      <div className="relative border-b border-dashed border-frame bg-hero">
         <PixelField />
-        <div className="relative mx-auto max-w-3xl pt-16 pb-12">
+        <SiteHeader />
+        <div className={cn("relative mx-auto max-w-3xl pt-16 pb-12", gutter)}>
           <Badge variant="outline" className="bg-card">
             Draft
           </Badge>

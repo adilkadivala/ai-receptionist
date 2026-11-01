@@ -7,7 +7,6 @@ import type { ReactNode } from "react";
 import { FrameColumn } from "@/components/frame-lines";
 import { MotionProvider } from "@/components/motion-provider";
 import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import { hero } from "@/content/home";
 import { ogImage, siteName, siteUrl } from "@/lib/site";
 
@@ -59,7 +58,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </a>
         <MotionProvider>
           <FrameColumn>
-            <SiteHeader />
             <main id="main">{children}</main>
             <SiteFooter />
           </FrameColumn>

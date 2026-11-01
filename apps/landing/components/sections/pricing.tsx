@@ -4,13 +4,14 @@ import { cn } from "@receptionist/ui/lib/utils";
 import { contract, pricingCopy } from "@/content/home";
 import { addOnSummary } from "@/lib/plans";
 import { ContactLink, GetStartedLink } from "../cta-links";
+import { FrameRule } from "../frame-lines";
 import { Reveal, RevealGroup, RevealItem } from "../motion/reveal";
 import { Section, SectionHeading } from "../section";
 
 // Restyles the shared PlanCard to the approved mockup from the outside, so the block (and the dashboard) stay as
 // they are: 28 px padding, 16 px corners, a 17 px name, a 48 px price, the badge in the blue tint, no footer band.
 const planCardClassName = cn(
-  "h-full gap-5 rounded-[16px] text-[15px] [--card-spacing:--spacing(7)]",
+  "h-full gap-5 rounded-[16px] text-[15px] shadow-(--float) [--card-spacing:--spacing(7)]",
   "transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1",
   "**:data-[slot=card-title]:text-[17px] **:data-[slot=card-title]:font-semibold",
   "**:data-[slot=badge]:h-6 **:data-[slot=badge]:bg-brand-soft **:data-[slot=badge]:px-2.5 **:data-[slot=badge]:text-brand-soft-foreground",
@@ -19,12 +20,15 @@ const planCardClassName = cn(
   "*:data-[slot=card-footer]:border-t-0 *:data-[slot=card-footer]:bg-transparent *:data-[slot=card-footer]:pt-0",
 );
 
-// The featured plan's soft blue glow.
-const featuredClassName = "shadow-[0_24px_48px_-28px_color-mix(in_oklch,var(--primary)_45%,transparent)]";
+// The others rest on their own shadow; the featured plan keeps the shared blue ring and adds a soft blue glow.
+const plainClassName = "ring-0";
+const featuredClassName =
+  "shadow-[0_2px_4px_-1px_color-mix(in_oklch,var(--primary)_20%,transparent),0_28px_56px_-24px_color-mix(in_oklch,var(--primary)_50%,transparent)]";
 
 export function Pricing() {
   return (
-    <Section id="pricing" className="flex flex-col gap-10 border-t border-dashed border-frame">
+    <Section id="pricing" className="relative flex flex-col gap-10">
+      <FrameRule />
       <SectionHeading
         align="center"
         eyebrow="Pricing"
@@ -36,7 +40,7 @@ export function Pricing() {
           <RevealItem key={plan.id}>
             <PlanCard
               plan={plan}
-              className={cn(planCardClassName, plan.featured && featuredClassName)}
+              className={cn(planCardClassName, plan.featured ? featuredClassName : plainClassName)}
               action={
                 <GetStartedLink
                   plan={plan.id}
@@ -51,7 +55,7 @@ export function Pricing() {
           </RevealItem>
         ))}
       </RevealGroup>
-      <Reveal className="flex flex-wrap items-center justify-between gap-5 rounded-[16px] border bg-card px-5 py-6 sm:px-7">
+      <Reveal className="flex flex-wrap items-center justify-between gap-5 rounded-[16px] bg-card px-5 py-6 shadow-(--raised) sm:px-7">
         <div className="flex max-w-[720px] flex-col gap-1.5">
           <h3 className="text-[17px] font-semibold">{contract.title}</h3>
           <p className="text-[15px]/relaxed text-pretty text-foreground/70">{contract.description}</p>

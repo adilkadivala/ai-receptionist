@@ -30,8 +30,25 @@ export const brandText = "text-primary dark:text-[color-mix(in_oklch,var(--prima
 // Small label: Geist Mono, 12 px, uppercase, wide tracking.
 export const eyebrowClassName = "font-mono text-xs tracking-[0.08em] text-muted-foreground uppercase";
 
+/** A section's label, in blue between drafting brackets: ⊣| LABEL |⊢. */
 export function Eyebrow({ className, children }: { className?: string; children: ReactNode }) {
-  return <p className={cn(eyebrowClassName, className)}>{children}</p>;
+  return (
+    <p className={cn(eyebrowClassName, "inline-flex items-center gap-2", brandText, className)}>
+      <Bracket />
+      {children}
+      <Bracket className="-scale-x-100" />
+    </p>
+  );
+}
+
+function Bracket({ className }: { className?: string }) {
+  return (
+    <span aria-hidden className={cn("flex items-center gap-[3px] opacity-70", className)}>
+      <span className="h-px w-1.5 bg-current" />
+      <span className="h-2.5 w-px bg-current" />
+      <span className="h-1.5 w-px bg-current opacity-60" />
+    </span>
+  );
 }
 
 /** A section's h2 with an optional label above and a lead paragraph below. */

@@ -24,7 +24,7 @@ export function CallTicker() {
     <div
       ref={ref}
       aria-hidden
-      className="h-[104px] overflow-hidden text-xs [mask-image:linear-gradient(180deg,black_70%,transparent)]"
+      className="-mx-1.5 h-[112px] overflow-hidden px-1.5 pt-[3px] text-xs [mask-image:linear-gradient(180deg,black_70%,transparent)]"
     >
       <ol className="flex flex-col gap-1.5">
         <AnimatePresence initial={false} mode="popLayout">
@@ -56,8 +56,10 @@ function CallRow({ number, state, fresh }: { number: string; state: string; fres
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-2 rounded-[9px] border px-2.5 py-[7px] transition-colors duration-500",
-        answered ? "bg-card" : "border-primary/40 bg-brand-soft/60",
+        "flex items-center justify-between gap-2 rounded-[9px] px-2.5 py-[7px] transition-[background-color,box-shadow] duration-500",
+        answered
+          ? "bg-card shadow-(--raised)"
+          : "bg-brand-soft shadow-[0_0_0_1px_color-mix(in_oklch,var(--primary)_45%,transparent)]",
       )}
     >
       <span dir="ltr" className="font-mono text-foreground/80">

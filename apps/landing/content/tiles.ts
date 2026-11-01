@@ -12,7 +12,10 @@ export const tiles = {
     title: "A summary of every call",
     description: "Emailed the moment it hangs up, with the full transcript.",
   },
-  languages: { title: `${languageCount} languages, switched mid-call` },
+  languages: {
+    title: `${languageCount} languages, switched mid-call`,
+    description: "It answers in the caller's language, and follows when they switch.",
+  },
   concurrent: { title: "Several calls at once", description: "Nobody waits on hold." },
   spam: { title: "Robocalls blocked", description: "Blocked before the AI answers, so spam never reaches you." },
 };

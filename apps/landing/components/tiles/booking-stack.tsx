@@ -30,7 +30,7 @@ export function BookingStack() {
         </span>
       </div>
       {/* Newest first; flex-col-reverse keeps the stack anchored to the bottom as it grows. */}
-      <ol className="flex h-[146px] flex-col-reverse gap-1.5 overflow-hidden">
+      <ol className="-mx-1.5 flex h-[152px] flex-col-reverse gap-1.5 overflow-hidden px-1.5 py-[3px]">
         <AnimatePresence initial={false} mode="popLayout">
           {visible.map((booking, index) => {
             const latest = index === visible.length - 1;
@@ -43,8 +43,10 @@ export function BookingStack() {
                 exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.25 } }}
                 transition={{ duration: 0.5, ease: ease.enter }}
                 className={cn(
-                  "flex items-center justify-between gap-2 rounded-lg border px-2.5 py-[7px] transition-colors duration-500",
-                  latest ? "border-primary bg-brand-soft text-brand-soft-foreground" : "bg-muted/60 text-foreground/80",
+                  "flex items-center justify-between gap-2 rounded-lg px-2.5 py-[7px] transition-colors duration-500",
+                  latest
+                    ? "bg-brand-soft text-brand-soft-foreground shadow-[0_0_0_1px_var(--primary),0_6px_14px_-6px_var(--primary)]"
+                    : "bg-card text-foreground/80 shadow-(--raised)",
                 )}
               >
                 <span className="flex min-w-0 gap-2.5">

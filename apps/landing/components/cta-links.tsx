@@ -12,9 +12,15 @@ const sizes = {
 };
 
 const variants = {
-  default: "",
-  // White on the grey page, with a hairline and the faintest shadow.
-  outline: "bg-card text-foreground shadow-xs",
+  // Signal blue, lit from above.
+  default: "shadow-[inset_0_1px_0_color-mix(in_oklch,white_22%,transparent),var(--raised)]",
+  // White on the grey page, resting on it.
+  outline: "border-transparent bg-card text-foreground shadow-(--raised)",
+  // On the blueprint (hero, final call to action): white with blueprint text, and clear glass beside it.
+  inverse:
+    "bg-primary-foreground text-(color:--ink) shadow-[0_8px_24px_-10px_black] hover:bg-primary-foreground/90 focus-visible:ring-primary-foreground/40",
+  glass:
+    "border-primary-foreground/15 bg-primary-foreground/8 text-primary-foreground backdrop-blur-sm hover:bg-primary-foreground/14 focus-visible:ring-primary-foreground/40",
 };
 
 // Moves 2 px toward where the link goes when the link is hovered.
@@ -29,7 +35,9 @@ export type CtaProps = {
 };
 
 export function ctaClassName({ variant = "default", size = "lg", className }: CtaProps = {}) {
-  return cn(buttonVariants({ variant }), "group/cta", sizes[size], variants[variant], className);
+  // The blueprint variants restyle the shared default button.
+  const base = variant === "outline" ? "outline" : "default";
+  return cn(buttonVariants({ variant: base }), "group/cta", sizes[size], variants[variant], className);
 }
 
 /** The page's one main action. The label is the same everywhere. */

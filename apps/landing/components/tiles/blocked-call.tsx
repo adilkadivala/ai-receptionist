@@ -52,8 +52,8 @@ function ScreenedRow({ number, spam, fresh }: { number: string; spam: boolean; f
   return (
     <div
       className={cn(
-        "flex items-center justify-between gap-2 rounded-[9px] border px-2.5 py-[7px] transition-colors duration-500",
-        blocked ? "border-transparent bg-muted/60" : "bg-card",
+        "flex items-center justify-between gap-2 rounded-[9px] px-2.5 py-[7px] transition-[background-color,box-shadow] duration-500",
+        blocked ? "bg-muted shadow-(--tray)" : "bg-card shadow-(--raised)",
       )}
     >
       <span

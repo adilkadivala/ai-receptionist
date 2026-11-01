@@ -1,5 +1,6 @@
 import { allLanguages, languageCount } from "@receptionist/product";
 import { languagesCopy } from "@/content/home";
+import { Pattern } from "../drafting";
 import { CountUp } from "../motion/count-up";
 import { Reveal, RevealGroup, RevealItem } from "../motion/reveal";
 import { Eyebrow, Section } from "../section";
@@ -17,17 +18,21 @@ export function LanguagesSection() {
         </h2>
         <p className="text-base/[1.65] text-pretty text-foreground/70">{languagesCopy.description}</p>
       </Reveal>
-      <RevealGroup as="ul" stagger={0.018} className="flex min-w-0 flex-[1.6_1_460px] flex-wrap content-start gap-2">
-        {allLanguages.map((name) => (
-          <RevealItem
-            as="li"
-            key={name}
-            className="inline-flex h-[34px] items-center rounded-full border bg-card px-3.5 text-sm text-foreground/90"
-          >
-            {name}
-          </RevealItem>
-        ))}
-      </RevealGroup>
+      {/* The languages as chips in a tray pressed into the sheet. */}
+      <div className="relative min-w-0 flex-[1.6_1_460px] self-start overflow-hidden rounded-[24px] bg-hero p-4 shadow-(--tray) sm:p-6">
+        <Pattern kind="dots" />
+        <RevealGroup as="ul" stagger={0.018} className="relative flex flex-wrap gap-2">
+          {allLanguages.map((name) => (
+            <RevealItem
+              as="li"
+              key={name}
+              className="inline-flex h-[34px] items-center rounded-full bg-card px-3.5 text-sm text-foreground/90 shadow-(--raised)"
+            >
+              {name}
+            </RevealItem>
+          ))}
+        </RevealGroup>
+      </div>
     </Section>
   );
 }

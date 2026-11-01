@@ -11,14 +11,20 @@ export const hero = {
     "An AI receptionist that picks up 24/7, books appointments into your calendar, takes messages and hands urgent calls to a person. For a one-person plumbing business or a large hospital.",
 };
 
-export const builtFor = [
-  "Plumbers and electricians",
-  "Salons and clinics",
-  "Lawyers and consultants",
-  "Hotels",
-  "Hospitals",
-  "Multi-branch companies",
-];
+export const builtFor = {
+  title: "Built for businesses of every size",
+  kinds: [
+    { id: "trades", name: "Trades" },
+    { id: "salons", name: "Salons" },
+    { id: "clinics", name: "Clinics" },
+    { id: "law", name: "Law firms" },
+    { id: "hotels", name: "Hotels" },
+    { id: "hospitals", name: "Hospitals" },
+    { id: "branches", name: "Multi-branch" },
+  ],
+} as const;
+
+export type BusinessKind = (typeof builtFor.kinds)[number]["id"];
 
 export const product = {
   eyebrow: "See it work",
