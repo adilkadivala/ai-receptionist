@@ -54,7 +54,7 @@ API_URL=http://localhost:8001 pnpm dev:dashboard
 
 ## Talking to the receptionist without a phone
 
-With the api running, open `http://localhost:<port>/dev/call` (for example `http://localhost:8000/dev/call`) in a browser on the same computer and press **Start call**. You talk through the microphone to the same listening, AI and voice as a phone call; only the phone line is missing, so it works without Telnyx, a phone number or call charges. It needs `DEEPGRAM_API_KEY` and `CARTESIA_API_KEY`, plus Anthropic credentials. When you hang up, the transcript is in the api's log, and the summary email goes out if it's set up (below).
+With the api running, open `http://localhost:<port>/dev/call` (for example `http://localhost:8000/dev/call`) in a browser on the same computer and press **Start call**. You talk through the microphone to the same listening, AI and voice as a phone call; only the phone line is missing, so it works without Telnyx, a phone number or call charges. It needs `DEEPGRAM_API_KEY` and `CARTESIA_API_KEY`, plus Anthropic credentials. When you hang up, the transcript is in the api's log, and the summary goes to the owner by email and on WhatsApp if they're set up (below).
 
 The page and its `/dev/call/offer` endpoint answer only requests made on this computer. Through a tunnel such as ngrok they return 404, so nobody else can start calls that spend our API minutes.
 
@@ -78,6 +78,33 @@ Nothing saves calls yet, so this email is how a business learns who called. Afte
 - `SUMMARY_FROM_EMAIL`: the sender, such as `Receptionist <calls@yourdomain.com>`, on a domain verified in Resend. Resend's test sender, `onboarding@resend.dev`, only delivers to the address the Resend account was opened with, which is enough to try it.
 
 If Claude can't write the summary, the email still goes with the transcript alone. If the email can't be sent, the api logs why; the transcript is in the log either way.
+
+## Call summaries on WhatsApp
+
+The same summary can also reach the owner on WhatsApp, a minute after the call, through Meta's [WhatsApp Cloud API](https://developers.facebook.com/documentation/business-messaging/whatsapp/get-started). Claude writes the summary once for both; either channel failing never stops the other. If there's no summary (Claude failed), there's no WhatsApp message: the email still carries the transcript.
+
+WhatsApp lets a business message someone first only with a template Meta has approved, so the summary goes out as a **utility** template with named fields. To set it up:
+1. On [developers.facebook.com](https://developers.facebook.com), create an app with the WhatsApp use case. It comes with a free test number that can message a few numbers you add as recipients, before any business verification. Note the test number's **Phone number ID**.
+2. Add the owner's WhatsApp number as a recipient of the test number (WhatsApp sends it a code to confirm).
+3. In [WhatsApp Manager](https://business.facebook.com/latest/whatsapp_manager/message_templates), create a template named `call_summary`, category **Utility**, language **English** (`en`), with named variables, and this body, giving each variable a sample value:
+   ```text
+   New call for {{business}}.
+   Caller: {{caller}}
+   Number: {{number}}
+   Needs: {{need}}
+   Urgency: {{urgency}}
+   Next step: {{next_step}}
+   Sent by your AI receptionist.
+   ```
+   Approval can take up to 24 hours; until then sends fail with Meta's error 132001.
+4. Make a System User token in Business Settings (System users), with `whatsapp_business_messaging` permission on the app and the WhatsApp account. The temporary token on the app's setup page expires within hours.
+5. Set in `apps/server/.env`, then restart the api:
+   - `WHATSAPP_TOKEN`: the System User token.
+   - `WHATSAPP_PHONE_NUMBER_ID`: the ID from step 1, not the number itself.
+   - `OWNER_WHATSAPP`: the owner's number with + and the country code, such as `+919876543210`.
+   - `WHATSAPP_TEMPLATE` and `WHATSAPP_TEMPLATE_LANGUAGE` only if the template isn't `call_summary` in `en`.
+
+The sender (`apps/server/voice/whatsapp.py`) pins Graph API v26.0. Meta charges per delivered template message, by category and the recipient's country.
 
 For now the summary is written and sent by the voice process itself (`apps/server/voice/summary.py`), in the background after the call has ended, so it never delays or breaks a call. A failed email isn't retried, and one in progress is lost if the api restarts. `docs/architecture.md` plans it as the worker's `summarize_call` job, queued once calls are saved to the database, which fixes both.
 

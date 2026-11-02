@@ -12,7 +12,7 @@ from tests.conftest import make_settings
 from voice import summary
 from voice.call import turns
 from voice.prompt import CALL_CONNECTED
-from voice.summary import CallSummary, compose, email_summary, email_summary_later, send_email, summarize
+from voice.summary import CallSummary, compose, notify_owner, notify_owner_later, send_email, summarize
 
 EMAIL_SETTINGS = {
     "resend_api_key": "re_test",
@@ -84,20 +84,20 @@ def test_summary_emails_are_off_until_all_three_settings_are_set():
 
 
 async def test_no_email_without_the_settings(outbox, logs):
-    await email_summary(CALL, make_settings(), label="Call 1")
+    await notify_owner(CALL, make_settings(), label="Call 1")
     assert outbox.sent == []
     assert "set RESEND_API_KEY, OWNER_EMAIL, SUMMARY_FROM_EMAIL" in "".join(logs)
 
 
 async def test_no_email_when_the_caller_said_nothing(outbox, logs):
-    await email_summary([("AI", "Hello, thanks for calling Glow Salon.")], make_settings(**EMAIL_SETTINGS))
-    await email_summary([], make_settings(**EMAIL_SETTINGS))
+    await notify_owner([("AI", "Hello, thanks for calling Glow Salon.")], make_settings(**EMAIL_SETTINGS))
+    await notify_owner([], make_settings(**EMAIL_SETTINGS))
     assert outbox.sent == []
     assert "the caller said nothing" in "".join(logs)
 
 
 async def test_the_owner_gets_the_summary_and_the_transcript(outbox, logs):
-    await email_summary(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1", caller_id="+919876543210")
+    await notify_owner(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1", caller_id="+919876543210")
     [email] = outbox.sent
     assert email.subject == "Priya: haircut tomorrow"
     assert "Number given: 98765 43210 (not confirmed)" in email.text
@@ -109,7 +109,7 @@ async def test_the_owner_gets_the_summary_and_the_transcript(outbox, logs):
 
 async def test_if_claude_fails_the_transcript_still_goes(outbox, logs):
     outbox.summary = RuntimeError("overloaded")
-    await email_summary(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1", caller_id="+919876543210")
+    await notify_owner(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1", caller_id="+919876543210")
     [email] = outbox.sent
     assert email.subject == "Call for Bright Pipes Plumbing from +919876543210"
     assert "couldn't write a summary" in email.text and "Caller: मुझे कल haircut" in email.text
@@ -118,7 +118,7 @@ async def test_if_claude_fails_the_transcript_still_goes(outbox, logs):
 
 async def test_a_refused_email_is_logged_and_never_raised(resend, logs):
     resend(lambda request: httpx.Response(403, json={"name": "validation_error", "message": "The domain is not verified."}))
-    await email_summary(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1")  # doesn't raise
+    await notify_owner(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1")  # doesn't raise
     logged = "".join(logs)
     assert "Call 1: couldn't email the call summary" in logged
     assert "403" in logged and "domain is not verified" in logged
@@ -130,7 +130,7 @@ async def test_a_network_failure_is_logged_and_never_raised(resend, logs):
         raise httpx.ConnectTimeout("timed out", request=request)
 
     resend(unreachable)
-    await email_summary(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1")  # doesn't raise
+    await notify_owner(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1")  # doesn't raise
     assert "Call 1: couldn't email the call summary" in "".join(logs) and "ConnectTimeout" in "".join(logs)
 
 
@@ -230,7 +230,7 @@ def test_turns_are_what_each_side_said():
 
 
 async def test_the_email_is_sent_in_the_background(outbox):
-    email_summary_later(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1")
+    notify_owner_later(CALL, make_settings(**EMAIL_SETTINGS), label="Call 1")
     assert outbox.sent == []  # the call's handler has returned before anything is sent
     [task] = summary._sending
     await task

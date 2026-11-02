@@ -138,7 +138,7 @@ Three readers went through the books that fit this product. These are the decisi
 6. When the call ends, **voice** saves the call record (outcome, cost by provider, transcript) and a usage event, then queues `summarize_call`.
 7. **worker** writes the summary, emails the owner, pushes the lead to their CRM, rolls up usage, and later deletes the transcript on the organization's retention schedule.
 
-Until calls are saved and the worker exists, **voice** writes and emails the summary itself, in the background after each call (`voice/summary.py`). It moves into the `summarize_call` job then.
+Until calls are saved and the worker exists, **voice** writes the summary itself and sends it by email and WhatsApp, in the background after each call (`voice/summary.py`). It moves into the `summarize_call` job then.
 
 ---
 
@@ -280,6 +280,8 @@ Ai-receptionist/
 │       │   ├── routes.py  texml.py               Telnyx webhook and audio WebSocket
 │       │   ├── call.py                           the pipeline: wires the stages together, handles barge-in
 │       │   ├── browser.py  browser_call.html     test calls from a browser on this computer, over WebRTC
+│       │   ├── end_call.py  numbers.py           hanging up after the goodbye; spoken phone numbers counted in code
+│       │   ├── summary.py  whatsapp.py           the owner's summary after each call, by email and WhatsApp
 │       │   ├── language.py  prompt.py
 │       │   └── (next) main.py    its own entry point (today voice is mounted inside the api)
 │       │       (next) stt.py  tts.py             one file per stage, each with its backup and deadline

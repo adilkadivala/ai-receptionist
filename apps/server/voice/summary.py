@@ -1,8 +1,9 @@
-"""After each call, a short summary for the business owner, by email.
+"""After each call, a short summary for the business owner, by email and on WhatsApp.
 
 Nothing saves calls yet, so without this the business never learns who called. Claude writes the summary from the
-transcript, in English whatever language the call was in, and Resend (resend.com) emails it with the full transcript
-below. Off until RESEND_API_KEY, OWNER_EMAIL and SUMMARY_FROM_EMAIL are set.
+transcript, once, in English whatever language the call was in. Resend (resend.com) emails it with the full transcript
+below, once RESEND_API_KEY, OWNER_EMAIL and SUMMARY_FROM_EMAIL are set; and the owner gets it on WhatsApp (voice.whatsapp),
+once WHATSAPP_TOKEN, WHATSAPP_PHONE_NUMBER_ID and OWNER_WHATSAPP are set. Either channel failing never stops the other.
 
 For now it runs in the voice process, in the background once a call's pipeline has finished (voice.call.converse), so it
 never delays or breaks a call. docs/architecture.md plans it as the worker's `summarize_call` job, queued once the call
@@ -19,7 +20,8 @@ from httpx import AsyncClient
 from loguru import logger
 from pydantic import BaseModel, Field
 
-from core.config import SUMMARY_KEYS, Settings
+from core.config import SUMMARY_KEYS, WHATSAPP_KEYS, Settings
+from voice.whatsapp import send_whatsapp, template_message
 
 CALLER, AI = "Caller", "AI"
 Turn = tuple[str, str]  # (CALLER or AI, what they said)
@@ -176,20 +178,49 @@ async def send_email(email: Email, settings: Settings) -> None:
         raise RuntimeError(f"Resend refused the email ({response.status_code}): {response.text}")
 
 
-async def email_summary(turns: list[Turn], settings: Settings, *, label: str = "Call", caller_id: str | None = None) -> None:
-    """Emails the owner the call's summary and transcript. Never raises: every failure is logged."""
-    if missing := settings.missing_keys(SUMMARY_KEYS):
-        logger.info(f"{label}: no summary email; set {', '.join(missing)} to send one")
+def whatsapp_fields(summary: CallSummary, business_name: str, caller_id: str | None = None) -> dict[str, str]:
+    """The named fields of the WhatsApp template (docs/development.md), in the template's order."""
+    number = summary.phone_number
+    if caller_id and number.startswith("Not given"):
+        number = f"{caller_id} (the number they called from)"
+    return {
+        "business": business_name,
+        "caller": summary.caller_name,
+        "number": number,
+        "need": summary.need,
+        "urgency": URGENCY[summary.urgency],
+        "next_step": " ".join(summary.next_steps) or "Nothing to do.",
+    }
+
+
+async def notify_owner(turns: list[Turn], settings: Settings, *, label: str = "Call", caller_id: str | None = None) -> None:
+    """Sends the owner the call's summary by email and on WhatsApp, whichever are set up. Never raises: every failure
+    is logged."""
+    email_missing, whatsapp_missing = settings.missing_keys(SUMMARY_KEYS), settings.missing_keys(WHATSAPP_KEYS)
+    if email_missing and whatsapp_missing:
+        logger.info(
+            f"{label}: no summary for the owner; set {', '.join(email_missing)} to email it,"
+            f" or {', '.join(whatsapp_missing)} to send it on WhatsApp"
+        )
         return
     if not any(who == CALLER for who, _ in turns):
-        logger.info(f"{label}: the caller said nothing, so no summary email")
+        logger.info(f"{label}: the caller said nothing, so no summary")
         return
     try:
         summary = await summarize(as_text(turns), settings)
     except Exception:
-        # The owner must still hear about the caller, so the transcript goes alone.
+        # The owner must still hear about the caller, so the email carries the transcript alone.
         logger.exception(f"{label}: couldn't write the call summary; emailing the transcript alone")
         summary = None
+    channels = []
+    if not email_missing:
+        channels.append(_email(summary, turns, settings, label, caller_id))
+    if not whatsapp_missing:
+        channels.append(_whatsapp(summary, settings, label, caller_id))
+    await asyncio.gather(*channels)
+
+
+async def _email(summary: CallSummary | None, turns: list[Turn], settings: Settings, label: str, caller_id: str | None):
     try:
         await send_email(compose(summary, turns, settings.business_name, caller_id), settings)
     except Exception:
@@ -198,12 +229,30 @@ async def email_summary(turns: list[Turn], settings: Settings, *, label: str = "
     logger.info(f"{label}: summary emailed to the owner")
 
 
+async def _whatsapp(summary: CallSummary | None, settings: Settings, label: str, caller_id: str | None):
+    if summary is None:
+        logger.info(f"{label}: no WhatsApp message, because there's no summary to send")
+        return
+    message = template_message(
+        whatsapp_fields(summary, settings.business_name, caller_id),
+        to=settings.owner_whatsapp,
+        template=settings.whatsapp_template,
+        language=settings.whatsapp_template_language,
+    )
+    try:
+        await send_whatsapp(message, settings)
+    except Exception:
+        logger.exception(f"{label}: couldn't send the call summary on WhatsApp")
+        return
+    logger.info(f"{label}: summary sent to the owner on WhatsApp")
+
+
 # Summaries on their way, kept here because asyncio holds only a weak reference to a running task.
 _sending: set[asyncio.Task] = set()
 
 
-def email_summary_later(turns: list[Turn], settings: Settings, *, label: str, caller_id: str | None = None) -> None:
-    """Starts `email_summary` in the background, so the call's handler returns at once."""
-    task = asyncio.create_task(email_summary(turns, settings, label=label, caller_id=caller_id))
+def notify_owner_later(turns: list[Turn], settings: Settings, *, label: str, caller_id: str | None = None) -> None:
+    """Starts `notify_owner` in the background, so the call's handler returns at once."""
+    task = asyncio.create_task(notify_owner(turns, settings, label=label, caller_id=caller_id))
     _sending.add(task)
     task.add_done_callback(_sending.discard)

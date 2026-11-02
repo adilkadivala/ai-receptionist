@@ -1,3 +1,4 @@
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -13,6 +14,8 @@ REQUIRED_KEYS = ("media_stream_token", "telnyx_api_key", "deepgram_api_key", "ca
 VOICE_KEYS = ("deepgram_api_key", "cartesia_api_key")
 # What the summary email after each call needs (voice.summary). Without all three, no email.
 SUMMARY_KEYS = ("resend_api_key", "owner_email", "summary_from_email")
+# What the WhatsApp summary after each call needs (voice.whatsapp). Without all three, no WhatsApp message.
+WHATSAPP_KEYS = ("whatsapp_token", "whatsapp_phone_number_id", "owner_whatsapp")
 
 
 class Settings(BaseSettings):
@@ -77,6 +80,24 @@ class Settings(BaseSettings):
     # The sender, on a domain verified in Resend: "Receptionist <calls@yourdomain.com>". Resend's test sender,
     # onboarding@resend.dev, only delivers to the Resend account's own address.
     summary_from_email: str = ""
+
+    # The same summary also goes to the owner on WhatsApp, through Meta's WhatsApp Cloud API, as the approved template
+    # WHATSAPP_TEMPLATE (its text is in docs/development.md). Off unless the first three are set.
+    whatsapp_token: str = ""
+    # The ID Meta gives the business's WhatsApp number (not the number itself).
+    whatsapp_phone_number_id: str = ""
+    # The owner's WhatsApp number, with + and the country code: +919876543210.
+    owner_whatsapp: str = ""
+    whatsapp_template: str = "call_summary"
+    whatsapp_template_language: str = "en"
+
+    @field_validator("owner_whatsapp")
+    @classmethod
+    def whatsapp_number(cls, value: str) -> str:
+        number = re.sub(r"[\s()-]", "", value)
+        if number and not re.fullmatch(r"\+[1-9]\d{7,14}", number):
+            raise ValueError("OWNER_WHATSAPP must be a number with + and the country code, such as +919876543210")
+        return number
 
     @field_validator("business_country")
     @classmethod

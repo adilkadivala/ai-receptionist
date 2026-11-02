@@ -31,7 +31,7 @@ from voice.end_call import END_CALL, end_call
 from voice.language import LanguageFollower
 from voice.numbers import NumberNoter
 from voice.prompt import CALL_CONNECTED, DEMO_BUSINESS_INFO, LANGUAGE_OFFERS, greeting, system_prompt
-from voice.summary import AI, CALLER, Turn, as_text, email_summary_later
+from voice.summary import AI, CALLER, Turn, as_text, notify_owner_later
 
 PHONE_SAMPLE_RATE = 8000  # Telnyx streams 8 kHz audio
 
@@ -118,7 +118,7 @@ async def converse(
     caller_id: str | None = None,
 ) -> None:
     """Greets the caller once they're connected, talks until they hang up, and says goodbye at the time limit. Then
-    the owner gets a summary by email (voice.summary).
+    the owner gets a summary by email and on WhatsApp (voice.summary).
 
     `sample_rate` is the audio coming in; the voice speaks at `out_sample_rate`, the same unless given. `caller_id` is
     the number the phone network says the call came from, for the email.
@@ -176,7 +176,7 @@ async def converse(
         # However the call ended: the caller hung up, the receptionist did (end_call), or the time limit.
         logger.info(f"{label}: ended. Transcript:\n{transcript(context)}")
         # In the background: the email waits on Claude and Resend, and the call must not.
-        email_summary_later(turns(context), settings, label=label, caller_id=caller_id)
+        notify_owner_later(turns(context), settings, label=label, caller_id=caller_id)
 
 
 def turns(context: LLMContext) -> list[Turn]:
