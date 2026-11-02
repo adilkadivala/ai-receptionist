@@ -54,7 +54,7 @@ API_URL=http://localhost:8001 pnpm dev:dashboard
 
 ## Talking to the receptionist without a phone
 
-With the api running, open `http://localhost:<port>/dev/call` (for example `http://localhost:8000/dev/call`) in a browser on the same computer and press **Start call**. You talk through the microphone to the same listening, AI and voice as a phone call; only the phone line is missing, so it works without Telnyx, a phone number or call charges. It needs `DEEPGRAM_API_KEY` and `CARTESIA_API_KEY`, plus Anthropic credentials. When you hang up, the transcript is in the api's log.
+With the api running, open `http://localhost:<port>/dev/call` (for example `http://localhost:8000/dev/call`) in a browser on the same computer and press **Start call**. You talk through the microphone to the same listening, AI and voice as a phone call; only the phone line is missing, so it works without Telnyx, a phone number or call charges. It needs `DEEPGRAM_API_KEY` and `CARTESIA_API_KEY`, plus Anthropic credentials. When you hang up, the transcript is in the api's log, and the summary email goes out if it's set up (below).
 
 The page and its `/dev/call/offer` endpoint answer only requests made on this computer. Through a tunnel such as ngrok they return 404, so nobody else can start calls that spend our API minutes.
 
@@ -69,6 +69,17 @@ Until each business's settings come from the database, the server answers for on
 - `TTS_VOICE_ID` and `VOICE_GENDER`: the Cartesia voice, and whether it's a woman's or a man's, which Hindi, Arabic and French grammar follow. A voice native to the callers' main language sounds most natural and speaks English in the same accent. The landing page's demo voices (`apps/landing/scripts/demo-voices.json`) are a good place to start.
 
 Restart the api after changing them.
+
+## Call summaries by email
+
+Nothing saves calls yet, so this email is how a business learns who called. After every call where the caller said something, phone or browser test, Claude (`LLM_MODEL`) writes a short summary in English: who called and the number they gave, what they need, how urgent it is, the outcome (callback, booking request, question answered, spam) and what the team must do next. [Resend](https://resend.com) emails it to the owner with the whole transcript below. Set all three in `apps/server/.env`, or no email is sent:
+- `RESEND_API_KEY`: an API key from Resend. A key with "sending access" only is enough.
+- `OWNER_EMAIL`: who gets the summaries.
+- `SUMMARY_FROM_EMAIL`: the sender, such as `Receptionist <calls@yourdomain.com>`, on a domain verified in Resend. Resend's test sender, `onboarding@resend.dev`, only delivers to the address the Resend account was opened with, which is enough to try it.
+
+If Claude can't write the summary, the email still goes with the transcript alone. If the email can't be sent, the api logs why; the transcript is in the log either way.
+
+For now the summary is written and sent by the voice process itself (`apps/server/voice/summary.py`), in the background after the call has ended, so it never delays or breaks a call. A failed email isn't retried, and one in progress is lost if the api restarts. `docs/architecture.md` plans it as the worker's `summarize_call` job, queued once calls are saved to the database, which fixes both.
 
 ## Every day
 

@@ -31,6 +31,7 @@ from voice.end_call import END_CALL, end_call
 from voice.language import LanguageFollower
 from voice.numbers import NumberNoter
 from voice.prompt import CALL_CONNECTED, DEMO_BUSINESS_INFO, LANGUAGE_OFFERS, greeting, system_prompt
+from voice.summary import AI, CALLER, Turn, as_text, email_summary_later
 
 PHONE_SAMPLE_RATE = 8000  # Telnyx streams 8 kHz audio
 
@@ -103,15 +104,24 @@ async def run_call(websocket: WebSocket, call: TelnyxCallData, settings: Setting
         settings,
         label=f"Call {call.call_id} from {call.from_number} to {call.to_number}",
         sample_rate=PHONE_SAMPLE_RATE,
+        caller_id=call.from_number,
     )
 
 
 async def converse(
-    transport: BaseTransport, settings: Settings, *, label: str, sample_rate: int, out_sample_rate: int | None = None
+    transport: BaseTransport,
+    settings: Settings,
+    *,
+    label: str,
+    sample_rate: int,
+    out_sample_rate: int | None = None,
+    caller_id: str | None = None,
 ) -> None:
-    """Greets the caller once they're connected, talks until they hang up, and says goodbye at the time limit.
+    """Greets the caller once they're connected, talks until they hang up, and says goodbye at the time limit. Then
+    the owner gets a summary by email (voice.summary).
 
-    `sample_rate` is the audio coming in; the voice speaks at `out_sample_rate`, the same unless given.
+    `sample_rate` is the audio coming in; the voice speaks at `out_sample_rate`, the same unless given. `caller_id` is
+    the number the phone network says the call came from, for the email.
     """
     stt, llm, tts = build_services(settings)
 
@@ -165,11 +175,13 @@ async def converse(
         timer.cancel()
         # However the call ended: the caller hung up, the receptionist did (end_call), or the time limit.
         logger.info(f"{label}: ended. Transcript:\n{transcript(context)}")
+        # In the background: the email waits on Claude and Resend, and the call must not.
+        email_summary_later(turns(context), settings, label=label, caller_id=caller_id)
 
 
-def transcript(context: LLMContext) -> str:
-    """The conversation as `Caller:` / `AI:` lines, for the log. Week 2 saves it and emails a summary."""
-    lines = []
+def turns(context: LLMContext) -> list[Turn]:
+    """What the caller and the AI said, in order, without the connect note and tool calls."""
+    said = []
     for message in context.get_messages():
         role = message.get("role") if isinstance(message, dict) else None
         content = message.get("content") if isinstance(message, dict) else None
@@ -179,5 +191,10 @@ def transcript(context: LLMContext) -> str:
             content = " ".join(part.get("text", "") for part in content if isinstance(part, dict))
         if not content:  # a message that only carries a tool call, such as end_call
             continue
-        lines.append(f"{'Caller' if role == 'user' else 'AI'}: {content}")
-    return "\n".join(lines)
+        said.append((CALLER if role == "user" else AI, content))
+    return said
+
+
+def transcript(context: LLMContext) -> str:
+    """The conversation as `Caller:` / `AI:` lines, for the log."""
+    return as_text(turns(context))

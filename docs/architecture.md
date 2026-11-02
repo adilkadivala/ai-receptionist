@@ -138,6 +138,8 @@ Three readers went through the books that fit this product. These are the decisi
 6. When the call ends, **voice** saves the call record (outcome, cost by provider, transcript) and a usage event, then queues `summarize_call`.
 7. **worker** writes the summary, emails the owner, pushes the lead to their CRM, rolls up usage, and later deletes the transcript on the organization's retention schedule.
 
+Until calls are saved and the worker exists, **voice** writes and emails the summary itself, in the background after each call (`voice/summary.py`). It moves into the `summarize_call` job then.
+
 ---
 
 ## 6. Data model

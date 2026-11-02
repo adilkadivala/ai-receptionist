@@ -11,6 +11,8 @@ SERVER_DIR = Path(__file__).resolve().parents[1]
 # What a phone call needs. A browser test call (voice.browser) needs only the listening and voice keys.
 REQUIRED_KEYS = ("media_stream_token", "telnyx_api_key", "deepgram_api_key", "cartesia_api_key")
 VOICE_KEYS = ("deepgram_api_key", "cartesia_api_key")
+# What the summary email after each call needs (voice.summary). Without all three, no email.
+SUMMARY_KEYS = ("resend_api_key", "owner_email", "summary_from_email")
 
 
 class Settings(BaseSettings):
@@ -67,6 +69,14 @@ class Settings(BaseSettings):
     voice_gender: Literal["feminine", "masculine"] = "feminine"
     # Hard cap per call, so a stuck or spam call can't burn minutes.
     max_call_seconds: int = 600
+
+    # After each call where the caller spoke, Claude summarizes it and Resend (resend.com) emails the summary and the
+    # transcript to OWNER_EMAIL. Off unless all three are set.
+    resend_api_key: str = ""
+    owner_email: str = ""
+    # The sender, on a domain verified in Resend: "Receptionist <calls@yourdomain.com>". Resend's test sender,
+    # onboarding@resend.dev, only delivers to the Resend account's own address.
+    summary_from_email: str = ""
 
     @field_validator("business_country")
     @classmethod
