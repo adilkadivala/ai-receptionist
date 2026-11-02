@@ -18,6 +18,12 @@
       "runtimeExecutable": "uv",
       "runtimeArgs": ["run", "--directory", "apps/server", "uvicorn", "api.main:app", "--reload", "--port", "8000"],
       "port": 8000
+    },
+    {
+      "name": "api-8010",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "--directory", "apps/server", "uvicorn", "api.main:app", "--port", "8010"],
+      "port": 8010
     }
   ]
 }
