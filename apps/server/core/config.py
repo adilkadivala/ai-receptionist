@@ -60,10 +60,21 @@ class Settings(BaseSettings):
     # Indian one. They steer the listening, and the greeting offers the second. The greeting itself is English, so
     # English comes first.
     caller_languages: str = "en,es"
+    # Where the business is (ISO code: US, CA, IN…): a caller's number without a country code is a number from here,
+    # and its length and read-back follow this country's (voice/prompt.py knows US, CA and IN; others get a general rule).
+    business_country: str = "US"
     # The voice's gender: where a language marks the speaker's gender, as Hindi, Arabic and French do, the AI matches it.
     voice_gender: Literal["feminine", "masculine"] = "feminine"
     # Hard cap per call, so a stuck or spam call can't burn minutes.
     max_call_seconds: int = 600
+
+    @field_validator("business_country")
+    @classmethod
+    def country_code(cls, value: str) -> str:
+        code = value.strip().upper()
+        if len(code) != 2 or not code.isalpha():
+            raise ValueError("BUSINESS_COUNTRY must be a two-letter country code, such as US or IN")
+        return code
 
     @field_validator("caller_languages")
     @classmethod

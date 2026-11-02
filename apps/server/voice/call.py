@@ -29,6 +29,7 @@ from pipecat.workers.runner import WorkerRunner
 from core.config import Settings
 from voice.end_call import END_CALL, end_call
 from voice.language import LanguageFollower
+from voice.numbers import NumberNoter
 from voice.prompt import CALL_CONNECTED, DEMO_BUSINESS_INFO, LANGUAGE_OFFERS, greeting, system_prompt
 
 PHONE_SAMPLE_RATE = 8000  # Telnyx streams 8 kHz audio
@@ -49,7 +50,10 @@ def build_services(settings: Settings) -> tuple[DeepgramFluxSTTService, Anthropi
         settings=AnthropicLLMService.Settings(
             model=settings.llm_model,
             system_instruction=system_prompt(
-                settings.business_name, settings.business_info() or DEMO_BUSINESS_INFO, settings.voice_gender
+                settings.business_name,
+                settings.business_info() or DEMO_BUSINESS_INFO,
+                settings.voice_gender,
+                settings.business_country,
             ),
             max_tokens=settings.llm_max_tokens,
             enable_prompt_caching=True,
@@ -119,6 +123,7 @@ async def converse(
             transport.input(),
             stt,
             LanguageFollower(),
+            NumberNoter(settings.business_country),
             user_aggregator,
             llm,
             tts,

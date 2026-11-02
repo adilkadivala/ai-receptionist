@@ -137,3 +137,23 @@ def test_prompt_matches_the_voice_gender():
 def test_greeting_language_must_come_first():
     with pytest.raises(ValidationError, match="must start with en"):
         make_settings(caller_languages="hi,en")
+
+
+def test_phone_numbers_follow_the_business_country():
+    india = build_services(make_settings(business_country="in"))[1]._settings.system_instruction
+    assert "Callers are usually in India" in india and "plus nine one" in india
+    assert "Callers are usually in the United States" in build_services(make_settings())[1]._settings.system_instruction
+    # A country without its own rule still counts digits and reads numbers in their usual groups.
+    elsewhere = build_services(make_settings(business_country="AE"))[1]._settings.system_instruction
+    assert "Callers are usually" not in elsewhere and "[digits heard" in elsewhere
+
+
+def test_business_country_is_a_two_letter_code():
+    with pytest.raises(ValidationError, match="two-letter country code"):
+        make_settings(business_country="India")
+
+
+def test_it_never_claims_a_booking_and_ignores_odd_words():
+    prompt = build_services(make_settings())[1]._settings.system_instruction
+    assert "never say you've booked, noted, saved or confirmed" in prompt
+    assert "treat it as misheard" in prompt and "don't take it as a yes" in prompt

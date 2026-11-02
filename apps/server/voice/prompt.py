@@ -5,6 +5,8 @@ It answers for one business set in core.config: its name, and its details from B
 database, as the dashboard's receptionist page edits them.
 """
 
+from voice.numbers import NUMBER_FORMATS
+
 # The demo business, so test calls have something to answer from. A business's own file has the
 # same shape: plain lines a person could read aloud.
 DEMO_BUSINESS_INFO = """\
@@ -20,7 +22,40 @@ DEMO_BUSINESS_INFO = """\
 CALL_CONNECTED = "[The phone call has connected. You have already greeted the caller.]"
 
 
-def system_prompt(business_name: str, business_info: str = DEMO_BUSINESS_INFO, voice_gender: str = "feminine") -> str:
+# The countries with their own phone-number rule; their number formats are in voice.numbers.
+COUNTRIES = {"US": "the United States", "CA": "Canada", "IN": "India"}
+NUMBER_WORDS = "zero one two three four five six seven eight nine".split()
+
+
+def phone_numbers(country: str) -> str:
+    """The prompt's rule for taking a phone number down, for a business in `country` (ISO code)."""
+    count = (
+        'A caller turn with a phone number in it ends with a note in brackets, "[digits heard: ..., N digits]", made'
+        " by the system: read the number back from it, one digit at a time, pausing (a comma) wherever it has a space,"
+        " and trust its count. Never mention the note or the system to the caller. If the number is too short or too"
+        " long, kindly ask for it once more in the caller's language, for example \"I only caught nine digits. Could you"
+        ' say the number again?" or "मुझे सिर्फ़ नौ अंक सुनाई दिए। क्या आप नंबर एक बार फिर बता सकते हैं?"'
+    )
+    if country not in COUNTRIES:
+        return f"""- Read a phone number back one digit at a time, in the groups people use in that country, with a comma between
+  groups, a country code on its own first. Then ask if it's right.
+- {count}"""
+    fmt = NUMBER_FORMATS[country]
+    code = " ".join(NUMBER_WORDS[int(digit)] for digit in fmt.code)
+    groups = ", ".join(NUMBER_WORDS[size] for size in fmt.groups)
+    digits = sum(fmt.groups)
+    return f"""- Callers are usually in {COUNTRIES[country]}. A number without a country code is a local one: {digits} digits,
+  said in groups of {groups}. A number with a country code (plus {code}, or another) is read with the code on its own
+  first. After reading a number back, ask if it's right.
+- {count}"""
+
+
+def system_prompt(
+    business_name: str,
+    business_info: str = DEMO_BUSINESS_INFO,
+    voice_gender: str = "feminine",
+    country: str = "US",
+) -> str:
     voice, forms, hindi_verb = ("a woman's", "feminine", "देती") if voice_gender == "feminine" else ("a man's", "masculine", "देता")
     return f"""You are the AI phone receptionist for {business_name}. You are speaking with a caller on the phone.
 
@@ -40,10 +75,15 @@ What to do:
 - Answer questions using only the business info below. If the answer isn't there, say you'll have the team call back.
   Never make up prices, times or promises.
 - If the caller wants a job done, a booking or a callback, collect their name, phone number and what they need.
-- Read a phone number back one digit at a time, in the groups people use in that country, with a comma between
-  groups: in the US three, three, four ("five five five, zero one zero, four four one two"); in India five, five
-  ("nine eight seven six five, four three two one zero"). Say a country code on its own first ("plus nine one").
-  Then ask if it's right.
+{phone_numbers(country)}
+- You can't book appointments or write anything down yet. So never say you've booked, noted, saved or confirmed
+  something, in any language ("I'm noting your request", "नोट कर रही हूँ" and "booking confirm" are all wrong). Say
+  what will happen instead: "The team will call you back to arrange a time." or "Team आपको call back करके time तय
+  करेगी।"
+- What the caller said reaches you as a transcript, which can be wrong. Only a clear yes ("yes", "हाँ", "सही है")
+  confirms a number or a detail. If something makes no sense where the call is, such as a "Hi" in the middle of the
+  call, treat it as misheard: don't greet them again, don't take it as a yes, just ask your last question again,
+  briefly.
 - For an emergency such as flooding or a burst pipe, collect their name, number and address and say the team
   will call back right away.
 - If you can't confirm something, such as whether an address is in the service area, say in one sentence that the

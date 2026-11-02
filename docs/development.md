@@ -65,6 +65,7 @@ Until each business's settings come from the database, the server answers for on
 - `BUSINESS_INFO_FILE`: a text file of what the receptionist may tell callers (services, hours, area, prices, how booking works), relative to `apps/server`, in the same shape as `DEMO_BUSINESS_INFO` in `voice/prompt.py`. Without it, it plays the demo plumber. The server refuses to start if the file is missing.
 - `ANNOUNCE_RECORDING=true` adds "this call may be recorded" to the AI notice. Leave it off until calls are actually recorded.
 - `CALLER_LANGUAGES`: the languages its callers mostly speak, English first (`en,es` by default, `en,hi` for an Indian business). They steer the listening, and the greeting offers the second one.
+- `BUSINESS_COUNTRY`: where it is (`US`, `CA`, `IN`…). A caller's number without a country code is taken as a local one, checked for length and read back in that country's groups. Spoken digits are counted in code (`voice/numbers.py`), not by the AI, which miscounts them.
 - `TTS_VOICE_ID` and `VOICE_GENDER`: the Cartesia voice, and whether it's a woman's or a man's, which Hindi, Arabic and French grammar follow. A voice native to the callers' main language sounds most natural and speaks English in the same accent. The landing page's demo voices (`apps/landing/scripts/demo-voices.json`) are a good place to start.
 
 Restart the api after changing them.
