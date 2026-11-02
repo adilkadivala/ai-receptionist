@@ -1,0 +1,52 @@
+{
+  "en": {
+    "ai": {
+      "id": "db6b0ed5-d5d3-463d-ae85-518a07d3c2b4",
+      "name": "Skylar"
+    },
+    "caller": {
+      "id": "62ae83ad-4f6a-430b-af41-a9bede9286ca",
+      "name": "Gemma"
+    }
+  },
+  "fr": {
+    "ai": {
+      "id": "7c58f4a4-a72c-42fa-a503-41b9408820f3",
+      "name": "Inès"
+    },
+    "caller": {
+      "id": "b56a7171-86f0-42b6-b3fa-a316794aa4e0",
+      "name": "Zoé"
+    }
+  },
+  "ar": {
+    "ai": {
+      "id": "f9f9f472-6247-4403-9abe-616f7c407c63",
+      "name": "Raed"
+    },
+    "caller": {
+      "id": "9cbad5f7-fbf6-4416-a22f-1ecc75ad40a2",
+      "name": "Youssef"
+    }
+  },
+  "hi": {
+    "ai": {
+      "id": "4459a9a5-69d6-4680-b970-e13dc51845b6",
+      "name": "Siya"
+    },
+    "caller": {
+      "id": "cb9c954d-bcaa-43ed-82bf-aeb5e88a3cb5",
+      "name": "Kabir"
+    }
+  },
+  "de": {
+    "ai": {
+      "id": "9b4d08b6-0494-4301-ab92-9150f4ee2718",
+      "name": "Marlene"
+    },
+    "caller": {
+      "id": "57a3a9e0-a91c-4c94-a2bb-e6cbab3ae649",
+      "name": "Clemens"
+    }
+  }
+}
