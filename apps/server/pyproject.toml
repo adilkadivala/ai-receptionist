@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "AI phone receptionist: answers a business's calls with Claude"
 requires-python = ">=3.12"
 dependencies = [
+    "aiortc>=1.15.0",
     "alembic>=1.16",
     "fastapi[standard]>=0.115.6",
     "pipecat-ai[anthropic,cartesia,deepgram,websocket]>=1.15.0",

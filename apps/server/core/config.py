@@ -2,7 +2,9 @@ from functools import lru_cache
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+# What a phone call needs. A browser test call (voice.browser) needs only the listening and voice keys.
 REQUIRED_KEYS = ("media_stream_token", "telnyx_api_key", "deepgram_api_key", "cartesia_api_key")
+VOICE_KEYS = ("deepgram_api_key", "cartesia_api_key")
 
 
 class Settings(BaseSettings):
@@ -46,8 +48,8 @@ class Settings(BaseSettings):
     # Hard cap per call, so a stuck or spam call can't burn minutes.
     max_call_seconds: int = 600
 
-    def missing_keys(self) -> list[str]:
-        return [name.upper() for name in REQUIRED_KEYS if not getattr(self, name)]
+    def missing_keys(self, names: tuple[str, ...] = REQUIRED_KEYS) -> list[str]:
+        return [name.upper() for name in names if not getattr(self, name)]
 
 
 @lru_cache

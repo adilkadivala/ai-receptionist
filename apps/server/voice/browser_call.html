@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Test call · AI Receptionist</title>
+    <style>
+      /* Signal colours (packages/ui globals.css), written out because this page is served by the Python server. */
+      :root {
+        color-scheme: light dark;
+        --background: oklch(0.985 0 0);
+        --card: oklch(1 0 0);
+        --foreground: oklch(0.141 0.004 285.8);
+        --muted: oklch(0.502 0.013 285.9);
+        --border: oklch(0.92 0.004 286.3);
+        --primary: oklch(0.497 0.256 269.6);
+        --danger: oklch(0.577 0.245 27.325);
+        --live: oklch(0.627 0.17 149.2);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --background: oklch(0.141 0.004 285.8);
+          --card: oklch(0.18 0.005 285.8);
+          --foreground: oklch(0.985 0 0);
+          --muted: oklch(0.705 0.015 286);
+          --border: oklch(1 0 0 / 10%);
+          --primary: oklch(0.55 0.24 270);
+          --danger: oklch(0.704 0.191 22.216);
+          --live: oklch(0.7 0.16 150);
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 16px;
+        background: var(--background);
+        color: var(--foreground);
+        font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+      }
+      main {
+        width: min(100%, 420px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 32px 24px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--card);
+        text-align: center;
+      }
+      .label {
+        margin: 0;
+        font: 12px ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      h1 {
+        margin: 6px 0 0;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+      #call {
+        width: 112px;
+        height: 112px;
+        border: 0;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: inset 0 1px 0 oklch(1 0 0 / 22%), 0 12px 28px -12px var(--primary);
+        transition: transform 0.15s ease-out, background 0.2s;
+      }
+      #call:hover {
+        transform: translateY(-1px);
+      }
+      #call:focus-visible {
+        outline: 3px solid color-mix(in oklch, var(--primary) 45%, transparent);
+        outline-offset: 4px;
+      }
+      #call:disabled {
+        opacity: 0.6;
+        cursor: progress;
+      }
+      [data-state="live"] #call {
+        background: var(--danger);
+        box-shadow: inset 0 1px 0 oklch(1 0 0 / 22%), 0 12px 28px -12px var(--danger);
+      }
+      #status {
+        min-height: 3em;
+        margin: 0;
+        color: var(--muted);
+      }
+      [data-state="error"] #status {
+        color: var(--danger);
+      }
+      #timer {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font: 14px ui-monospace, SFMono-Regular, Menlo, monospace;
+        visibility: hidden;
+      }
+      [data-state="live"] #timer {
+        visibility: visible;
+      }
+      #timer::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--live);
+      }
+      .note {
+        margin: 0;
+        font-size: 13px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body data-state="idle">
+    <main>
+      <div>
+        <p class="label">Test call</p>
+        <h1>{{business}}</h1>
+      </div>
+      <button id="call" type="button">Start call</button>
+      <span id="timer" aria-label="Call time">00:00</span>
+      <p id="status" role="status">Talk to the receptionist through your microphone, as a caller would.</p>
+      <p class="note">
+        The same listening, AI and voice as a phone call, without the phone line. The transcript appears in the server's
+        log when you hang up. Works only on this computer.
+      </p>
+    </main>
+    <audio autoplay></audio>
+
+    <script>
+      const body = document.body;
+      const button = document.getElementById("call");
+      const statusLine = document.getElementById("status");
+      const timer = document.getElementById("timer");
+      const audio = document.querySelector("audio");
+
+      let peer = null;
+      let microphone = null;
+      let clock = null;
+
+      function show(state, message) {
+        body.dataset.state = state;
+        statusLine.textContent = message;
+        button.textContent = state === "live" || state === "connecting" ? "Hang up" : "Start call";
+        button.disabled = state === "connecting";
+      }
+
+      function startClock() {
+        const started = Date.now();
+        clock = setInterval(() => {
+          const seconds = Math.floor((Date.now() - started) / 1000);
+          timer.textContent = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+        }, 500);
+      }
+
+      function hangUp(state = "idle", message = "Call ended. Start another whenever you like.") {
+        clearInterval(clock);
+        timer.textContent = "00:00";
+        peer?.close();
+        peer = null;
+        for (const track of microphone?.getTracks() ?? []) track.stop();
+        microphone = null;
+        audio.srcObject = null;
+        show(state, message);
+      }
+
+      // Sends the offer once the browser has gathered its network candidates, so no further exchange is needed.
+      function candidatesGathered(connection) {
+        if (connection.iceGatheringState === "complete") return Promise.resolve();
+        return new Promise((resolve) => {
+          connection.addEventListener("icegatheringstatechange", () => {
+            if (connection.iceGatheringState === "complete") resolve();
+          });
+          setTimeout(resolve, 2000);
+        });
+      }
+
+      async function call() {
+        show("connecting", "Connecting…");
+        try {
+          microphone = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+          });
+        } catch {
+          return hangUp("error", "The microphone is blocked. Allow it from the address bar, then try again.");
+        }
+
+        peer = new RTCPeerConnection();
+        // Pipecat sends status messages over a data channel. The page doesn't use them, but an open channel keeps
+        // the server from queueing them and warning about it.
+        peer.createDataChannel("events");
+        for (const track of microphone.getTracks()) peer.addTrack(track, microphone);
+        peer.ontrack = (event) => {
+          audio.srcObject = event.streams[0] ?? new MediaStream([event.track]);
+        };
+        peer.onconnectionstatechange = () => {
+          const state = peer?.connectionState;
+          if (state === "connected") {
+            show("live", "Connected. It greets you first, then it's your turn.");
+            startClock();
+          } else if (state === "failed" || state === "disconnected") {
+            hangUp("error", "The call dropped. Is the server still running?");
+          }
+        };
+
+        try {
+          await peer.setLocalDescription(await peer.createOffer());
+          await candidatesGathered(peer);
+          const response = await fetch("/dev/call/offer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sdp: peer.localDescription.sdp, type: peer.localDescription.type }),
+          });
+          if (!response.ok) {
+            const problem = await response.json().catch(() => ({}));
+            return hangUp("error", problem.detail ?? `The server answered ${response.status}.`);
+          }
+          const answer = await response.json();
+          await peer.setRemoteDescription({ sdp: answer.sdp, type: answer.type });
+        } catch {
+          hangUp("error", "Couldn't reach the server. Is it running on this computer?");
+        }
+      }
+
+      button.addEventListener("click", () => {
+        if (peer) hangUp();
+        else call();
+      });
+      window.addEventListener("pagehide", () => peer?.close());
+    </script>
+  </body>
+</html>

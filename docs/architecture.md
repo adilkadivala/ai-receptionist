@@ -277,6 +277,7 @@ Ai-receptionist/
 │       ├── voice/                process 2: live calls
 │       │   ├── routes.py  texml.py               Telnyx webhook and audio WebSocket
 │       │   ├── call.py                           the pipeline: wires the stages together, handles barge-in
+│       │   ├── browser.py  browser_call.html     test calls from a browser on this computer, over WebRTC
 │       │   ├── language.py  prompt.py
 │       │   └── (next) main.py    its own entry point (today voice is mounted inside the api)
 │       │       (next) stt.py  tts.py             one file per stage, each with its backup and deadline

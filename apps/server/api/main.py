@@ -2,6 +2,7 @@ from fastapi import APIRouter, FastAPI
 from pydantic import BaseModel
 
 from core.config import get_settings
+from voice.browser import router as browser_call_router
 from voice.routes import router as telnyx_router
 
 app = FastAPI(title="AI Receptionist API", version="0.1.0")
@@ -21,3 +22,4 @@ def health() -> Health:
 
 app.include_router(api)
 app.include_router(telnyx_router)  # public: Telnyx connects here
+app.include_router(browser_call_router)  # this computer only: test calls from a browser

@@ -24,6 +24,7 @@ def use_settings(monkeypatch):
     def apply(settings: Settings) -> Settings:
         monkeypatch.setattr("api.main.get_settings", lambda: settings)
         monkeypatch.setattr("voice.routes.get_settings", lambda: settings)
+        monkeypatch.setattr("voice.browser.get_settings", lambda: settings)
         return settings
 
     return apply

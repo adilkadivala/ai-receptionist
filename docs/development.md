@@ -52,6 +52,12 @@ If port 8000 is taken by another project, run the api on another port and point 
 API_URL=http://localhost:8001 pnpm dev:dashboard
 ```
 
+## Talking to the receptionist without a phone
+
+With the api running, open `http://localhost:<port>/dev/call` (for example `http://localhost:8000/dev/call`) in a browser on the same computer and press **Start call**. You talk through the microphone to the same listening, AI and voice as a phone call; only the phone line is missing, so it works without Telnyx, a phone number or call charges. It needs `DEEPGRAM_API_KEY` and `CARTESIA_API_KEY`, plus Anthropic credentials. When you hang up, the transcript is in the api's log.
+
+The page and its `/dev/call/offer` endpoint answer only requests made on this computer. Through a tunnel such as ngrok they return 404, so nobody else can start calls that spend our API minutes.
+
 ## Every day
 
 Run the same checks CI runs.
