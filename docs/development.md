@@ -58,6 +58,17 @@ With the api running, open `http://localhost:<port>/dev/call` (for example `http
 
 The page and its `/dev/call/offer` endpoint answer only requests made on this computer. Through a tunnel such as ngrok they return 404, so nobody else can start calls that spend our API minutes.
 
+## Answering as a real business
+
+Until each business's settings come from the database, the server answers for one business set in `apps/server/.env`:
+- `BUSINESS_NAME`: the name in the greeting and the prompt.
+- `BUSINESS_INFO_FILE`: a text file of what the receptionist may tell callers (services, hours, area, prices, how booking works), relative to `apps/server`, in the same shape as `DEMO_BUSINESS_INFO` in `voice/prompt.py`. Without it, it plays the demo plumber. The server refuses to start if the file is missing.
+- `ANNOUNCE_RECORDING=true` adds "this call may be recorded" to the AI notice. Leave it off until calls are actually recorded.
+- `CALLER_LANGUAGES`: the languages its callers mostly speak, English first (`en,es` by default, `en,hi` for an Indian business). They steer the listening, and the greeting offers the second one.
+- `TTS_VOICE_ID` and `VOICE_GENDER`: the Cartesia voice, and whether it's a woman's or a man's, which Hindi, Arabic and French grammar follow. A voice native to the callers' main language sounds most natural and speaks English in the same accent. The landing page's demo voices (`apps/landing/scripts/demo-voices.json`) are a good place to start.
+
+Restart the api after changing them.
+
 ## Every day
 
 Run the same checks CI runs.

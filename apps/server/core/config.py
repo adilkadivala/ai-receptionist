@@ -1,6 +1,12 @@
 from functools import lru_cache
+from pathlib import Path
+from typing import Literal
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# apps/server, which relative file paths in settings are read from.
+SERVER_DIR = Path(__file__).resolve().parents[1]
 
 # What a phone call needs. A browser test call (voice.browser) needs only the listening and voice keys.
 REQUIRED_KEYS = ("media_stream_token", "telnyx_api_key", "deepgram_api_key", "cartesia_api_key")
@@ -43,13 +49,49 @@ class Settings(BaseSettings):
     tts_model: str = "sonic-3.6"
     tts_voice_id: str = "71a7ad14-091c-4e8e-a314-022ece01c121"
 
-    # The business this number answers for. Week 2 replaces this with per-business data.
+    # The business this number answers for, until each business's settings come from the database.
     business_name: str = "Bright Pipes Plumbing"
+    # A text file of what the receptionist knows about the business: services, hours, area, prices, how booking
+    # works. Relative to apps/server. Empty: the demo plumber in voice/prompt.py.
+    business_info_file: str = ""
+    # Add "this call may be recorded" to the AI notice. Off until calls are actually recorded.
+    announce_recording: bool = False
+    # The languages the business's callers mostly speak, comma-separated: "en,es" for a US business, "en,hi" for an
+    # Indian one. They steer the listening, and the greeting offers the second. The greeting itself is English, so
+    # English comes first.
+    caller_languages: str = "en,es"
+    # The voice's gender: where a language marks the speaker's gender, as Hindi, Arabic and French do, the AI matches it.
+    voice_gender: Literal["feminine", "masculine"] = "feminine"
     # Hard cap per call, so a stuck or spam call can't burn minutes.
     max_call_seconds: int = 600
 
+    @field_validator("caller_languages")
+    @classmethod
+    def english_first(cls, value: str) -> str:
+        codes = [code.strip().lower() for code in value.split(",") if code.strip()]
+        if not codes or codes[0] != "en":
+            raise ValueError("CALLER_LANGUAGES must start with en: the greeting is in English")
+        return ",".join(codes)
+
+    @field_validator("business_info_file")
+    @classmethod
+    def business_info_file_exists(cls, value: str) -> str:
+        if value and not (SERVER_DIR / value).is_file():
+            raise ValueError(f"BUSINESS_INFO_FILE: no file at {SERVER_DIR / value}")
+        return value
+
     def missing_keys(self, names: tuple[str, ...] = REQUIRED_KEYS) -> list[str]:
         return [name.upper() for name in names if not getattr(self, name)]
+
+    def languages(self) -> list[str]:
+        """CALLER_LANGUAGES as codes, English first: ["en", "hi"]."""
+        return self.caller_languages.split(",")
+
+    def business_info(self) -> str | None:
+        """The business's details from BUSINESS_INFO_FILE, or None when it isn't set."""
+        if not self.business_info_file:
+            return None
+        return (SERVER_DIR / self.business_info_file).read_text(encoding="utf-8").strip()
 
 
 @lru_cache

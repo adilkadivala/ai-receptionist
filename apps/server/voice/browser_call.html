@@ -202,9 +202,14 @@
         }
 
         peer = new RTCPeerConnection();
-        // Pipecat sends status messages over a data channel. The page doesn't use them, but an open channel keeps
-        // the server from queueing them and warning about it.
-        peer.createDataChannel("events");
+        let wasLive = false;
+        // Pipecat sends status messages over a data channel; the page doesn't need them. The channel matters
+        // because it closes as soon as the server hangs up, after the receptionist's goodbye, while the connection
+        // itself can take Chrome up to half a minute to notice.
+        const events = peer.createDataChannel("events");
+        events.onclose = () => {
+          if (wasLive && peer) hangUp("idle", "The receptionist ended the call. Start another whenever you like.");
+        };
         for (const track of microphone.getTracks()) peer.addTrack(track, microphone);
         peer.ontrack = (event) => {
           audio.srcObject = event.streams[0] ?? new MediaStream([event.track]);
@@ -212,10 +217,13 @@
         peer.onconnectionstatechange = () => {
           const state = peer?.connectionState;
           if (state === "connected") {
+            wasLive = true;
             show("live", "Connected. It greets you first, then it's your turn.");
             startClock();
-          } else if (state === "failed" || state === "disconnected") {
-            hangUp("error", "The call dropped. Is the server still running?");
+          } else if (state === "failed" || state === "disconnected" || state === "closed") {
+            // Once the call was live, the receptionist hanging up after its goodbye looks the same as this.
+            if (wasLive) hangUp("idle", "The receptionist ended the call. Start another whenever you like.");
+            else hangUp("error", "The call couldn't connect. Is the server still running?");
           }
         };
 

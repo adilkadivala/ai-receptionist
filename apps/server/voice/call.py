@@ -9,6 +9,7 @@ import asyncio
 
 from fastapi import WebSocket
 from loguru import logger
+from pipecat.adapters.llm.schemas.tools_schema import ToolsSchema
 from pipecat.frames.frames import EndFrame, TTSSpeakFrame, TTSUpdateSettingsFrame
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.worker import PipelineParams, PipelineWorker
@@ -26,8 +27,9 @@ from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams, FastAPI
 from pipecat.workers.runner import WorkerRunner
 
 from core.config import Settings
+from voice.end_call import END_CALL, end_call
 from voice.language import LanguageFollower
-from voice.prompt import CALL_CONNECTED, SPANISH_OFFER, greeting, system_prompt
+from voice.prompt import CALL_CONNECTED, DEMO_BUSINESS_INFO, LANGUAGE_OFFERS, greeting, system_prompt
 
 PHONE_SAMPLE_RATE = 8000  # Telnyx streams 8 kHz audio
 
@@ -37,18 +39,23 @@ TIME_LIMIT_GOODBYE = "We've reached the time limit for this call. The team will 
 def build_services(settings: Settings) -> tuple[DeepgramFluxSTTService, AnthropicLLMService, CartesiaTTSService]:
     stt = DeepgramFluxSTTService(
         api_key=settings.deepgram_api_key,
-        settings=DeepgramFluxSTTService.Settings(model=settings.stt_model, language_hints=[Language.EN, Language.ES]),
+        settings=DeepgramFluxSTTService.Settings(
+            model=settings.stt_model, language_hints=[Language(code) for code in settings.languages()]
+        ),
     )
     llm = AnthropicLLMService(
         # None lets the SDK find credentials itself (env vars, `ant auth login` profile).
         api_key=settings.anthropic_api_key or None,
         settings=AnthropicLLMService.Settings(
             model=settings.llm_model,
-            system_instruction=system_prompt(settings.business_name),
+            system_instruction=system_prompt(
+                settings.business_name, settings.business_info() or DEMO_BUSINESS_INFO, settings.voice_gender
+            ),
             max_tokens=settings.llm_max_tokens,
             enable_prompt_caching=True,
         ),
     )
+    llm.register_function(END_CALL.name, end_call)
     tts = CartesiaTTSService(
         api_key=settings.cartesia_api_key,
         settings=CartesiaTTSService.Settings(model=settings.tts_model, voice=settings.tts_voice_id, language=Language.EN),
@@ -56,14 +63,18 @@ def build_services(settings: Settings) -> tuple[DeepgramFluxSTTService, Anthropi
     return stt, llm, tts
 
 
-def opening_frames(business_name: str) -> list:
-    """Greeting with the AI and recording notice, then an offer in Spanish."""
-    return [
-        TTSSpeakFrame(greeting(business_name)),
-        TTSUpdateSettingsFrame(delta=TTSSettings(language=Language.ES)),
-        TTSSpeakFrame(SPANISH_OFFER),
-        TTSUpdateSettingsFrame(delta=TTSSettings(language=Language.EN)),
-    ]
+def opening_frames(business_name: str, announce_recording: bool = False, languages: list[str] | None = None) -> list:
+    """The English greeting with the AI notice (and the recording notice, if calls are recorded), then an offer in the
+    business's second language when there's a line for it: Spanish by default."""
+    frames: list = [TTSSpeakFrame(greeting(business_name, announce_recording))]
+    second = (languages or ["en", "es"])[1:2]
+    if second and (offer := LANGUAGE_OFFERS.get(second[0])):
+        frames += [
+            TTSUpdateSettingsFrame(delta=TTSSettings(language=Language(second[0]))),
+            TTSSpeakFrame(offer),
+            TTSUpdateSettingsFrame(delta=TTSSettings(language=Language.EN)),
+        ]
+    return frames
 
 
 async def run_call(websocket: WebSocket, call: TelnyxCallData, settings: Settings) -> None:
@@ -100,7 +111,7 @@ async def converse(
     """
     stt, llm, tts = build_services(settings)
 
-    context = LLMContext(messages=[{"role": "user", "content": CALL_CONNECTED}])
+    context = LLMContext(messages=[{"role": "user", "content": CALL_CONNECTED}], tools=ToolsSchema(standard_tools=[END_CALL]))
     user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
 
     pipeline = Pipeline(
@@ -130,11 +141,10 @@ async def converse(
     @transport.event_handler("on_client_connected")
     async def on_client_connected(transport, client):
         logger.info(f"{label}: connected")
-        await worker.queue_frames(opening_frames(settings.business_name))
+        await worker.queue_frames(opening_frames(settings.business_name, settings.announce_recording, settings.languages()))
 
     @transport.event_handler("on_client_disconnected")
     async def on_client_disconnected(transport, client):
-        logger.info(f"{label}: ended. Transcript:\n{transcript(context)}")
         await runner.cancel()
 
     # Hard cap per call, so a stuck or spam call can't burn minutes.
@@ -148,6 +158,8 @@ async def converse(
         await runner.run()
     finally:
         timer.cancel()
+        # However the call ended: the caller hung up, the receptionist did (end_call), or the time limit.
+        logger.info(f"{label}: ended. Transcript:\n{transcript(context)}")
 
 
 def transcript(context: LLMContext) -> str:
@@ -160,5 +172,7 @@ def transcript(context: LLMContext) -> str:
             continue
         if isinstance(content, list):
             content = " ".join(part.get("text", "") for part in content if isinstance(part, dict))
+        if not content:  # a message that only carries a tool call, such as end_call
+            continue
         lines.append(f"{'Caller' if role == 'user' else 'AI'}: {content}")
     return "\n".join(lines)
