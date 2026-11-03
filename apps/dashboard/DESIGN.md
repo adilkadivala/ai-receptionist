@@ -52,6 +52,10 @@ The landing page's motion is for a page read once; this is a screen people keep 
 
 `src/components/`: `AppSidebar` with `SidebarMat` and `SidebarRuler` (the blueprint it's drawn on), `SiteHeader` with `FrameRule` (the dashed guide line), `PageHeader` (optional bracketed label, headline, lead, actions), `SectionTitle` (a section's bracketed label, description and controls), `StatCard` (one hairline cell), `EmptyState` (a patterned stage with the icon as a white object), `SettingsCard`, `DataTable`, `Pager`, `SaveBar`, `UsageMeter` (`onInk` draws the bar in white), `surfaces.ts`. From `@receptionist/ui/blocks/`: `Blueprint`, `blueprintGrid`, `rulerTicks`, `Pattern`, `HatchBand`, `Eyebrow`, `brandText` and `PlanCard`, all shared with the landing page.
 
+## The admin area
+
+`/admin` is the founders' view across every customer (docs/development.md). It's drawn with the same system so it needs no second one, with three differences so it's never mistaken for a customer's dashboard: its sidebar is headed "Admin · every customer" and ends with a glass note saying it works on this computer only; the header carries an "Admin, read only" chip where the customer's carries "Sample data"; and it shows only real data from the api, so it has no sample-data chip at all. The customer list and a customer's calls are `floating` tables, a customer's numbers and receptionists are `raised` settings cards, the totals are the Overview's hairline cells, and a call opens in the same sheet as a customer's call. Calls by outcome is a list of outcome pills with bars in the one accent.
+
 ## UX rules
 
 1. Every number on a card says what it's counted against ("212 of 350 minutes", not "212").

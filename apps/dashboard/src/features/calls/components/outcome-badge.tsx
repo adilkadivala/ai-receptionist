@@ -13,9 +13,17 @@ const tones: Record<OutcomeTone, string> = {
   destructive: "bg-destructive/10 text-destructive",
 };
 
-/** How a call ended, as a pill. */
-export function OutcomeBadge({ outcome, className }: { outcome: CallOutcome | null; className?: string }) {
-  const { label, tone } = outcome ? outcomes[outcome] : { label: "In progress", tone: "neutral" as const };
+/** How a call ended, as a pill. `emptyLabel` names a call without an outcome. */
+export function OutcomeBadge({
+  outcome,
+  emptyLabel = "In progress",
+  className,
+}: {
+  outcome: CallOutcome | null;
+  emptyLabel?: string;
+  className?: string;
+}) {
+  const { label, tone } = outcome ? outcomes[outcome] : { label: emptyLabel, tone: "neutral" as const };
 
   return <Badge className={cn("h-6 border-transparent px-2.5", tones[tone], className)}>{label}</Badge>;
 }

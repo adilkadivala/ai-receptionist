@@ -108,6 +108,28 @@ The sender (`apps/server/voice/whatsapp.py`) pins Graph API v26.0. Meta charges 
 
 For now the summary is written and sent by the voice process itself (`apps/server/voice/summary.py`), in the background after the call has ended, so it never delays or breaks a call. A failed email isn't retried, and one in progress is lost if the api restarts. `docs/architecture.md` plans it as the worker's `summarize_call` job, queued once calls are saved to the database, which fixes both.
 
+## The admin pages (founders only)
+
+An admin area in the dashboard shows every customer's data in one place, read from the database:
+- **Overview** (`/admin`): how many customers there are; calls today, this week (from Monday) and in all, in your own time zone; talk minutes this week and in all; and every call by outcome.
+- **Customers** (`/admin/customers`): every organization, newest first, with its plan, data region, HIPAA mode, numbers, receptionists, calls, minutes, last call and sign-up date. Search by name, receptionist or a few digits of a number.
+- **A customer** (`/admin/customers/<id>`): its numbers and who answers each, its receptionists, then its calls, newest first, 25 to a page.
+- **A call** opens in a sheet over the customer: from, to, language, start and end, length, outcome, cost, Claude's summary once there is one, and the whole transcript.
+
+With the api and the dashboard running (above), open `http://localhost:5173/admin`. It's read only.
+
+**There's no admin login yet, so it only works on this computer:**
+- The `/api/admin/*` routes answer only requests addressed to localhost and not forwarded by a proxy, the same guard as the browser test call. Through ngrok or any other tunnel they return 404. The dashboard's dev server forwards `/api` without adding a forwarding header, so it works.
+- Only development builds include the pages. `pnpm build` leaves them out, so customers never download them.
+- **Before the api is deployed anywhere, a real admin login has to replace this guard**: a staff role on top of the planned users and memberships, checked on every admin route. Until then, never expose these routes.
+
+**How it reads across customers without loosening row-level security:**
+- The customer list and the totals are the only reads that cross organizations. They go through two `SECURITY DEFINER` functions, `admin_organizations()` and `admin_call_totals(time_zone)` (migration 0003), built like `resolve_phone_number`. They return names, plans, numbers, receptionist names and counts, never calls, and only the app role may run them. `Database.platform()` runs them in a read-only transaction with no organization set.
+- One customer's numbers, receptionists and calls are read through `Database.tenant()`, like every other read. So a transcript never crosses organizations.
+- Each time a call is opened, a row goes into that customer's `audit_log`: who (`admin on this computer` until there's a login), `call.transcript_viewed`, and the call. The app role can add to and read `audit_log`, never change or delete it.
+
+The code: `apps/server/api/routes/admin.py`, `api/schemas/admin.py`, `repositories/admin.py`; `apps/dashboard/src/features/admin/`, `pages/admin/`, `layouts/AdminLayout.tsx`.
+
 ## Every day
 
 Run the same checks CI runs.
@@ -124,6 +146,7 @@ pnpm check && pnpm typecheck && pnpm test && pnpm build
 
 - `pnpm fix` applies Biome's formatting and import order.
 - The database tests use their own database, `receptionist_test`. They skip themselves if Postgres isn't running. CI sets `REQUIRE_DB=1`, so there they fail instead.
+- The tests migrate that database down to nothing and back up to the newest migration they know. Two branches with different migrations sharing `receptionist_test` trip over each other's revisions, so a branch with a migration `main` doesn't have yet can use a database of its own: create it once (`CREATE DATABASE receptionist_mine OWNER receptionist_owner`, as the `postgres` user), then point the tests at it with `TEST_DATABASE_URL` and `TEST_MIGRATION_DATABASE_URL` (the same URLs as in `tests/db/conftest.py`, with your database's name).
 
 ## Changing the api
 
@@ -183,9 +206,13 @@ It reads `CARTESIA_API_KEY` from `apps/server/.env`. The voices it picked are sa
 
 - The api, voice and worker processes connect as `receptionist_app`, which can't bypass row-level security.
 - All work for a business runs inside `Database.tenant(organization_id)`. That sets the organization for one transaction, so every table shows and accepts only that organization's rows. Outside it, tables return nothing.
-- The one exception is `Database.resolve_number()`. A call arrives knowing only the dialed number, and this finds which business owns it. Future cross-organization work, such as claiming jobs or rolling up usage, follows the same pattern: a narrow `SECURITY DEFINER` function, never a role that bypasses the rules.
+- The exceptions are narrow `SECURITY DEFINER` functions, never a role that bypasses the rules:
+  - `Database.resolve_number()`: a call arrives knowing only the dialed number, and this finds which business owns it.
+  - The admin pages' customer list and totals (above), run in `Database.platform()`, a read-only transaction with no organization set.
+
+  Future cross-organization work, such as claiming jobs or rolling up usage, follows the same pattern.
 - Migrations run as `receptionist_owner`, which owns the tables and isn't limited by the rules.
-- `apps/server/tests/db/test_tenancy.py` tries to read, write and link across businesses, and every attempt must fail.
+- `apps/server/tests/db/test_tenancy.py` tries to read, write and link across businesses, and every attempt must fail. `tests/db/test_admin.py` checks the admin's reads across them: only the app role may run the functions, the platform transaction sees no rows and can't write, and a call is found only under its own business.
 
 ## Supply-chain safety
 

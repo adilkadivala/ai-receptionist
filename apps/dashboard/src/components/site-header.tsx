@@ -1,9 +1,7 @@
 import { Separator } from "@receptionist/ui/components/separator";
 import { SidebarTrigger } from "@receptionist/ui/components/sidebar";
-import { useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 import { useMatches, useNavigation } from "react-router";
-import { CallSearch } from "../features/calls/components/call-search";
-import { SampleDataBadge } from "../layouts/SampleDataBadge";
 import { FrameRule } from "./frame-rule";
 
 export type RouteHandle = { title: string };
@@ -24,10 +22,17 @@ export function usePageTitle() {
 }
 
 /**
- * dashboard-01's header: sidebar toggle and the page's title, then search and the page's own controls, which pages
- * put into `slotRef` with HeaderActions. A dashed guide line runs under it, as on the landing page.
+ * dashboard-01's header: sidebar toggle and the page's title, then the layout's own controls (`children`, such as
+ * search) and the page's, which pages put into `slotRef` with HeaderActions. A dashed guide line runs under it, as on
+ * the landing page.
  */
-export function SiteHeader({ slotRef }: { slotRef: (element: HTMLDivElement | null) => void }) {
+export function SiteHeader({
+  slotRef,
+  children,
+}: {
+  slotRef: (element: HTMLDivElement | null) => void;
+  children?: ReactNode;
+}) {
   const title = usePageTitle();
   const navigation = useNavigation();
 
@@ -36,8 +41,7 @@ export function SiteHeader({ slotRef }: { slotRef: (element: HTMLDivElement | nu
       <SidebarTrigger className="-ms-1.5" />
       <Separator orientation="vertical" className="me-1 data-vertical:h-4 data-vertical:self-center" />
       <h1 className="min-w-0 flex-1 truncate text-[15px] font-semibold tracking-[-0.01em]">{title}</h1>
-      <SampleDataBadge />
-      <CallSearch />
+      {children}
       <div ref={slotRef} className="contents" />
       <FrameRule />
       {navigation.state === "loading" && (

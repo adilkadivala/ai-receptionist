@@ -9,8 +9,8 @@ export type TranscriptTurn = {
   role: "caller" | "ai";
   text: string;
   language?: Language;
-  /** Seconds from the start of the call. */
-  at_seconds: number;
+  /** Seconds from the start of the call. Saved calls don't record it yet. */
+  at_seconds?: number;
 };
 
 export type Call = {

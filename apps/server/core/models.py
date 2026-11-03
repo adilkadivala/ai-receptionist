@@ -160,3 +160,19 @@ class Call(Base):
     # What the call cost us across providers, to track the per-plan margin.
     cost_usd: Mapped[Decimal | None] = mapped_column(Numeric(10, 5))
     created_at: Mapped[datetime] = _created_at()
+
+
+class AuditEntry(Base):
+    """Append-only: who viewed, changed, exported or deleted what. The app role can add and read rows, never change them."""
+
+    __tablename__ = "audit_log"
+
+    id: Mapped[uuid.UUID] = _id()
+    organization_id: Mapped[uuid.UUID] = _org_id()
+    # Who did it. Until there's a login, the admin pages write ADMIN_ON_THIS_COMPUTER (repositories.admin).
+    actor: Mapped[str] = mapped_column(Text)
+    # What they did, as thing.verb: "call.transcript_viewed".
+    action: Mapped[str] = mapped_column(Text)
+    # The row it was done to, such as the call whose transcript was read.
+    target_id: Mapped[uuid.UUID | None]
+    created_at: Mapped[datetime] = _created_at()
