@@ -3,7 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import field_validator
+from pydantic import ValidationInfo, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # apps/server, which relative file paths in settings are read from.
@@ -56,6 +56,9 @@ class Settings(BaseSettings):
 
     # The business this number answers for, until each business's settings come from the database.
     business_name: str = "Bright Pipes Plumbing"
+    # The number callers dial for it, with + and the country code. Each call is saved under the business that owns the
+    # number dialed (scripts/add_business.py adds it to the database); browser test calls count as calls to this one.
+    business_number: str = ""
     # A text file of what the receptionist knows about the business: services, hours, area, prices, how booking
     # works. Relative to apps/server. Empty: the demo plumber in voice/prompt.py.
     business_info_file: str = ""
@@ -91,12 +94,12 @@ class Settings(BaseSettings):
     whatsapp_template: str = "call_summary"
     whatsapp_template_language: str = "en"
 
-    @field_validator("owner_whatsapp")
+    @field_validator("owner_whatsapp", "business_number")
     @classmethod
-    def whatsapp_number(cls, value: str) -> str:
+    def international_number(cls, value: str, info: ValidationInfo) -> str:
         number = re.sub(r"[\s()-]", "", value)
         if number and not re.fullmatch(r"\+[1-9]\d{7,14}", number):
-            raise ValueError("OWNER_WHATSAPP must be a number with + and the country code, such as +919876543210")
+            raise ValueError(f"{info.field_name.upper()} must be a number with + and the country code, such as +919876543210")
         return number
 
     @field_validator("business_country")

@@ -27,6 +27,10 @@ You need Docker, [uv](https://docs.astral.sh/uv/), Node 22.22+ and pnpm 11.
    ```bash
    cd apps/server && uv run alembic upgrade head
    ```
+   Then, once `BUSINESS_NUMBER` is set (see "Saving calls" below), add the business so its calls are saved:
+   ```bash
+   cd apps/server && uv run python -m scripts.add_business
+   ```
 4. Install the frontend packages: about 500 MB in `node_modules`, mostly hard links into pnpm's shared store, so repeat installs download little.
    ```bash
    pnpm install
@@ -54,7 +58,7 @@ API_URL=http://localhost:8001 pnpm dev:dashboard
 
 ## Talking to the receptionist without a phone
 
-With the api running, open `http://localhost:<port>/dev/call` (for example `http://localhost:8000/dev/call`) in a browser on the same computer and press **Start call**. You talk through the microphone to the same listening, AI and voice as a phone call; only the phone line is missing, so it works without Telnyx, a phone number or call charges. It needs `DEEPGRAM_API_KEY` and `CARTESIA_API_KEY`, plus Anthropic credentials. When you hang up, the transcript is in the api's log, and the summary goes to the owner by email and on WhatsApp if they're set up (below).
+With the api running, open `http://localhost:<port>/dev/call` (for example `http://localhost:8000/dev/call`) in a browser on the same computer and press **Start call**. You talk through the microphone to the same listening, AI and voice as a phone call; only the phone line is missing, so it works without Telnyx, a phone number or call charges. It needs `DEEPGRAM_API_KEY` and `CARTESIA_API_KEY`, plus Anthropic credentials. When you hang up, the transcript is in the api's log, the call is saved as a call to `BUSINESS_NUMBER` (below), and the summary goes to the owner by email and on WhatsApp if they're set up.
 
 The page and its `/dev/call/offer` endpoint answer only requests made on this computer. Through a tunnel such as ngrok they return 404, so nobody else can start calls that spend our API minutes.
 
@@ -70,9 +74,22 @@ Until each business's settings come from the database, the server answers for on
 
 Restart the api after changing them.
 
+## Saving calls
+
+Every call is saved in the `calls` table when it ends, phone or browser test: who called, the number dialed, when, how long, the language the caller ended in, the transcript, and once Claude has written it, the summary and the outcome (`message`, `answered`, `spam`, or `abandoned` when the caller said nothing). A call belongs to the business that owns the number dialed, looked up with `resolve_phone_number`, so the business and its number must be in the database first:
+1. Set `BUSINESS_NUMBER` in `apps/server/.env`: the number callers dial, with + and the country code, such as `+16176656213`. Browser test calls count as calls to it.
+2. Add the business: `cd apps/server && uv run python -m scripts.add_business`. It creates the organization (`BUSINESS_NAME`), its receptionist and its number, once; running it again changes nothing.
+
+A call to a number that isn't in the database, or one the database can't take (it isn't running), isn't saved: the api logs why, and the owner still gets the summary. Saving happens in the background after the call, with the summary (`apps/server/voice/after_call.py`), so it never delays or breaks a call.
+
+To look at the saved calls until the dashboard shows them:
+```bash
+docker compose -f infra/compose/dev.yml exec postgres psql -U postgres receptionist -c "SELECT started_at, from_number, duration_seconds, outcome, summary->>'headline' FROM calls ORDER BY started_at DESC LIMIT 10"
+```
+
 ## Call summaries by email
 
-Nothing saves calls yet, so this email is how a business learns who called. After every call where the caller said something, phone or browser test, Claude (`LLM_MODEL`) writes a short summary in English: who called and the number they gave, what they need, how urgent it is, the outcome (callback, booking request, question answered, spam) and what the team must do next. [Resend](https://resend.com) emails it to the owner with the whole transcript below. Set all three in `apps/server/.env`, or no email is sent:
+After every call where the caller said something, phone or browser test, Claude (`LLM_MODEL`) writes a short summary in English: who called and the number they gave, what they need, how urgent it is, the outcome (callback, booking request, question answered, spam) and what the team must do next. [Resend](https://resend.com) emails it to the owner with the whole transcript below. Set all three in `apps/server/.env`, or no email is sent:
 - `RESEND_API_KEY`: an API key from Resend. A key with "sending access" only is enough.
 - `OWNER_EMAIL`: who gets the summaries.
 - `SUMMARY_FROM_EMAIL`: the sender, such as `Receptionist <calls@yourdomain.com>`, on a domain verified in Resend. Resend's test sender, `onboarding@resend.dev`, only delivers to the address the Resend account was opened with, which is enough to try it.
@@ -106,7 +123,7 @@ WhatsApp lets a business message someone first only with a template Meta has app
 
 The sender (`apps/server/voice/whatsapp.py`) pins Graph API v26.0. Meta charges per delivered template message, by category and the recipient's country.
 
-For now the summary is written and sent by the voice process itself (`apps/server/voice/summary.py`), in the background after the call has ended, so it never delays or breaks a call. A failed email isn't retried, and one in progress is lost if the api restarts. `docs/architecture.md` plans it as the worker's `summarize_call` job, queued once calls are saved to the database, which fixes both.
+For now the summary is written and sent by the voice process itself (`apps/server/voice/after_call.py`), in the background after the call has been saved, so it never delays or breaks a call. A failed email isn't retried, and one in progress is lost if the api restarts; the call itself is already saved by then. `docs/architecture.md` plans it as the worker's `summarize_call` job, queued with the saved call, which fixes both.
 
 ## Every day
 

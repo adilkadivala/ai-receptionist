@@ -65,6 +65,7 @@ async def offer(body: dict, background_tasks: BackgroundTasks) -> dict:
             label="Browser test call",
             sample_rate=BROWSER_IN_SAMPLE_RATE,
             out_sample_rate=BROWSER_OUT_SAMPLE_RATE,
+            dialed_number=settings.business_number or None,  # saved as a call to the business
         )
 
     answer = await connections.handle_web_request(SmallWebRTCRequest.from_dict(body), start)

@@ -138,7 +138,7 @@ Three readers went through the books that fit this product. These are the decisi
 6. When the call ends, **voice** saves the call record (outcome, cost by provider, transcript) and a usage event, then queues `summarize_call`.
 7. **worker** writes the summary, emails the owner, pushes the lead to their CRM, rolls up usage, and later deletes the transcript on the organization's retention schedule.
 
-Until calls are saved and the worker exists, **voice** writes the summary itself and sends it by email and WhatsApp, in the background after each call (`voice/summary.py`). It moves into the `summarize_call` job then.
+Calls are saved now, without cost or per-turn timings yet: when one ends, **voice** saves it under the business that owns the dialed number, then, until the worker exists, writes the summary itself, keeps it with the call and sends it by email and WhatsApp, all in the background (`voice/after_call.py`). The summary moves into the `summarize_call` job then.
 
 ---
 
@@ -153,7 +153,7 @@ Every table below `organizations` carries `organization_id` and is limited by ro
 | `locations` | Branches, hotel properties, hospital departments: address, hours, time zone |
 | ✅ `agents` | One receptionist setup. Next: versioned settings (`agent_configs`) |
 | ✅ `phone_numbers` | Telnyx numbers → agent |
-| ✅ `calls` | One row per call: numbers, language, duration, outcome, transcript, cost |
+| ✅ `calls` | One row per call: numbers, language, duration, outcome, transcript, summary, cost |
 | `turn_events` | Per-turn timings by stage, interruptions: the latency dashboard |
 | `tool_calls` | Every tool decision: arguments (redacted), allowed or refused, result |
 | `action_log` | Side effects with a unique `(organization_id, idempotency_key)`, state `in_flight` → `complete` |
@@ -281,6 +281,7 @@ Ai-receptionist/
 │       │   ├── call.py                           the pipeline: wires the stages together, handles barge-in
 │       │   ├── browser.py  browser_call.html     test calls from a browser on this computer, over WebRTC
 │       │   ├── end_call.py  numbers.py           hanging up after the goodbye; spoken phone numbers counted in code
+│       │   ├── after_call.py                     once a call ends: save it, summarize it, tell the owner
 │       │   ├── summary.py  whatsapp.py           the owner's summary after each call, by email and WhatsApp
 │       │   ├── language.py  prompt.py
 │       │   └── (next) main.py    its own entry point (today voice is mounted inside the api)
@@ -294,11 +295,12 @@ Ai-receptionist/
 │       │   └── jobs/             summarize_call, ingest_knowledge, usage_rollup, retention_sweep, reconcile_actions
 │       ├── (next) services/      business rules shared by all three processes:
 │       │                         agents, calls, bookings, messages, knowledge, usage, billing
-│       ├── (next) repositories/  every database query, one file per group of tables, always inside Database.tenant()
+│       ├── repositories/         every database query, one file per group of tables, always inside Database.tenant()
+│       │   └── calls.py          saving calls and their summaries (next: agents, numbers, bookings, messages)
 │       ├── (next) integrations/  outside services behind our own interface, each with a fake for tests:
 │       │                         llm (the thin Claude adapter), calendars, CRMs, email (Resend), payments (Dodo)
 │       ├── migrations/           database changes
-│       ├── scripts/              export_openapi.py
+│       ├── scripts/              export_openapi.py  add_business.py
 │       ├── tests/                every commit: fast tests; db/ needs Postgres (row-level security)
 │       │                         (next) chaos/ (fake providers that hang or fail), safety/ (gate for every rule-pack edit)
 │       └── (next) evals/         cases/*.jsonl, simulated callers, sandbox, redteam, run.py; cost money, run nightly
@@ -342,7 +344,7 @@ Ai-receptionist/
    - give voice its own entry point (`voice/main.py`) instead of running inside the api;
    - switch to Soniox with backups, deadlines and circuit breakers;
    - load the agent from the dialed number;
-   - save every call and its per-turn timings;
+   - save every call (**done 2026-11-03**, `scripts/add_business.py` adds a business's number) and its per-turn timings;
    - pre-recorded phrases;
    - chaos tests.
 4. **Tools and safety:** tool registry and guard, first `services/` and `repositories/` (bookings, messages) with `action_log` idempotency, read-back, `SafetyGate` with YAML rule packs, emergency transfer.

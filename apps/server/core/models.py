@@ -155,8 +155,11 @@ class Call(Base):
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     duration_seconds: Mapped[int | None]
     outcome: Mapped[str | None] = mapped_column(Text)
-    # [{"role": "caller" | "ai", "text": ..., "language": ...}, ...]
+    # [{"role": "caller" | "ai", "text": ...}, ...]
     transcript: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, default=list, server_default="[]")
+    # Claude's summary for the owner (voice.summary.CallSummary): caller, number given, need, urgency, next steps.
+    # None until it's written, and for calls where the caller said nothing or Claude failed.
+    summary: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
     # What the call cost us across providers, to track the per-plan margin.
     cost_usd: Mapped[Decimal | None] = mapped_column(Numeric(10, 5))
     created_at: Mapped[datetime] = _created_at()

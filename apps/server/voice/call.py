@@ -6,6 +6,7 @@ strategy automatically), so there is no local voice-activity model to run.
 """
 
 import asyncio
+from datetime import UTC, datetime
 
 from fastapi import WebSocket
 from loguru import logger
@@ -27,11 +28,12 @@ from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams, FastAPI
 from pipecat.workers.runner import WorkerRunner
 
 from core.config import Settings
+from voice.after_call import EndedCall, after_call_later
 from voice.end_call import END_CALL, end_call
 from voice.language import LanguageFollower
 from voice.numbers import NumberNoter
 from voice.prompt import CALL_CONNECTED, DEMO_BUSINESS_INFO, LANGUAGE_OFFERS, greeting, system_prompt
-from voice.summary import AI, CALLER, Turn, as_text, notify_owner_later
+from voice.summary import AI, CALLER, Turn, as_text
 
 PHONE_SAMPLE_RATE = 8000  # Telnyx streams 8 kHz audio
 
@@ -105,6 +107,8 @@ async def run_call(websocket: WebSocket, call: TelnyxCallData, settings: Setting
         label=f"Call {call.call_id} from {call.from_number} to {call.to_number}",
         sample_rate=PHONE_SAMPLE_RATE,
         caller_id=call.from_number,
+        dialed_number=call.to_number,
+        provider_call_id=call.call_id,
     )
 
 
@@ -116,14 +120,19 @@ async def converse(
     sample_rate: int,
     out_sample_rate: int | None = None,
     caller_id: str | None = None,
+    dialed_number: str | None = None,
+    provider_call_id: str | None = None,
 ) -> None:
     """Greets the caller once they're connected, talks until they hang up, and says goodbye at the time limit. Then
-    the owner gets a summary by email and on WhatsApp (voice.summary).
+    the call is saved, and the owner gets a summary by email and on WhatsApp (voice.after_call).
 
     `sample_rate` is the audio coming in; the voice speaks at `out_sample_rate`, the same unless given. `caller_id` is
-    the number the phone network says the call came from, for the email.
+    the number the phone network says the call came from, `dialed_number` the one the caller dialed: the call is saved
+    under the business that owns it.
     """
     stt, llm, tts = build_services(settings)
+    language_follower = LanguageFollower()
+    started_at = datetime.now(UTC)
 
     context = LLMContext(messages=[{"role": "user", "content": CALL_CONNECTED}], tools=ToolsSchema(standard_tools=[END_CALL]))
     user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
@@ -132,7 +141,7 @@ async def converse(
         [
             transport.input(),
             stt,
-            LanguageFollower(),
+            language_follower,
             NumberNoter(settings.business_country),
             user_aggregator,
             llm,
@@ -155,6 +164,8 @@ async def converse(
 
     @transport.event_handler("on_client_connected")
     async def on_client_connected(transport, client):
+        nonlocal started_at
+        started_at = datetime.now(UTC)  # the call's time counts from when the caller is on the line
         logger.info(f"{label}: connected")
         await worker.queue_frames(opening_frames(settings.business_name, settings.announce_recording, settings.languages()))
 
@@ -175,8 +186,17 @@ async def converse(
         timer.cancel()
         # However the call ended: the caller hung up, the receptionist did (end_call), or the time limit.
         logger.info(f"{label}: ended. Transcript:\n{transcript(context)}")
-        # In the background: the email waits on Claude and Resend, and the call must not.
-        notify_owner_later(turns(context), settings, label=label, caller_id=caller_id)
+        ended = EndedCall(
+            turns=turns(context),
+            started_at=started_at,
+            ended_at=datetime.now(UTC),
+            to_number=dialed_number,
+            from_number=caller_id,
+            provider_call_id=provider_call_id,
+            language=language_follower.language.value,
+        )
+        # In the background: saving and the owner's summary wait on the database, Claude and Resend; the call must not.
+        after_call_later(ended, settings, label=label)
 
 
 def turns(context: LLMContext) -> list[Turn]:

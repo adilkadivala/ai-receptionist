@@ -22,14 +22,8 @@ WHATSAPP_SETTINGS = {
 
 @pytest.fixture
 def channels(monkeypatch):
-    """Stands in for Claude, Resend and WhatsApp: what was summarized, emailed and sent on WhatsApp."""
-    box = SimpleNamespace(summary=PRIYA, summaries=0, emails=[], whatsapps=[], whatsapp_error=None)
-
-    async def fake_summarize(transcript, settings):
-        box.summaries += 1
-        if isinstance(box.summary, Exception):
-            raise box.summary
-        return box.summary
+    """Stands in for Resend and WhatsApp: what was emailed and sent on WhatsApp."""
+    box = SimpleNamespace(emails=[], whatsapps=[], whatsapp_error=None)
 
     async def fake_email(email, settings):
         box.emails.append(email)
@@ -40,7 +34,6 @@ def channels(monkeypatch):
         box.whatsapps.append(message)
         return "wamid.test"
 
-    monkeypatch.setattr(summary, "summarize", fake_summarize)
     monkeypatch.setattr(summary, "send_email", fake_email)
     monkeypatch.setattr(summary, "send_whatsapp", fake_whatsapp)
     return box
@@ -63,7 +56,7 @@ def test_the_owners_number_needs_its_country_code():
 
 
 async def test_whatsapp_only(channels, logs):  # noqa: F811
-    await notify_owner(CALL, make_settings(**WHATSAPP_SETTINGS), label="Call 1")
+    await notify_owner(PRIYA, CALL, make_settings(**WHATSAPP_SETTINGS), label="Call 1")
     [message] = channels.whatsapps
     assert channels.emails == []
     assert message["to"] == "+919876543210" and message["template"]["name"] == "call_summary"
@@ -78,15 +71,14 @@ async def test_whatsapp_only(channels, logs):  # noqa: F811
     assert "Call 1: summary sent to the owner on WhatsApp" in "".join(logs)
 
 
-async def test_one_summary_for_both_channels(channels):
-    await notify_owner(CALL, make_settings(**EMAIL_SETTINGS, **WHATSAPP_SETTINGS), label="Call 1")
-    assert channels.summaries == 1
+async def test_both_channels_at_once(channels):
+    await notify_owner(PRIYA, CALL, make_settings(**EMAIL_SETTINGS, **WHATSAPP_SETTINGS), label="Call 1")
     assert len(channels.emails) == 1 and len(channels.whatsapps) == 1
 
 
 async def test_a_whatsapp_failure_still_lets_the_email_go(channels, logs):  # noqa: F811
     channels.whatsapp_error = RuntimeError("WhatsApp refused the message (400, error 132001: template not approved)")
-    await notify_owner(CALL, make_settings(**EMAIL_SETTINGS, **WHATSAPP_SETTINGS), label="Call 1")  # doesn't raise
+    await notify_owner(PRIYA, CALL, make_settings(**EMAIL_SETTINGS, **WHATSAPP_SETTINGS), label="Call 1")  # doesn't raise
     assert len(channels.emails) == 1
     logged = "".join(logs)
     assert "couldn't send the call summary on WhatsApp" in logged and "132001" in logged
@@ -94,8 +86,7 @@ async def test_a_whatsapp_failure_still_lets_the_email_go(channels, logs):  # no
 
 
 async def test_without_a_summary_whatsapp_waits_for_the_email(channels, logs):  # noqa: F811
-    channels.summary = RuntimeError("overloaded")
-    await notify_owner(CALL, make_settings(**EMAIL_SETTINGS, **WHATSAPP_SETTINGS), label="Call 1")
+    await notify_owner(None, CALL, make_settings(**EMAIL_SETTINGS, **WHATSAPP_SETTINGS), label="Call 1")
     assert channels.whatsapps == [] and len(channels.emails) == 1  # the email carries the transcript alone
     assert "no WhatsApp message, because there's no summary" in "".join(logs)
 
