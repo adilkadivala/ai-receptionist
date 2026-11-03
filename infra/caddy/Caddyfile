@@ -1,0 +1,5 @@
+# The public front door: HTTPS for PUBLIC_HOST, with certificates Caddy gets and renews itself (Let's Encrypt), and
+# everything sent on to the api. Telnyx's audio WebSocket (wss://PUBLIC_HOST/telnyx/media/...) passes through as is.
+{$PUBLIC_HOST} {
+	reverse_proxy api:8000
+}

@@ -125,6 +125,10 @@ The sender (`apps/server/voice/whatsapp.py`) pins Graph API v26.0. Meta charges 
 
 For now the summary is written and sent by the voice process itself (`apps/server/voice/after_call.py`), in the background after the call has been saved, so it never delays or breaks a call. A failed email isn't retried, and one in progress is lost if the api restarts; the call itself is already saved by then. `docs/architecture.md` plans it as the worker's `summarize_call` job, queued with the saved call, which fixes both.
 
+## Deploying
+
+`docs/deploy.md` puts the receptionist on a server with HTTPS, so Telnyx reaches it without ngrok and it answers while this computer is off.
+
 ## Every day
 
 Run the same checks CI runs.

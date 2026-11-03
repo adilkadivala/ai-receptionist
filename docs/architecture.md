@@ -317,9 +317,10 @@ Ai-receptionist/
 │           └── styles/globals.css   Tailwind, Signal theme tokens (light and dark), Geist fonts, the blueprint ink and the
 │                                    two depth levels mixed from them, the rise entrance, the reduced-motion rule
 ├── infra/
-│   ├── compose/                  dev.yml (local Postgres + pgvector)   (next) staging.yml, prod.yml
-│   └── (next) terraform/, caddy/, docker/
-├── docs/                         architecture.md, development.md, design/ (the approved mockups)
+│   ├── compose/                  dev.yml (local Postgres + pgvector), prod.yml (one server: api, Postgres, backups, Caddy)   (next) staging.yml
+│   ├── caddy/                    Caddyfile: HTTPS in front of the api
+│   └── (next) terraform/
+├── docs/                         architecture.md, development.md, deploy.md, design/ (the approved mockups)
 └── .github/workflows/ci.yml      server job (ruff, pytest with Postgres, OpenAPI check)
                                   web job (Biome, typecheck, tests, builds, generated-types check)
 ```

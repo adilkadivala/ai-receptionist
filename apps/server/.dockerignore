@@ -1,0 +1,11 @@
+# Never in the image: secrets come from the server's own .env at run time.
+.env
+.env.*
+!.env.example
+.venv/
+tests/
+**/__pycache__/
+.pytest_cache/
+.ruff_cache/
+Dockerfile
+.dockerignore
