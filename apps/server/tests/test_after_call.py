@@ -120,6 +120,17 @@ async def test_a_silent_caller_is_saved_as_abandoned_and_nobody_is_bothered(worl
     assert world.summarized == 0 and world.summaries_saved == [] and world.emails == []
 
 
+async def test_a_call_put_through_is_saved_as_a_transfer_and_the_owner_hears_it(world):
+    put_through = ended(transferred_to="+919876543210")
+    await after_call(put_through, make_settings(**EMAIL_SETTINGS), label="Call 1", db=FakeDatabase())
+    [(_, row)] = world.calls
+    assert row.outcome == "transfer"
+    [(_, _, fields, outcome)] = world.summaries_saved
+    assert fields["outcome"] == "booking request" and outcome == "transfer"  # the summary doesn't overwrite it
+    [email] = world.emails
+    assert "put this call through to +919876543210" in email.text
+
+
 async def test_if_claude_fails_the_call_is_still_saved_and_emailed(world):
     world.summary = RuntimeError("overloaded")
     await after_call(ended(), make_settings(**EMAIL_SETTINGS), label="Call 1", db=FakeDatabase())

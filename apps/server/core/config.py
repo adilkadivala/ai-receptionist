@@ -59,6 +59,10 @@ class Settings(BaseSettings):
     # The number callers dial for it, with + and the country code. Each call is saved under the business that owns the
     # number dialed (scripts/add_business.py adds it to the database); browser test calls count as calls to this one.
     business_number: str = ""
+    # Where emergency calls go: a person's phone, with + and the country code. The receptionist puts a caller through
+    # when harm or damage is happening now (voice.transfer), and calls our server drops go there too. The number is in
+    # the TeXML (`uv run python -m voice.texml`), so paste it into Telnyx again after changing it. Empty: no transfers.
+    transfer_number: str = ""
     # A text file of what the receptionist knows about the business: services, hours, area, prices, how booking
     # works. Relative to apps/server. Empty: the demo plumber in voice/prompt.py.
     business_info_file: str = ""
@@ -94,13 +98,21 @@ class Settings(BaseSettings):
     whatsapp_template: str = "call_summary"
     whatsapp_template_language: str = "en"
 
-    @field_validator("owner_whatsapp", "business_number")
+    @field_validator("owner_whatsapp", "business_number", "transfer_number")
     @classmethod
     def international_number(cls, value: str, info: ValidationInfo) -> str:
         number = re.sub(r"[\s()-]", "", value)
         if number and not re.fullmatch(r"\+[1-9]\d{7,14}", number):
             raise ValueError(f"{info.field_name.upper()} must be a number with + and the country code, such as +919876543210")
         return number
+
+    @field_validator("transfer_number")
+    @classmethod
+    def not_the_business_number(cls, value: str, info: ValidationInfo) -> str:
+        # Putting a caller through to the number they dialed would just reach the receptionist again.
+        if value and value == info.data.get("business_number"):
+            raise ValueError("TRANSFER_NUMBER must be a person's phone, not BUSINESS_NUMBER")
+        return value
 
     @field_validator("business_country")
     @classmethod

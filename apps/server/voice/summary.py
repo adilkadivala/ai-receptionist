@@ -112,12 +112,26 @@ OUTCOMES = {
     "other": "Other",
 }
 CHECK_NOTE = "Names and numbers come from speech recognition, so check them when you call back."
+
+
+def put_through_note(number: str) -> str:
+    """What the owner reads about a call the receptionist put through. Nothing tells us whether it was answered."""
+    return f"The receptionist put this call through to {number}. If you missed it, call them back."
+
+
 LABEL_STYLE = "color: #555; padding: 2px 16px 2px 0; vertical-align: top; white-space: nowrap;"
 HEADING_STYLE = "font-size: 15px; margin: 24px 0 8px;"
 
 
-def compose(summary: CallSummary | None, turns: list[Turn], business_name: str, caller_id: str | None = None) -> Email:
-    """The owner's email: the summary, then the whole transcript. Without a summary, the transcript alone."""
+def compose(
+    summary: CallSummary | None,
+    turns: list[Turn],
+    business_name: str,
+    caller_id: str | None = None,
+    put_through_to: str | None = None,
+) -> Email:
+    """The owner's email: the summary, then the whole transcript. Without a summary, the transcript alone.
+    `put_through_to` is the number the receptionist put the caller through to, if it did."""
     called_from = [("Called from", caller_id)] if caller_id else []
     if summary:
         subject = SUBJECT_PREFIX.get(summary.urgency, "") + summary.headline
@@ -135,6 +149,8 @@ def compose(summary: CallSummary | None, turns: list[Turn], business_name: str, 
         subject = f"Call for {business_name}" + (f" from {caller_id}" if caller_id else "")
         intro = f"A call for {business_name}. The AI couldn't write a summary of it, so here is the transcript."
         rows, steps = called_from, []
+    if put_through_to:
+        intro += " " + put_through_note(put_through_to)
 
     text = [intro, "", *(f"{label}: {value}" for label, value in rows)]
     if steps:
@@ -173,18 +189,22 @@ async def send_email(email: Email, settings: Settings) -> None:
         raise RuntimeError(f"Resend refused the email ({response.status_code}): {response.text}")
 
 
-def whatsapp_fields(summary: CallSummary, business_name: str, caller_id: str | None = None) -> dict[str, str]:
+def whatsapp_fields(
+    summary: CallSummary, business_name: str, caller_id: str | None = None, put_through_to: str | None = None
+) -> dict[str, str]:
     """The named fields of the WhatsApp template (docs/development.md), in the template's order."""
     number = summary.phone_number
     if caller_id and number.startswith("Not given"):
         number = f"{caller_id} (the number they called from)"
+    steps = [put_through_note(put_through_to)] if put_through_to else []
+    steps += summary.next_steps
     return {
         "business": business_name,
         "caller": summary.caller_name,
         "number": number,
         "need": summary.need,
         "urgency": URGENCY[summary.urgency],
-        "next_step": " ".join(summary.next_steps) or "Nothing to do.",
+        "next_step": " ".join(steps) or "Nothing to do.",
     }
 
 
@@ -206,11 +226,17 @@ async def summarize_call(turns: list[Turn], settings: Settings, *, label: str = 
 
 
 async def notify_owner(
-    summary: CallSummary | None, turns: list[Turn], settings: Settings, *, label: str = "Call", caller_id: str | None = None
+    summary: CallSummary | None,
+    turns: list[Turn],
+    settings: Settings,
+    *,
+    label: str = "Call",
+    caller_id: str | None = None,
+    put_through_to: str | None = None,
 ) -> None:
     """Sends the owner the call's summary by email and on WhatsApp, whichever are set up. Without a summary the email
     carries the transcript alone, so the owner still hears about the caller. Nothing when the caller said nothing.
-    Never raises: every failure is logged."""
+    A call put through to `put_through_to` says so, in case they missed it. Never raises: every failure is logged."""
     if not caller_spoke(turns):
         return
     email_missing, whatsapp_missing = settings.missing_keys(SUMMARY_KEYS), settings.missing_keys(WHATSAPP_KEYS)
@@ -222,27 +248,36 @@ async def notify_owner(
         return
     channels = []
     if not email_missing:
-        channels.append(_email(summary, turns, settings, label, caller_id))
+        channels.append(_email(summary, turns, settings, label, caller_id, put_through_to))
     if not whatsapp_missing:
-        channels.append(_whatsapp(summary, settings, label, caller_id))
+        channels.append(_whatsapp(summary, settings, label, caller_id, put_through_to))
     await asyncio.gather(*channels)
 
 
-async def _email(summary: CallSummary | None, turns: list[Turn], settings: Settings, label: str, caller_id: str | None):
+async def _email(
+    summary: CallSummary | None,
+    turns: list[Turn],
+    settings: Settings,
+    label: str,
+    caller_id: str | None,
+    put_through_to: str | None,
+):
     try:
-        await send_email(compose(summary, turns, settings.business_name, caller_id), settings)
+        await send_email(compose(summary, turns, settings.business_name, caller_id, put_through_to), settings)
     except Exception:
         logger.exception(f"{label}: couldn't email the call summary")
         return
     logger.info(f"{label}: summary emailed to the owner")
 
 
-async def _whatsapp(summary: CallSummary | None, settings: Settings, label: str, caller_id: str | None):
+async def _whatsapp(
+    summary: CallSummary | None, settings: Settings, label: str, caller_id: str | None, put_through_to: str | None
+):
     if summary is None:
         logger.info(f"{label}: no WhatsApp message, because there's no summary to send")
         return
     message = template_message(
-        whatsapp_fields(summary, settings.business_name, caller_id),
+        whatsapp_fields(summary, settings.business_name, caller_id, put_through_to),
         to=settings.owner_whatsapp,
         template=settings.whatsapp_template,
         language=settings.whatsapp_template_language,

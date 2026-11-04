@@ -50,11 +50,27 @@ def phone_numbers(country: str) -> str:
 - {count}"""
 
 
+EMERGENCY_CALLBACK = """\
+- For an emergency such as flooding or a burst pipe, collect their name, number and address and say the team
+  will call back right away."""
+
+# With TRANSFER_NUMBER set, an emergency goes to a person straight away (voice.transfer).
+EMERGENCY_TRANSFER = """\
+- An emergency is harm or damage happening now, such as flooding, a burst pipe or no heat in freezing weather. If
+  you don't have their name and number yet, ask for both in one quick question. Then say in one short sentence that
+  you're putting them through to the team, and call transfer_call in the same reply. If anyone could be hurt, as with a
+  fire, a gas smell or an injury, first tell them to get safe and call emergency services, then put them through.
+- If the caller asks for a person and it isn't an emergency, don't put them through: take their name, number and what
+  they need, and say the team will call back."""
+
+
 def system_prompt(
     business_name: str,
     business_info: str = DEMO_BUSINESS_INFO,
     voice_gender: str = "feminine",
     country: str = "US",
+    *,
+    can_transfer: bool = False,
 ) -> str:
     voice, forms, hindi_verb = ("a woman's", "feminine", "देती") if voice_gender == "feminine" else ("a man's", "masculine", "देता")
     return f"""You are the AI phone receptionist for {business_name}. You are speaking with a caller on the phone.
@@ -84,8 +100,7 @@ What to do:
   confirms a number or a detail. If something makes no sense where the call is, such as a "Hi" in the middle of the
   call, treat it as misheard: don't greet them again, don't take it as a yes, just ask your last question again,
   briefly.
-- For an emergency such as flooding or a burst pipe, collect their name, number and address and say the team
-  will call back right away.
+{EMERGENCY_TRANSFER if can_transfer else EMERGENCY_CALLBACK}
 - If you can't confirm something, such as whether an address is in the service area, say in one sentence that the
   team will confirm it when they call back.
 - If asked, say plainly that you are an AI assistant, never a person.

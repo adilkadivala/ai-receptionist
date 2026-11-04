@@ -281,6 +281,7 @@ Ai-receptionist/
 │       │   ├── call.py                           the pipeline: wires the stages together, handles barge-in
 │       │   ├── browser.py  browser_call.html     test calls from a browser on this computer, over WebRTC
 │       │   ├── end_call.py  numbers.py           hanging up after the goodbye; spoken phone numbers counted in code
+│       │   ├── transfer.py                       putting emergencies through to a person, through the TeXML <Dial>
 │       │   ├── after_call.py                     once a call ends: save it, summarize it, tell the owner
 │       │   ├── summary.py  whatsapp.py           the owner's summary after each call, by email and WhatsApp
 │       │   ├── language.py  prompt.py
@@ -348,7 +349,7 @@ Ai-receptionist/
    - save every call (**done 2026-11-03**, `scripts/add_business.py` adds a business's number) and its per-turn timings;
    - pre-recorded phrases;
    - chaos tests.
-4. **Tools and safety:** tool registry and guard, first `services/` and `repositories/` (bookings, messages) with `action_log` idempotency, read-back, `SafetyGate` with YAML rule packs, emergency transfer.
+4. **Tools and safety:** tool registry and guard, first `services/` and `repositories/` (bookings, messages) with `action_log` idempotency, read-back, `SafetyGate` with YAML rule packs, emergency transfer (a first version is **done 2026-11-04**: the receptionist puts emergencies through to `TRANSFER_NUMBER` with the TeXML `<Dial>`, which also catches calls the server drops; the emergency detector and the tool guard are still to come).
 5. **Worker:** `worker/main.py` with the job queue, call summaries and email, usage events, rollups and caps.
 6. **Dashboard and login:** `api/routes/`, `deps.py` and `schemas/`; users, memberships, cookie auth, setup wizard, call history, audit log.
 7. **Knowledge:** documents and hybrid search, with an organization check in the search code.

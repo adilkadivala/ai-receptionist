@@ -55,3 +55,12 @@ def test_texml_points_telnyx_at_the_media_stream():
     assert 'url="wss://abc.ngrok-free.app/telnyx/media/s3cret"' in xml
     assert 'bidirectionalMode="rtp"' in xml
     assert xml.startswith('<?xml version="1.0" encoding="UTF-8"?>')
+    assert "<Dial" not in xml and "enableReconnect" not in xml  # no transfer number: the call ends with the stream
+
+
+def test_texml_rings_the_transfer_number_once_the_stream_stops():
+    xml = texml("calls.example.com", "s3cret", transfer_number="+919876543210", caller_id="+16175550142")
+    assert 'enableReconnect="false"' in xml  # closing the stream must reach the <Dial>, not a new conversation
+    assert xml.index("</Connect>") < xml.index('<Dial callerId="+16175550142" timeout="25">') < xml.index("<Say>")
+    assert "<Number>+919876543210</Number>" in xml
+    assert 'url="wss://calls.example.com/telnyx/media/s3cret"' in xml

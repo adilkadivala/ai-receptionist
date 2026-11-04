@@ -74,9 +74,25 @@ Until each business's settings come from the database, the server answers for on
 
 Restart the api after changing them.
 
+## Putting emergencies through to a person
+
+Set `TRANSFER_NUMBER` in `apps/server/.env` to the phone of whoever handles emergencies, with + and the country code. It must not be `BUSINESS_NUMBER`, or the call would come back to the receptionist. When harm or damage is happening now (a burst pipe, flooding), the receptionist asks for the caller's name and number if it doesn't have them, says it's putting them through, and calls its `transfer_call` tool. If anyone could be hurt, it first tells them to get safe and call emergency services. A caller who just wants a person, with no emergency, gets a message taken instead. Without `TRANSFER_NUMBER` it takes emergencies as messages, as before.
+
+The handover stays inside TeXML, because Telnyx advises against mixing TeXML calls with Call Control commands. `voice/texml.py` puts a `<Dial>` to `TRANSFER_NUMBER` after the media stream, and Telnyx runs what follows the stream once it stops. Putting a caller through therefore means closing our stream without hanging up (`apps/server/voice/transfer.py`). Calls the AI ends itself are hung up first, so they never reach the `<Dial>`.
+- The owner's phone shows `BUSINESS_NUMBER` as the caller, so they know it comes from the receptionist. It rings for 25 seconds; afterwards the caller hears that the team will call back.
+- The same `<Dial>` should catch calls our server drops, when it's down or restarting, so those callers reach a person instead of silence.
+- The number is in the TeXML, so after setting or changing it, print the TeXML again and paste it into the number's TeXML bin in the Telnyx portal:
+  ```bash
+  cd apps/server && uv run python -m voice.texml
+  ```
+- A browser test call can't be put through: it ends, and the api logs where a phone call would have gone.
+- The call is saved with the outcome `transfer`. The owner's summary says it was put through and to call back if they missed it: nothing tells the server whether the owner answered.
+
+Not yet tried on a live phone call: that Telnyx moves on to the `<Dial>` when we close the stream, and when our server can't be reached at all. Try both before relying on them: put a call through, then call once with the api stopped.
+
 ## Saving calls
 
-Every call is saved in the `calls` table when it ends, phone or browser test: who called, the number dialed, when, how long, the language the caller ended in, the transcript, and once Claude has written it, the summary and the outcome (`message`, `answered`, `spam`, or `abandoned` when the caller said nothing). A call belongs to the business that owns the number dialed, looked up with `resolve_phone_number`, so the business and its number must be in the database first:
+Every call is saved in the `calls` table when it ends, phone or browser test: who called, the number dialed, when, how long, the language the caller ended in, the transcript, and once Claude has written it, the summary and the outcome (`message`, `answered`, `spam`, `transfer` when it was put through to `TRANSFER_NUMBER`, or `abandoned` when the caller said nothing). A call belongs to the business that owns the number dialed, looked up with `resolve_phone_number`, so the business and its number must be in the database first:
 1. Set `BUSINESS_NUMBER` in `apps/server/.env`: the number callers dial, with + and the country code, such as `+16176656213`. Browser test calls count as calls to it.
 2. Add the business: `cd apps/server && uv run python -m scripts.add_business`. It creates the organization (`BUSINESS_NAME`), its receptionist and its number, once; running it again changes nothing.
 

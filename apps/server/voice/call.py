@@ -17,7 +17,6 @@ from pipecat.pipeline.worker import PipelineParams, PipelineWorker
 from pipecat.processors.aggregators.llm_context import LLMContext
 from pipecat.processors.aggregators.llm_response_universal import LLMContextAggregatorPair
 from pipecat.runner.types import TelnyxCallData
-from pipecat.serializers.telnyx import TelnyxFrameSerializer
 from pipecat.services.anthropic.llm import AnthropicLLMService
 from pipecat.services.cartesia.tts import CartesiaTTSService
 from pipecat.services.deepgram.flux.stt import DeepgramFluxSTTService
@@ -34,13 +33,17 @@ from voice.language import LanguageFollower
 from voice.numbers import NumberNoter
 from voice.prompt import CALL_CONNECTED, DEMO_BUSINESS_INFO, LANGUAGE_OFFERS, greeting, system_prompt
 from voice.summary import AI, CALLER, Turn, as_text
+from voice.transfer import TRANSFER_CALL, TelnyxLine, Transfer
 
 PHONE_SAMPLE_RATE = 8000  # Telnyx streams 8 kHz audio
 
 TIME_LIMIT_GOODBYE = "We've reached the time limit for this call. The team will call you back. Goodbye."
 
 
-def build_services(settings: Settings) -> tuple[DeepgramFluxSTTService, AnthropicLLMService, CartesiaTTSService]:
+def build_services(
+    settings: Settings, transfer: Transfer | None = None
+) -> tuple[DeepgramFluxSTTService, AnthropicLLMService, CartesiaTTSService]:
+    """The call's listening, brain and voice. With `transfer`, the receptionist can put emergency callers through."""
     stt = DeepgramFluxSTTService(
         api_key=settings.deepgram_api_key,
         settings=DeepgramFluxSTTService.Settings(
@@ -57,12 +60,15 @@ def build_services(settings: Settings) -> tuple[DeepgramFluxSTTService, Anthropi
                 settings.business_info() or DEMO_BUSINESS_INFO,
                 settings.voice_gender,
                 settings.business_country,
+                can_transfer=transfer is not None,
             ),
             max_tokens=settings.llm_max_tokens,
             enable_prompt_caching=True,
         ),
     )
     llm.register_function(END_CALL.name, end_call)
+    if transfer:
+        llm.register_function(TRANSFER_CALL.name, transfer)
     tts = CartesiaTTSService(
         api_key=settings.cartesia_api_key,
         settings=CartesiaTTSService.Settings(model=settings.tts_model, voice=settings.tts_voice_id, language=Language.EN),
@@ -85,12 +91,12 @@ def opening_frames(business_name: str, announce_recording: bool = False, languag
 
 
 async def run_call(websocket: WebSocket, call: TelnyxCallData, settings: Settings) -> None:
-    serializer = TelnyxFrameSerializer(
+    serializer = TelnyxLine(
         stream_id=call.stream_id,
         call_control_id=call.call_id,
         outbound_encoding=call.outbound_encoding or "PCMU",
         inbound_encoding="PCMU",
-        api_key=settings.telnyx_api_key,  # hangs up the call when the pipeline ends
+        api_key=settings.telnyx_api_key,  # hangs up the call when the pipeline ends, unless it was put through
     )
     transport = FastAPIWebsocketTransport(
         websocket=websocket,
@@ -109,6 +115,7 @@ async def run_call(websocket: WebSocket, call: TelnyxCallData, settings: Setting
         caller_id=call.from_number,
         dialed_number=call.to_number,
         provider_call_id=call.call_id,
+        line=serializer,
     )
 
 
@@ -122,19 +129,23 @@ async def converse(
     caller_id: str | None = None,
     dialed_number: str | None = None,
     provider_call_id: str | None = None,
+    line: TelnyxLine | None = None,
 ) -> None:
     """Greets the caller once they're connected, talks until they hang up, and says goodbye at the time limit. Then
     the call is saved, and the owner gets a summary by email and on WhatsApp (voice.after_call).
 
     `sample_rate` is the audio coming in; the voice speaks at `out_sample_rate`, the same unless given. `caller_id` is
     the number the phone network says the call came from, `dialed_number` the one the caller dialed: the call is saved
-    under the business that owns it.
+    under the business that owns it. `line` is a phone call's serializer, which a call put through to TRANSFER_NUMBER
+    hands over (voice.transfer); a browser test call has none.
     """
-    stt, llm, tts = build_services(settings)
+    transfer = Transfer(settings.transfer_number, line, label) if settings.transfer_number else None
+    stt, llm, tts = build_services(settings, transfer)
     language_follower = LanguageFollower()
     started_at = datetime.now(UTC)
 
-    context = LLMContext(messages=[{"role": "user", "content": CALL_CONNECTED}], tools=ToolsSchema(standard_tools=[END_CALL]))
+    tools = [END_CALL, TRANSFER_CALL] if transfer else [END_CALL]
+    context = LLMContext(messages=[{"role": "user", "content": CALL_CONNECTED}], tools=ToolsSchema(standard_tools=tools))
     user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
 
     pipeline = Pipeline(
@@ -184,7 +195,8 @@ async def converse(
         await runner.run()
     finally:
         timer.cancel()
-        # However the call ended: the caller hung up, the receptionist did (end_call), or the time limit.
+        # However the call ended: the caller hung up, the receptionist did (end_call) or put them through
+        # (transfer_call), or the time limit.
         logger.info(f"{label}: ended. Transcript:\n{transcript(context)}")
         ended = EndedCall(
             turns=turns(context),
@@ -194,6 +206,7 @@ async def converse(
             from_number=caller_id,
             provider_call_id=provider_call_id,
             language=language_follower.language.value,
+            transferred_to=transfer.number if transfer and transfer.put_through else None,
         )
         # In the background: saving and the owner's summary wait on the database, Claude and Resend; the call must not.
         after_call_later(ended, settings, label=label)

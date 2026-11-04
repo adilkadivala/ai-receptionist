@@ -43,11 +43,22 @@ class EndedCall:
     from_number: str | None = None  # the caller ID, when the phone network gave one
     provider_call_id: str | None = None  # Telnyx's call_control_id
     language: str | None = None  # the language the caller spoke last
+    transferred_to: str | None = None  # TRANSFER_NUMBER, when the receptionist put the caller through (voice.transfer)
+
+
+def outcome(call: EndedCall, summary_outcome: str | None) -> str | None:
+    """The calls-table outcome: "transfer" for a call put through to the team, whatever the summary says; then
+    "abandoned" when the caller said nothing; otherwise the summary's outcome, or None until there is one."""
+    if call.transferred_to:
+        return "transfer"
+    if not caller_spoke(call.turns):
+        return "abandoned"
+    return OUTCOMES[summary_outcome] if summary_outcome else None
 
 
 def call_row(call: EndedCall) -> Call:
-    """The calls-table row for `call`. A caller who said nothing makes it an abandoned call; otherwise the outcome
-    comes with the summary."""
+    """The calls-table row for `call`. Its outcome is known now for a call put through or one where the caller said
+    nothing; otherwise it comes with the summary."""
     return Call(
         provider_call_id=call.provider_call_id,
         from_number=call.from_number,
@@ -56,7 +67,7 @@ def call_row(call: EndedCall) -> Call:
         started_at=call.started_at,
         ended_at=call.ended_at,
         duration_seconds=round((call.ended_at - call.started_at).total_seconds()),
-        outcome=None if caller_spoke(call.turns) else "abandoned",
+        outcome=outcome(call, None),
         transcript=[{"role": "caller" if who == CALLER else "ai", "text": said} for who, said in call.turns],
     )
 
@@ -70,10 +81,10 @@ async def after_call(call: EndedCall, settings: Settings, *, label: str, db: Dat
     if saved and summary:
         organization_id, call_id = saved
         try:
-            await save_summary(db, organization_id, call_id, summary.model_dump(), OUTCOMES[summary.outcome])
+            await save_summary(db, organization_id, call_id, summary.model_dump(), outcome(call, summary.outcome))
         except Exception:
             logger.exception(f"{label}: couldn't save the summary with the call")
-    await notify_owner(summary, call.turns, settings, label=label, caller_id=call.from_number)
+    await notify_owner(summary, call.turns, settings, label=label, caller_id=call.from_number, put_through_to=call.transferred_to)
 
 
 async def _save(call: EndedCall, db: Database, label: str) -> tuple[uuid.UUID, uuid.UUID] | None:

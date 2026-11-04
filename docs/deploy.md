@@ -36,7 +36,7 @@ On the server:
 
    Make each token and password with `python3 -c "import secrets; print(secrets.token_urlsafe(24))"`. Those use only letters, digits, `-` and `_`, so they fit in the database URLs.
 
-   Also check the business's settings (`BUSINESS_NAME`, `BUSINESS_NUMBER`, `BUSINESS_INFO_FILE`, languages, owner email and WhatsApp), as `docs/development.md` describes them. A `BUSINESS_INFO_FILE` must be inside `apps/server` on the server too.
+   Also check the business's settings (`BUSINESS_NAME`, `BUSINESS_NUMBER`, `TRANSFER_NUMBER`, `BUSINESS_INFO_FILE`, languages, owner email and WhatsApp), as `docs/development.md` describes them. A `BUSINESS_INFO_FILE` must be inside `apps/server` on the server too.
 4. Start everything:
    ```bash
    dc up -d --build
@@ -58,6 +58,7 @@ On the server:
    ```bash
    dc exec api python -m voice.texml
    ```
+   With `TRANSFER_NUMBER` set, the TeXML also rings that phone whenever the server drops a call, so a call cut by a deploy or an outage should reach a person. Print and paste it again whenever `TRANSFER_NUMBER` or the host changes.
 
 ## Talking to it without a phone
 
@@ -87,7 +88,7 @@ Then open `http://localhost:8000/dev/call` in your browser. It's the same recept
 
 ## Not covered yet
 
-- **Calls cut on deploy:** deploys don't wait for calls in progress to end. `docs/architecture.md` plans voice to drain calls instead.
+- **Calls cut on deploy:** deploys don't wait for calls in progress to end. With `TRANSFER_NUMBER` set those callers should be rung through to it, which no live call has confirmed yet. `docs/architecture.md` plans voice to drain calls instead.
 - **No staging server, and no images built by CI.** The server builds its own image.
 - **The database lives on the server:** a lost disk loses everything since the last copy you took off the server. A managed database such as RDS adds point-in-time recovery.
 - **No monitoring:** nothing alerts you when the server is down. An uptime check on `/api/health` is the cheapest start.
