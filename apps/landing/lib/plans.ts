@@ -9,7 +9,10 @@ function midSentence(name: string): string {
   return second === second.toUpperCase() ? name : name.charAt(0).toLowerCase() + name.slice(1);
 }
 
-// "your own voice $15 · CRM connection pack $20 · …" for the line under the plans.
+// "your own voice $15 (coming soon) · CRM connection pack $20 · …" for the line under the plans.
 export const addOnSummary = addOns
-  .map((addOn) => `${midSentence(addOn.name)} ${addOn.from ? "from " : ""}${formatUsd(addOn.price)}`)
+  .map(
+    (addOn) =>
+      `${midSentence(addOn.name)} ${addOn.from ? "from " : ""}${formatUsd(addOn.price)}${addOn.soon ? " (coming soon)" : ""}`,
+  )
   .join(" · ");

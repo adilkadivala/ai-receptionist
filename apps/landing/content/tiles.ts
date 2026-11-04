@@ -3,21 +3,30 @@ import { languageCount } from "@receptionist/product";
 import type { Outcome } from "./demo-calls";
 
 export const tiles = {
-  booking: { title: "Books into your calendar", description: "Reads the details back, then books. Never twice." },
+  // `soon`: not built yet, so the tile says "Coming soon" (components/soon.tsx).
+  booking: {
+    title: "Books into your calendar",
+    description: "Reads the details back, then books. Never twice.",
+    soon: true,
+  },
   transfer: {
     title: "Urgent calls go to a person",
-    description: 'Emergencies and "can I speak to someone" go straight to you.',
+    description: "Emergencies are put through to you. Everything else, it handles itself.",
   },
   summary: {
     title: "A summary of every call",
-    description: "Emailed the moment it hangs up, with the full transcript.",
+    description: "By email and WhatsApp the moment it hangs up, with the full transcript.",
   },
   languages: {
     title: `${languageCount} languages, switched mid-call`,
     description: "It answers in the caller's language, and follows when they switch.",
   },
   concurrent: { title: "Several calls at once", description: "Nobody waits on hold." },
-  spam: { title: "Robocalls blocked", description: "Blocked before the AI answers, so spam never reaches you." },
+  spam: {
+    title: "Robocalls blocked",
+    description: "Blocked before the AI answers, so spam never reaches you.",
+    soon: true,
+  },
 };
 
 // One day's calendar filling up, a booking at a time.
@@ -36,7 +45,8 @@ export const routedCalls = [
   { reason: "Book a boiler service", urgent: false },
   { reason: "Burst pipe, water everywhere", urgent: true },
   { reason: "Are you open Saturday?", urgent: false },
-  { reason: "Can I speak to someone?", urgent: true },
+  { reason: "Sewage coming up the drain", urgent: true },
+  { reason: "Can I speak to someone?", urgent: false },
   { reason: "Price for a new tap", urgent: false },
 ];
 
@@ -45,9 +55,9 @@ export type SummaryEmail = { time: string; subject: string; lines: string[]; out
 export const summaryEmails: SummaryEmail[] = [
   {
     time: "11:43 pm",
-    subject: "New booking: Maria Lopez",
-    lines: ["Kitchen sink leak under the cabinet.", "Booked Wed 10:00 · 555-0142 confirmed."],
-    outcome: "booked",
+    subject: "Booking request: Maria Lopez",
+    lines: ["Kitchen sink leak under the cabinet.", "Wants Wed morning · 555-0142 confirmed."],
+    outcome: "message",
   },
   {
     time: "2:07 pm",
@@ -58,7 +68,7 @@ export const summaryEmails: SummaryEmail[] = [
   {
     time: "8:51 pm",
     subject: "Urgent call: Liam O'Connor",
-    lines: ["Burst pipe in the basement, water rising.", "Put through to you · talked 1m 38s."],
+    lines: ["Burst pipe in the basement, water rising.", "Put through to you straight away."],
     outcome: "transferred",
   },
 ];

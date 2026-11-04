@@ -12,7 +12,7 @@ import { ogImage, siteName, siteUrl } from "@/lib/site";
 
 const title = `${siteName}: every call answered, in ${languageCount} languages`;
 const description =
-  "An AI receptionist that answers your phone 24/7, books appointments, takes messages and transfers urgent calls, for businesses of every size.";
+  "An AI receptionist that answers your phone 24/7, takes messages and booking requests, and puts urgent calls through to you, for businesses of every size.";
 const images = [{ ...ogImage, alt: `${siteName}: ${hero.title} ${hero.subtitle}` }];
 
 export const metadata: Metadata = {

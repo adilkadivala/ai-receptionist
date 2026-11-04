@@ -1,6 +1,7 @@
 import { cn } from "@receptionist/ui/lib/utils";
 import type { ReactNode } from "react";
 import { Pattern, type PatternKind } from "./drafting";
+import { Soon } from "./soon";
 
 /**
  * One cell of a drafting grid: a patterned grey stage on top with the example standing on it, then a hairline and a
@@ -12,6 +13,7 @@ export function StageCell({
   title,
   description,
   aside,
+  soon = false,
   pattern,
   align = "start",
   className,
@@ -23,6 +25,8 @@ export function StageCell({
   description?: ReactNode;
   /** Shown at the end of the heading row, e.g. a big number. */
   aside?: ReactNode;
+  /** The feature isn't built yet: a "Coming soon" label follows the heading. */
+  soon?: boolean;
   pattern: PatternKind;
   align?: "start" | "center";
   className?: string;
@@ -49,7 +53,10 @@ export function StageCell({
         )}
       >
         <div className={cn("flex items-baseline gap-3", align === "start" && "justify-between")}>
-          <h3 className="text-[15px] font-semibold tracking-[-0.01em]">{title}</h3>
+          <h3 className="inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[15px] font-semibold tracking-[-0.01em]">
+            {title}
+            {soon && <Soon />}
+          </h3>
           {aside}
         </div>
         {description && <p className="max-w-[46ch] text-sm/relaxed text-pretty text-muted-foreground">{description}</p>}

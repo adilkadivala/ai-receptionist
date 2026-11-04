@@ -8,7 +8,7 @@ export const hero = {
   title: "Every call answered.",
   subtitle: `Day or night, in ${languageCount} languages.`,
   description:
-    "An AI receptionist that picks up 24/7, books appointments into your calendar, takes messages and hands urgent calls to a person. For a one-person plumbing business or a large hospital.",
+    "An AI receptionist that picks up 24/7, answers questions about your business, takes messages and booking requests, and puts urgent calls through to you. For a one-person plumbing business or a large hospital.",
 };
 
 export const builtFor = {
@@ -40,7 +40,7 @@ export const steps = [
   },
   {
     title: "It answers every call",
-    description: "It books, transfers and emails you a summary of every call, around the clock.",
+    description: "It answers, puts emergencies through and sends you a summary of every call, around the clock.",
   },
 ];
 
@@ -52,12 +52,12 @@ export const languagesCopy = {
 
 export const pricingCopy = {
   title: "Simple plans. Every language included.",
-  description: `Extra minutes are ${formatUsd(overagePerMinute)} each. Booking, transfers, spam blocking and call summaries come with every plan.`,
+  description: `Extra minutes are ${formatUsd(overagePerMinute)} each. Transfers to a person and call summaries come with every plan.`,
 };
 
 export const contract = {
   title: "Hotels, hospitals and large companies",
-  description: `From ${formatUsd(contractFromPerMinute)} a minute, billed by invoice. Department routing, HIPAA mode and your choice of data region.`,
+  description: `From ${formatUsd(contractFromPerMinute)} a minute, billed by invoice. Department routing, HIPAA mode and your choice of data region are coming soon.`,
 };
 
 export const trust = [
@@ -71,8 +71,14 @@ export const trust = [
     id: "hipaa",
     title: "HIPAA mode for healthcare",
     description: "Only vendors with a signed agreement, short retention.",
+    soon: true,
   },
-  { id: "region", title: "Your data region", description: "Large contracts choose where their data is stored." },
+  {
+    id: "region",
+    title: "Your data region",
+    description: "Large contracts choose where their data is stored.",
+    soon: true,
+  },
 ] as const;
 
 export type TrustId = (typeof trust)[number]["id"];

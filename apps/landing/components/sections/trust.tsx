@@ -44,6 +44,7 @@ export function Trust() {
                     </span>
                   }
                   description={item.description}
+                  soon={"soon" in item && item.soon}
                 >
                   <Medal icon={Icon} />
                 </StageCell>

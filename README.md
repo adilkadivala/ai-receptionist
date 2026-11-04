@@ -107,7 +107,7 @@ Each customer also needs a phone number, at $1 a month.
 
 Customers rarely use all their minutes. At a typical 60% usage, each plan keeps about **$8.50–8.60 of every $10**.
 
-**Every plan includes:** all 42 languages, appointment booking, transfer to a person, spam blocking, and a summary and transcript of every call.
+**Every plan includes:** all 42 languages, transfer to a person, and a summary and transcript of every call. Appointment booking and spam blocking are coming soon, and so are the add-ons below except extra numbers.
 
 **Compared with competitors:**
 - Rosie: $49 for 250 min or $149 for 1,000 min; appointment booking only from $149.

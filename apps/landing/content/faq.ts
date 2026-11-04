@@ -20,11 +20,13 @@ export const faq = [
   },
   {
     question: "What if it doesn't know the answer?",
-    answer: "It takes a message and emails you straight away, or transfers the caller to a person if you set that up.",
+    answer:
+      "It says the team will call back, takes the caller's name and number, and sends them to you by email and WhatsApp as soon as the call ends. Emergencies are put through to you.",
   },
   {
     question: "Can it book into my calendar?",
-    answer: "Yes. It checks your availability, reads the details back to the caller, and only then books.",
+    answer:
+      "Not yet; it's coming soon. Today it takes the booking request, reads the caller's number back, and you call them to confirm a time.",
   },
   {
     question: "What if I go over my minutes?",
