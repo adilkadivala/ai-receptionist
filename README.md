@@ -1,6 +1,6 @@
 # AI Receptionist
 
-An AI that answers phone calls 24/7 for **businesses of every size**, in **42 languages from launch**. Customers range from a one-person plumbing business to busy hotels and large hospitals.
+An AI that answers phone calls 24/7 for **businesses of every size**, in **10 languages** today (42 once listening moves to Soniox). Customers range from a one-person plumbing business to busy hotels and large hospitals.
 
 Prices were checked on 29–30 October 2026 against published rates. None of these numbers have been measured on real calls yet.
 
@@ -28,6 +28,8 @@ Prices were checked on 29–30 October 2026 against published rates. None of the
 ---
 
 ## 2. Languages: global from launch
+
+**Today: 10 languages.** Listening runs on Deepgram Flux, which understands English, Spanish, French, German, Portuguese, Italian, Dutch, Japanese, Russian and Hindi (Hinglish too). The rest of this section is the plan for when listening moves to Soniox, which isn't built.
 
 We launch with every language that both our listening service (Soniox) and our voice (Cartesia) support. The AI detects the caller's language and answers in it, and it can follow callers who mix two languages, such as Hindi and English or Arabic and English. This matters most for hotels and hospitals, whose callers speak many languages.
 
@@ -107,7 +109,7 @@ Each customer also needs a phone number, at $1 a month.
 
 Customers rarely use all their minutes. At a typical 60% usage, each plan keeps about **$8.50–8.60 of every $10**.
 
-**Every plan includes:** all 42 languages, transfer to a person, and a summary and transcript of every call. Appointment booking and spam blocking are coming soon, and so are the add-ons below except extra numbers.
+**Every plan includes:** every language, transfer to a person, and a summary and transcript of every call. Appointment booking and spam blocking are coming soon, and so are the add-ons below except extra numbers.
 
 **Compared with competitors:**
 - Rosie: $49 for 250 min or $149 for 1,000 min; appointment booking only from $149.

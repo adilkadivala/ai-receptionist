@@ -151,19 +151,21 @@ const scenarios: Scenario[] = [
   },
   {
     outcome: "message",
-    language: "Arabic",
+    language: "French",
     weight: 1,
     seconds: [80, 160],
-    // "Latin|Arabic": the summary uses the first, the transcript the second.
-    names: ["Layla Haddad|ليلى حداد", "Omar Khalil|عمر خليل", "Nour Saleh|نور صالح"],
+    names: ["Camille Dubois", "Lucas Moreau", "Léa Bernard"],
     summary:
-      "{name} wants a quote for a bathroom remodel. Took a message and promised a call back within one working day. The call was in Arabic.",
+      "{name} wants a quote for a bathroom remodel. Took a message and promised a call back within one working day. The call was in French.",
     turns: [
       ["ai", greeting, "English"],
-      ["caller", "مرحباً، أريد عرض سعر لتجديد الحمام."],
-      ["ai", "أهلاً بك! سأترك رسالة لفريقنا ليتصل بك بعرض سعر. ما اسمك؟"],
-      ["caller", "اسمي {native}، ويمكنكم الاتصال بي على هذا الرقم."],
-      ["ai", "شكراً لك. سيتصل بك أحد من فريقنا خلال يوم عمل واحد."],
+      ["caller", "Bonjour, je voudrais un devis pour refaire ma salle de bain."],
+      [
+        "ai",
+        "Bonjour ! Je laisse un message à l'équipe pour qu'elle vous rappelle avec un devis. Quel est votre nom ?",
+      ],
+      ["caller", "Je m'appelle {name}, vous pouvez me rappeler à ce numéro."],
+      ["ai", "Merci. Quelqu'un de l'équipe vous rappellera sous un jour ouvré."],
     ],
   },
   {

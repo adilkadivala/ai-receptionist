@@ -46,7 +46,7 @@ export const mockConfigs: Record<string, AgentConfig> = {
       sat: { open: true, from: "09:00", to: "14:00" },
       sun: { open: false, from: "09:00", to: "14:00" },
     },
-    languages: ["English", "Spanish", "Chinese", "Tagalog"],
+    languages: ["English", "Spanish", "Hindi"],
     voice_id: "voice_ava",
     transfer_numbers: [
       {

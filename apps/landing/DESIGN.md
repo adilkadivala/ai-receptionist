@@ -3,7 +3,7 @@
 The approved design is **"Signal"** (approved 2026-11-01). The reference is `docs/design/landing.dc.html`; `docs/design/README.md` maps its colours to Tailwind classes. This file records how the landing page applies it.
 
 ## Brief
-- **Subject:** an AI phone receptionist that answers a business's calls 24/7 in 42 languages. It books appointments, takes messages, puts urgent calls through to a person and emails a summary of every call. Customers range from a one-person plumber to a hospital.
+- **Subject:** an AI phone receptionist that answers a business's calls 24/7 in 10 languages. It takes messages and booking requests (calendar booking is coming), puts urgent calls through to a person and sends a summary of every call. Customers range from a one-person plumber to a hospital.
 - **Audience:** owners who miss calls while they work (trades, salons, shops), busy professionals, and operations leads at hotels, hospitals and multi-branch companies. They have heard robotic phone bots before. They doubt it will understand their callers' language, book correctly, be honest that it's an AI, and be safe with patients.
 - **One job:** start the self-serve sign-up ("Get started"). Large organizations get one secondary path: "Talk to us".
 

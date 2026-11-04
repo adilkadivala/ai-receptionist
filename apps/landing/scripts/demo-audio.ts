@@ -23,11 +23,11 @@ type Gender = "feminine" | "masculine";
 type Voice = { id: string; name: string; language: string };
 type VoiceChoice = { id: string; name: string };
 
-// The receptionist matches its script's grammar (French "l'assistante", Arabic "المساعد"); callers match their names.
+// The receptionist matches its script's grammar (French "l'assistante", Spanish "la asistente"); callers match their names.
 const genders: Record<string, Record<Speaker, Gender>> = {
   en: { ai: "feminine", caller: "feminine" },
   fr: { ai: "feminine", caller: "feminine" },
-  ar: { ai: "masculine", caller: "masculine" },
+  es: { ai: "feminine", caller: "masculine" },
   hi: { ai: "feminine", caller: "masculine" },
   de: { ai: "feminine", caller: "masculine" },
 };

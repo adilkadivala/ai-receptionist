@@ -19,16 +19,6 @@
       "name": "Zoé"
     }
   },
-  "ar": {
-    "ai": {
-      "id": "f9f9f472-6247-4403-9abe-616f7c407c63",
-      "name": "Raed"
-    },
-    "caller": {
-      "id": "9cbad5f7-fbf6-4416-a22f-1ecc75ad40a2",
-      "name": "Youssef"
-    }
-  },
   "hi": {
     "ai": {
       "id": "4459a9a5-69d6-4680-b970-e13dc51845b6",
@@ -47,6 +37,16 @@
     "caller": {
       "id": "57a3a9e0-a91c-4c94-a2bb-e6cbab3ae649",
       "name": "Clemens"
+    }
+  },
+  "es": {
+    "ai": {
+      "id": "3597a26f-80ef-4bd5-8101-9699bc764917",
+      "name": "Ximena"
+    },
+    "caller": {
+      "id": "35b2cfc1-e6fb-4d69-a598-c1780612be4a",
+      "name": "Darío"
     }
   }
 }

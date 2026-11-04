@@ -1,6 +1,6 @@
 // FAQ copy: the approved design's questions, with answers the README and architecture doc back.
 // Prices and counts are read from @receptionist/product so the answers can't drift from the plans.
-import { addOns, formatUsd, languageCount, overagePerMinute } from "@receptionist/product";
+import { addOns, allLanguages, formatUsd, languageCount, overagePerMinute } from "@receptionist/product";
 
 function addOnPrice(id: string): string {
   const addOn = addOns.find((item) => item.id === id);
@@ -34,6 +34,6 @@ export const faq = [
   },
   {
     question: "Which languages does it speak?",
-    answer: `${languageCount}, including English, Spanish, Arabic, Hindi, Chinese and Japanese. It answers in whatever language the caller uses, even when they mix two.`,
+    answer: `${languageCount}: ${allLanguages.slice(0, -1).join(", ")} and ${allLanguages.at(-1)}. It answers in whatever language the caller uses, even when they mix two, like Hindi and English. More languages are coming.`,
   },
 ];

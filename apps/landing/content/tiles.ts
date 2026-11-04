@@ -75,29 +75,31 @@ export const summaryEmails: SummaryEmail[] = [
 
 export type Greeting = { text: string; lang: string };
 
-// "Hello" in some of the launch languages, for the two marquees.
+// Every language it speaks, twice: "hello" going one way, and how people answer the phone going the other.
 export const greetings: { forward: Greeting[]; backward: Greeting[] } = {
   forward: [
     { text: "Hello", lang: "en" },
     { text: "Bonjour", lang: "fr" },
-    { text: "مرحبا", lang: "ar" },
-    { text: "Hallo", lang: "de" },
     { text: "नमस्ते", lang: "hi" },
+    { text: "Hallo", lang: "de" },
     { text: "Hola", lang: "es" },
     { text: "こんにちは", lang: "ja" },
     { text: "Olá", lang: "pt" },
+    { text: "Привет", lang: "ru" },
     { text: "Ciao", lang: "it" },
+    { text: "Hoi", lang: "nl" },
   ],
   backward: [
-    { text: "你好", lang: "zh" },
-    { text: "안녕하세요", lang: "ko" },
-    { text: "Merhaba", lang: "tr" },
-    { text: "Привет", lang: "ru" },
-    { text: "Xin chào", lang: "vi" },
-    { text: "สวัสดี", lang: "th" },
-    { text: "שלום", lang: "he" },
-    { text: "Cześć", lang: "pl" },
-    { text: "Hej", lang: "sv" },
+    { text: "Allô", lang: "fr" },
+    { text: "もしもし", lang: "ja" },
+    { text: "¿Dígame?", lang: "es" },
+    { text: "Pronto", lang: "it" },
+    { text: "Haan ji, boliye", lang: "hi-Latn" },
+    { text: "Алло", lang: "ru" },
+    { text: "Alô", lang: "pt" },
+    { text: "Guten Tag", lang: "de" },
+    { text: "Goedendag", lang: "nl" },
+    { text: "Hi there", lang: "en" },
   ],
 };
 

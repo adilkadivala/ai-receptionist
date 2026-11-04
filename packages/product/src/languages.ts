@@ -1,43 +1,10 @@
-// The languages both Soniox (listening) and Cartesia (speaking) cover. Mirrors the README; change both together.
+// The languages a caller can talk to the receptionist in today: the ones Deepgram Flux, the listening service
+// (apps/server/core/config.py), understands. Cartesia, the voice, speaks them all. Mirrors the README; change both
+// together. Moving listening to Soniox would add 32 more (README section 2), but that isn't built.
 
 export const languages = {
   "Major global": ["English", "Spanish", "French", "German", "Portuguese", "Italian", "Dutch", "Russian"],
-  Asia: [
-    "Chinese",
-    "Japanese",
-    "Korean",
-    "Hindi",
-    "Urdu",
-    "Bengali",
-    "Tamil",
-    "Telugu",
-    "Gujarati",
-    "Kannada",
-    "Malayalam",
-    "Marathi",
-    "Punjabi",
-    "Thai",
-    "Vietnamese",
-    "Indonesian",
-    "Malay",
-    "Tagalog",
-  ],
-  "Middle East": ["Arabic", "Hebrew", "Turkish"],
-  Europe: [
-    "Polish",
-    "Ukrainian",
-    "Czech",
-    "Slovak",
-    "Romanian",
-    "Bulgarian",
-    "Croatian",
-    "Hungarian",
-    "Greek",
-    "Swedish",
-    "Danish",
-    "Norwegian",
-    "Finnish",
-  ],
+  Asia: ["Japanese", "Hindi"],
 } as const;
 
 export type Language = (typeof languages)[keyof typeof languages][number];

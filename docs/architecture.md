@@ -307,7 +307,7 @@ Ai-receptionist/
 │       └── (next) evals/         cases/*.jsonl, simulated callers, sandbox, redteam, run.py; cost money, run nightly
 ├── packages/
 │   ├── api-client/               openapi.json (from the server) → src/schema.d.ts (generated) + createApiClient()
-│   ├── product/                  plans, add-ons, prices and the 42 languages; mirrors the README, used by both apps
+│   ├── product/                  plans, add-ons, prices and the languages callers can use; mirrors the README, used by both apps
 │   └── ui/                       shadcn/ui shared by both apps (Base UI, base-nova style, right-to-left on)
 │       ├── components.json       shadcn settings; each app has its own copy that points here
 │       └── src/
