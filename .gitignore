@@ -26,3 +26,6 @@ in-complete/
 .DS_Store
 .idea/
 .vscode/
+
+# Business-info files written by scripts/import_website.py, often for prospects: kept local
+apps/server/business-info/

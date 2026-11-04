@@ -74,6 +74,17 @@ Until each business's settings come from the database, the server answers for on
 
 Restart the api after changing them.
 
+### From the business's website
+
+To give a prospect a demo answering as their business, let Claude read their website and write the business-info file:
+```bash
+cd apps/server && uv run python -m scripts.import_website https://brightpipes.com
+```
+- Claude (`claude-opus-5-5`) reads up to 15 pages of that site and only that site: services, prices, hours, contact, areas served, booking, FAQs, and the shipping, returns and cancellation policies. Anthropic's servers fetch the pages, through the API's web fetch tool.
+- It writes `business-info/<domain>.txt` in `apps/server` (kept out of git), with the questions callers ask that the site answers, and prints what it couldn't confirm, the tokens used, and the two `.env` lines to set.
+- **Read the file and fix it before anyone calls**: websites go out of date, and the receptionist answers from this file as if it were true.
+- A site that builds its pages with JavaScript can come back nearly empty. Then write the file by hand.
+
 ## Putting emergencies through to a person
 
 Set `TRANSFER_NUMBER` in `apps/server/.env` to the phone of whoever handles emergencies, with + and the country code. It must not be `BUSINESS_NUMBER`, or the call would come back to the receptionist. When harm or damage is happening now (a burst pipe, flooding), the receptionist asks for the caller's name and number if it doesn't have them, says it's putting them through, and calls its `transfer_call` tool. If anyone could be hurt, it first tells them to get safe and call emergency services. A caller who just wants a person, with no emergency, gets a message taken instead. Without `TRANSFER_NUMBER` it takes emergencies as messages, as before.

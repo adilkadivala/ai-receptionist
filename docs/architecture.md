@@ -301,7 +301,7 @@ Ai-receptionist/
 │       ├── (next) integrations/  outside services behind our own interface, each with a fake for tests:
 │       │                         llm (the thin Claude adapter), calendars, CRMs, email (Resend), payments (Dodo)
 │       ├── migrations/           database changes
-│       ├── scripts/              export_openapi.py  add_business.py
+│       ├── scripts/              export_openapi.py  add_business.py  import_website.py (a business-info file from a website)
 │       ├── tests/                every commit: fast tests; db/ needs Postgres (row-level security)
 │       │                         (next) chaos/ (fake providers that hang or fail), safety/ (gate for every rule-pack edit)
 │       └── (next) evals/         cases/*.jsonl, simulated callers, sandbox, redteam, run.py; cost money, run nightly
@@ -352,6 +352,6 @@ Ai-receptionist/
 4. **Tools and safety:** tool registry and guard, first `services/` and `repositories/` (bookings, messages) with `action_log` idempotency, read-back, `SafetyGate` with YAML rule packs, emergency transfer (a first version is **done 2026-11-04**: the receptionist puts emergencies through to `TRANSFER_NUMBER` with the TeXML `<Dial>`, which also catches calls the server drops; the emergency detector and the tool guard are still to come).
 5. **Worker:** `worker/main.py` with the job queue, call summaries and email, usage events, rollups and caps.
 6. **Dashboard and login:** `api/routes/`, `deps.py` and `schemas/`; users, memberships, cookie auth, setup wizard, call history, audit log.
-7. **Knowledge:** documents and hybrid search, with an organization check in the search code.
+7. **Knowledge:** documents and hybrid search, with an organization check in the search code. A first step is **done 2026-11-04**: `scripts/import_website.py` has Claude read a business's website and write its business-info file; next it saves a draft of the receptionist's settings for the owner to review in the dashboard.
 8. **Billing:** plans, overage, Dodo.
 9. **Evals and infrastructure:** eval suite in CI; Terraform for stage 1; staging, then production; real test calls in every launch language.
