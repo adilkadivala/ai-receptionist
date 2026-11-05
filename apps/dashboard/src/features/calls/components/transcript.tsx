@@ -23,7 +23,9 @@ export function Transcript({ turns }: { turns: readonly TranscriptTurn[] }) {
           >
             <div className="flex items-baseline gap-2 px-1 text-xs text-muted-foreground">
               <span className="font-medium">{ai ? "Receptionist" : "Caller"}</span>
-              <time className="font-mono tabular-nums">{formatDuration(turn.at_seconds)}</time>
+              {turn.at_seconds !== undefined && (
+                <time className="font-mono tabular-nums">{formatDuration(turn.at_seconds)}</time>
+              )}
             </div>
             <p
               dir="auto"

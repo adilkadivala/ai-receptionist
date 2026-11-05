@@ -1,6 +1,7 @@
 from fastapi import APIRouter, FastAPI
 from pydantic import BaseModel
 
+from api.routes.admin import router as admin_router
 from core.config import get_settings
 from voice.browser import router as browser_call_router
 from voice.routes import router as telnyx_router
@@ -21,5 +22,6 @@ def health() -> Health:
 
 
 app.include_router(api)
+app.include_router(admin_router)  # this computer only, until there's an admin login
 app.include_router(telnyx_router)  # public: Telnyx connects here
 app.include_router(browser_call_router)  # this computer only: test calls from a browser

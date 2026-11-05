@@ -164,7 +164,7 @@ Every table below `organizations` carries `organization_id` and is limited by ro
 | `integrations` | Calendar and CRM connections (tokens encrypted) |
 | `webhook_events` | Received webhooks, with a unique event ID for de-duplication |
 | `jobs` | Queue: `run_at`, attempts, `locked_until`, `dedupe_key`, dead-letter state |
-| `audit_log` | Append-only: who changed, viewed, exported or deleted what |
+| ✅ `audit_log` | Append-only: who changed, viewed, exported or deleted what. So far it records the admin pages' transcript views |
 
 ---
 
@@ -258,10 +258,13 @@ Ai-receptionist/
 │   │   └── src/
 │   │       ├── main.tsx  router.tsx
 │   │       ├── layouts/          AppLayout: dashboard-01's sidebar on blueprint ink beside the page as a light sheet;
-│   │       │                     AuthLayout: sign-up and login on the blueprint, like the landing's hero
-│   │       ├── pages/            Overview, Calls, Receptionist, Phone numbers, Billing, Settings, Signup, Log in
+│   │       │                     AuthLayout: sign-up and login on the blueprint, like the landing's hero;
+│   │       │                     AdminLayout: the founders' /admin area, in development builds only
+│   │       ├── pages/            Overview, Calls, Receptionist, Phone numbers, Billing, Settings, Signup, Log in;
+│   │       │                     admin/: the founders' Overview, Customers and one customer with its calls
 │   │       ├── features/         one folder per area (overview, calls, receptionist, numbers, billing, account):
-│   │       │                     api.ts (TanStack Query hooks), types, components, mocks until the api routes exist
+│   │       │                     api.ts (TanStack Query hooks), types, components, mocks until the api routes exist;
+│   │       │                     admin/ reads every customer from the real api (/api/admin), never mocks
 │   │       ├── components/       the app's own pieces: sidebar and its blueprint mat, site header, section title, stat cell,
 │   │       │                     empty state on a patterned stage, data table, usage meter; surfaces.ts (the depth levels)
 │   │       ├── hooks/            use-validated-form, use-stored-state, use-reduced-motion
@@ -273,9 +276,11 @@ Ai-receptionist/
 │       │                         password and token helpers; HTTP client with deadlines, retry and circuit breaker; redaction
 │       ├── api/                  process 1: dashboard REST API
 │       │   ├── main.py           builds the app and mounts the routers
+│       │   ├── routes/           one thin router per resource. So far admin.py: the founders' read-only view of every
+│       │   │                     customer, answered only on this computer until there's an admin login
+│       │   │                     (next) auth, agents, numbers, calls, billing, webhooks
+│       │   ├── schemas/          Pydantic request and response models; the OpenAPI the dashboard client comes from
 │       │   └── (next) deps.py    current user, current organization, tenant session
-│       │       (next) routes/    one thin router per resource: auth, agents, numbers, calls, billing, webhooks
-│       │       (next) schemas/   Pydantic request and response models; the OpenAPI the dashboard client comes from
 │       ├── voice/                process 2: live calls
 │       │   ├── routes.py  texml.py               Telnyx webhook and audio WebSocket
 │       │   ├── call.py                           the pipeline: wires the stages together, handles barge-in
@@ -297,7 +302,8 @@ Ai-receptionist/
 │       ├── (next) services/      business rules shared by all three processes:
 │       │                         agents, calls, bookings, messages, knowledge, usage, billing
 │       ├── repositories/         every database query, one file per group of tables, always inside Database.tenant()
-│       │   └── calls.py          saving calls and their summaries (next: agents, numbers, bookings, messages)
+│       │   ├── calls.py          saving calls and their summaries (next: agents, numbers, bookings, messages)
+│       │   └── admin.py          the founders' customer list and totals, through migration 0003's SECURITY DEFINER functions
 │       ├── (next) integrations/  outside services behind our own interface, each with a fake for tests:
 │       │                         llm (the thin Claude adapter), calendars, CRMs, email (Resend), payments (Dodo)
 │       ├── migrations/           database changes
