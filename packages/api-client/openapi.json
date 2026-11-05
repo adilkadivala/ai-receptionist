@@ -25,10 +25,981 @@
           }
         }
       }
+    },
+    "/api/admin/overview": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Overview",
+        "operationId": "overview_api_admin_overview_get",
+        "parameters": [
+          {
+            "name": "time_zone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "IANA name, such as Asia/Kolkata: where today and this week start.",
+              "default": "UTC",
+              "title": "Time Zone"
+            },
+            "description": "IANA name, such as Asia/Kolkata: where today and this week start."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOverview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/organizations": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Organizations",
+        "operationId": "organizations_api_admin_organizations_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/AdminOrganization"
+                  },
+                  "type": "array",
+                  "title": "Response Organizations Api Admin Organizations Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/organizations/{organization_id}": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Organization",
+        "operationId": "organization_api_admin_organizations__organization_id__get",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminOrganizationDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/organizations/{organization_id}/calls": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Calls",
+        "operationId": "calls_api_admin_organizations__organization_id__calls_get",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 25,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCallPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/organizations/{organization_id}/calls/{call_id}": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Call",
+        "description": "The full call. Each time it's opened, audit_log records that its transcript was viewed.",
+        "operationId": "call_api_admin_organizations__organization_id__calls__call_id__get",
+        "parameters": [
+          {
+            "name": "organization_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Organization Id"
+            }
+          },
+          {
+            "name": "call_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Call Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminCall"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AdminAgent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "greeting": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Greeting"
+          },
+          "languages": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Languages"
+          },
+          "transfer_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transfer Number"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "greeting",
+          "languages",
+          "transfer_number",
+          "created_at"
+        ],
+        "title": "AdminAgent"
+      },
+      "AdminAgentRef": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "AdminAgentRef"
+      },
+      "AdminCall": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "organization_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Organization Id"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
+          },
+          "agent_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Name"
+          },
+          "phone_number_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone Number Id"
+          },
+          "from_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Number"
+          },
+          "to_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Number"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "duration_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Seconds"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          },
+          "transcript": {
+            "items": {
+              "$ref": "#/components/schemas/AdminTranscriptTurn"
+            },
+            "type": "array",
+            "title": "Transcript"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "organization_id",
+          "agent_id",
+          "agent_name",
+          "phone_number_id",
+          "from_number",
+          "to_number",
+          "language",
+          "started_at",
+          "ended_at",
+          "duration_seconds",
+          "outcome",
+          "cost_usd",
+          "transcript",
+          "summary"
+        ],
+        "title": "AdminCall",
+        "description": "One call, with the full transcript and, once it's written, Claude's summary (voice.summary.CallSummary)."
+      },
+      "AdminCallPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AdminCallRow"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size"
+        ],
+        "title": "AdminCallPage"
+      },
+      "AdminCallRow": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
+          },
+          "from_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "From Number"
+          },
+          "to_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "To Number"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "ended_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ended At"
+          },
+          "duration_seconds": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Seconds"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "headline": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Headline",
+            "description": "The summary's one-line headline, once there's a summary."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "agent_id",
+          "from_number",
+          "to_number",
+          "language",
+          "started_at",
+          "ended_at",
+          "duration_seconds",
+          "outcome",
+          "headline"
+        ],
+        "title": "AdminCallRow"
+      },
+      "AdminNumberRef": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "e164": {
+            "type": "string",
+            "title": "E164"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "e164",
+          "agent_id"
+        ],
+        "title": "AdminNumberRef"
+      },
+      "AdminOrganization": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "plan": {
+            "type": "string",
+            "title": "Plan"
+          },
+          "region": {
+            "type": "string",
+            "title": "Region"
+          },
+          "hipaa_mode": {
+            "type": "boolean",
+            "title": "Hipaa Mode"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "phone_numbers": {
+            "items": {
+              "$ref": "#/components/schemas/AdminNumberRef"
+            },
+            "type": "array",
+            "title": "Phone Numbers"
+          },
+          "agents": {
+            "items": {
+              "$ref": "#/components/schemas/AdminAgentRef"
+            },
+            "type": "array",
+            "title": "Agents"
+          },
+          "calls": {
+            "type": "integer",
+            "title": "Calls"
+          },
+          "call_seconds": {
+            "type": "integer",
+            "title": "Call Seconds"
+          },
+          "last_call_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Call At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "plan",
+          "region",
+          "hipaa_mode",
+          "created_at",
+          "phone_numbers",
+          "agents",
+          "calls",
+          "call_seconds",
+          "last_call_at"
+        ],
+        "title": "AdminOrganization",
+        "description": "One customer in the list, with its call totals."
+      },
+      "AdminOrganizationDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "plan": {
+            "type": "string",
+            "title": "Plan"
+          },
+          "region": {
+            "type": "string",
+            "title": "Region"
+          },
+          "hipaa_mode": {
+            "type": "boolean",
+            "title": "Hipaa Mode"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "phone_numbers": {
+            "items": {
+              "$ref": "#/components/schemas/AdminPhoneNumber"
+            },
+            "type": "array",
+            "title": "Phone Numbers"
+          },
+          "agents": {
+            "items": {
+              "$ref": "#/components/schemas/AdminAgent"
+            },
+            "type": "array",
+            "title": "Agents"
+          },
+          "calls": {
+            "type": "integer",
+            "title": "Calls"
+          },
+          "call_seconds": {
+            "type": "integer",
+            "title": "Call Seconds"
+          },
+          "last_call_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Call At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "plan",
+          "region",
+          "hipaa_mode",
+          "created_at",
+          "phone_numbers",
+          "agents",
+          "calls",
+          "call_seconds",
+          "last_call_at"
+        ],
+        "title": "AdminOrganizationDetail",
+        "description": "One customer: its numbers and agents, and its call totals."
+      },
+      "AdminOutcomeCount": {
+        "properties": {
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome",
+            "description": "How the calls ended; null while it isn't set yet."
+          },
+          "calls": {
+            "type": "integer",
+            "title": "Calls"
+          }
+        },
+        "type": "object",
+        "required": [
+          "outcome",
+          "calls"
+        ],
+        "title": "AdminOutcomeCount"
+      },
+      "AdminOverview": {
+        "properties": {
+          "customers": {
+            "type": "integer",
+            "title": "Customers"
+          },
+          "calls_today": {
+            "type": "integer",
+            "title": "Calls Today"
+          },
+          "calls_this_week": {
+            "type": "integer",
+            "title": "Calls This Week"
+          },
+          "calls": {
+            "type": "integer",
+            "title": "Calls"
+          },
+          "call_seconds_this_week": {
+            "type": "integer",
+            "title": "Call Seconds This Week"
+          },
+          "call_seconds": {
+            "type": "integer",
+            "title": "Call Seconds"
+          },
+          "outcomes": {
+            "items": {
+              "$ref": "#/components/schemas/AdminOutcomeCount"
+            },
+            "type": "array",
+            "title": "Outcomes",
+            "description": "All-time calls per outcome, most first."
+          }
+        },
+        "type": "object",
+        "required": [
+          "customers",
+          "calls_today",
+          "calls_this_week",
+          "calls",
+          "call_seconds_this_week",
+          "call_seconds",
+          "outcomes"
+        ],
+        "title": "AdminOverview",
+        "description": "Totals across every customer. Today and this week (from Monday) are in the time zone asked for."
+      },
+      "AdminPhoneNumber": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "e164": {
+            "type": "string",
+            "title": "E164"
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider"
+          },
+          "agent_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Agent Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "e164",
+          "provider",
+          "agent_id",
+          "created_at"
+        ],
+        "title": "AdminPhoneNumber"
+      },
+      "AdminTranscriptTurn": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "description": "\"caller\" or \"ai\"."
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role",
+          "text"
+        ],
+        "title": "AdminTranscriptTurn"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
       "Health": {
         "properties": {
           "ok": {
@@ -49,6 +1020,46 @@
           "missing"
         ],
         "title": "Health"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
       }
     }
   }

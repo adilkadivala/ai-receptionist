@@ -21,16 +21,385 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Overview */
+        get: operations["overview_api_admin_overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/organizations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Organizations */
+        get: operations["organizations_api_admin_organizations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/organizations/{organization_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Organization */
+        get: operations["organization_api_admin_organizations__organization_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/organizations/{organization_id}/calls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Calls */
+        get: operations["calls_api_admin_organizations__organization_id__calls_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/organizations/{organization_id}/calls/{call_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Call
+         * @description The full call. Each time it's opened, audit_log records that its transcript was viewed.
+         */
+        get: operations["call_api_admin_organizations__organization_id__calls__call_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AdminAgent */
+        AdminAgent: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Greeting */
+            greeting: string | null;
+            /** Languages */
+            languages: string[];
+            /** Transfer Number */
+            transfer_number: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** AdminAgentRef */
+        AdminAgentRef: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+        };
+        /**
+         * AdminCall
+         * @description One call, with the full transcript and, once it's written, Claude's summary (voice.summary.CallSummary).
+         */
+        AdminCall: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Organization Id
+             * Format: uuid
+             */
+            organization_id: string;
+            /** Agent Id */
+            agent_id: string | null;
+            /** Agent Name */
+            agent_name: string | null;
+            /** Phone Number Id */
+            phone_number_id: string | null;
+            /** From Number */
+            from_number: string | null;
+            /** To Number */
+            to_number: string | null;
+            /** Language */
+            language: string | null;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Ended At */
+            ended_at: string | null;
+            /** Duration Seconds */
+            duration_seconds: number | null;
+            /** Outcome */
+            outcome: string | null;
+            /** Cost Usd */
+            cost_usd: number | null;
+            /** Transcript */
+            transcript: components["schemas"]["AdminTranscriptTurn"][];
+            /** Summary */
+            summary: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** AdminCallPage */
+        AdminCallPage: {
+            /** Items */
+            items: components["schemas"]["AdminCallRow"][];
+            /** Total */
+            total: number;
+            /** Page */
+            page: number;
+            /** Page Size */
+            page_size: number;
+        };
+        /** AdminCallRow */
+        AdminCallRow: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Agent Id */
+            agent_id: string | null;
+            /** From Number */
+            from_number: string | null;
+            /** To Number */
+            to_number: string | null;
+            /** Language */
+            language: string | null;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /** Ended At */
+            ended_at: string | null;
+            /** Duration Seconds */
+            duration_seconds: number | null;
+            /** Outcome */
+            outcome: string | null;
+            /**
+             * Headline
+             * @description The summary's one-line headline, once there's a summary.
+             */
+            headline: string | null;
+        };
+        /** AdminNumberRef */
+        AdminNumberRef: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** E164 */
+            e164: string;
+            /** Agent Id */
+            agent_id: string | null;
+        };
+        /**
+         * AdminOrganization
+         * @description One customer in the list, with its call totals.
+         */
+        AdminOrganization: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Plan */
+            plan: string;
+            /** Region */
+            region: string;
+            /** Hipaa Mode */
+            hipaa_mode: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Phone Numbers */
+            phone_numbers: components["schemas"]["AdminNumberRef"][];
+            /** Agents */
+            agents: components["schemas"]["AdminAgentRef"][];
+            /** Calls */
+            calls: number;
+            /** Call Seconds */
+            call_seconds: number;
+            /** Last Call At */
+            last_call_at: string | null;
+        };
+        /**
+         * AdminOrganizationDetail
+         * @description One customer: its numbers and agents, and its call totals.
+         */
+        AdminOrganizationDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Plan */
+            plan: string;
+            /** Region */
+            region: string;
+            /** Hipaa Mode */
+            hipaa_mode: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Phone Numbers */
+            phone_numbers: components["schemas"]["AdminPhoneNumber"][];
+            /** Agents */
+            agents: components["schemas"]["AdminAgent"][];
+            /** Calls */
+            calls: number;
+            /** Call Seconds */
+            call_seconds: number;
+            /** Last Call At */
+            last_call_at: string | null;
+        };
+        /** AdminOutcomeCount */
+        AdminOutcomeCount: {
+            /**
+             * Outcome
+             * @description How the calls ended; null while it isn't set yet.
+             */
+            outcome: string | null;
+            /** Calls */
+            calls: number;
+        };
+        /**
+         * AdminOverview
+         * @description Totals across every customer. Today and this week (from Monday) are in the time zone asked for.
+         */
+        AdminOverview: {
+            /** Customers */
+            customers: number;
+            /** Calls Today */
+            calls_today: number;
+            /** Calls This Week */
+            calls_this_week: number;
+            /** Calls */
+            calls: number;
+            /** Call Seconds This Week */
+            call_seconds_this_week: number;
+            /** Call Seconds */
+            call_seconds: number;
+            /**
+             * Outcomes
+             * @description All-time calls per outcome, most first.
+             */
+            outcomes: components["schemas"]["AdminOutcomeCount"][];
+        };
+        /** AdminPhoneNumber */
+        AdminPhoneNumber: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** E164 */
+            e164: string;
+            /** Provider */
+            provider: string;
+            /** Agent Id */
+            agent_id: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** AdminTranscriptTurn */
+        AdminTranscriptTurn: {
+            /**
+             * Role
+             * @description "caller" or "ai".
+             */
+            role: string;
+            /** Text */
+            text: string;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
         /** Health */
         Health: {
             /** Ok */
             ok: boolean;
             /** Missing */
             missing: string[];
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
     };
     responses: never;
@@ -57,6 +426,155 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Health"];
+                };
+            };
+        };
+    };
+    overview_api_admin_overview_get: {
+        parameters: {
+            query?: {
+                /** @description IANA name, such as Asia/Kolkata: where today and this week start. */
+                time_zone?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOverview"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    organizations_api_admin_organizations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrganization"][];
+                };
+            };
+        };
+    };
+    organization_api_admin_organizations__organization_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrganizationDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    calls_api_admin_organizations__organization_id__calls_get: {
+        parameters: {
+            query?: {
+                page?: number;
+                page_size?: number;
+            };
+            header?: never;
+            path: {
+                organization_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCallPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    call_api_admin_organizations__organization_id__calls__call_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                organization_id: string;
+                call_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCall"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

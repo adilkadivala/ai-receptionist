@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, type RouteObject } from "react-router";
 import { PageLoader } from "./components/page-loader";
 import type { RouteHandle } from "./components/site-header";
 import { AppLayout } from "./layouts/AppLayout";
@@ -51,6 +51,9 @@ export const router = createBrowserRouter([
       { path: "*", element: <NotFoundPage /> },
     ],
   },
+  // The founders' admin area: every customer's data in one place. Only development builds include it, and its api
+  // answers only on this computer, until there's an admin login (docs/development.md).
+  ...(import.meta.env.DEV ? [adminRoutes()] : []),
   {
     path: "/signup",
     errorElement: <RouteErrorPage />,
@@ -64,3 +67,32 @@ export const router = createBrowserRouter([
     lazy: () => import("./pages/LoginPage").then((m) => ({ Component: m.LoginPage })),
   },
 ]);
+
+function adminRoutes(): RouteObject {
+  return {
+    path: "/admin",
+    lazy: () => import("./layouts/AdminLayout").then((m) => ({ Component: m.AdminLayout })),
+    errorElement: <RouteErrorPage />,
+    HydrateFallback: PageLoader,
+    children: [
+      {
+        index: true,
+        handle: title("Overview"),
+        lazy: () => import("./pages/admin/AdminOverviewPage").then((m) => ({ Component: m.AdminOverviewPage })),
+      },
+      {
+        path: "customers",
+        handle: title("Customers"),
+        lazy: () => import("./pages/admin/AdminCustomersPage").then((m) => ({ Component: m.AdminCustomersPage })),
+      },
+      {
+        path: "customers/:id",
+        handle: title("Customer"),
+        lazy: () => import("./pages/admin/AdminCustomerPage").then((m) => ({ Component: m.AdminCustomerPage })),
+        // A call opens in a sheet over the customer, so /admin/customers/:id/calls/:callId renders the customer too.
+        children: [{ path: "calls/:callId" }],
+      },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  };
+}

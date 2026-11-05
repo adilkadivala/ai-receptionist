@@ -4,6 +4,8 @@ import { Outlet } from "react-router";
 import { AppSidebar } from "../components/app-sidebar";
 import { HeaderSlotProvider } from "../components/header-slot";
 import { SiteHeader } from "../components/site-header";
+import { CallSearch } from "../features/calls/components/call-search";
+import { SampleDataBadge } from "./SampleDataBadge";
 
 /**
  * shadcn's dashboard-01 frame, drawn like the landing page: the sidebar on blueprint ink, and beside it the page as a
@@ -28,7 +30,10 @@ export function AppLayout() {
       {/* SidebarInset is the page's <main>. */}
       <SidebarInset className="mt-2 min-w-0 rounded-t-[20px] md:peer-data-[variant=inset]:rounded-[20px] md:peer-data-[variant=inset]:shadow-none">
         <HeaderSlotProvider value={slot}>
-          <SiteHeader slotRef={setSlot} />
+          <SiteHeader slotRef={setSlot}>
+            <SampleDataBadge />
+            <CallSearch />
+          </SiteHeader>
           <div className="@container/main flex flex-1 flex-col px-4 py-5 lg:px-6 lg:py-6">
             <Outlet />
           </div>
