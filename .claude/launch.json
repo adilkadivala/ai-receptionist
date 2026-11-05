@@ -24,6 +24,12 @@
       "runtimeExecutable": "uv",
       "runtimeArgs": ["run", "--directory", "apps/server", "uvicorn", "api.main:app", "--port", "8010"],
       "port": 8010
+    },
+    {
+      "name": "dashboard-8010",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["API_URL=http://localhost:8010", "pnpm", "--filter", "@receptionist/dashboard", "dev"],
+      "port": 5173
     }
   ]
 }
