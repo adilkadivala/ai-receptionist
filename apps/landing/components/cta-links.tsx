@@ -2,7 +2,7 @@ import { buttonVariants } from "@receptionist/ui/components/button";
 import { cn } from "@receptionist/ui/lib/utils";
 import { ArrowRight, Play } from "lucide-react";
 import type { ReactNode } from "react";
-import { contactHref, signupUrl } from "@/lib/site";
+import { bookDemoHref, contactHref } from "@/lib/site";
 
 // Link sizes from the design: 46 px for the hero and the final call to action, 42 px in cards, 36 px in the header.
 const sizes = {
@@ -40,15 +40,15 @@ export function ctaClassName({ variant = "default", size = "lg", className }: Ct
   return cn(buttonVariants({ variant: base }), "group/cta", sizes[size], variants[variant], className);
 }
 
-/** The page's one main action. The label is the same everywhere. */
-export function GetStartedLink({
+/** The page's one main action, the same label everywhere. A plan card passes its plan, so sales knows which one. */
+export function BookDemoLink({
   plan,
   arrow,
-  children = "Get started",
+  children = "Book a demo",
   ...props
 }: CtaProps & { plan?: string; arrow?: boolean }) {
   return (
-    <a href={signupUrl(plan)} className={ctaClassName(props)}>
+    <a href={bookDemoHref(plan)} className={ctaClassName(props)}>
       {children}
       {arrow && <ArrowRight aria-hidden className={arrowClassName} />}
     </a>

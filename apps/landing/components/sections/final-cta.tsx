@@ -1,6 +1,6 @@
 import { finalCta } from "@/content/home";
 import { Blueprint } from "../blueprint";
-import { ctaClassName, GetStartedLink } from "../cta-links";
+import { BookDemoLink, ctaClassName } from "../cta-links";
 import { DeskProps } from "../desk-props";
 import { RevealGroup, RevealItem } from "../motion/reveal";
 
@@ -27,7 +27,7 @@ export function FinalCta() {
             {finalCta.description}
           </RevealItem>
           <RevealItem className="mt-8 flex flex-wrap justify-center gap-3">
-            <GetStartedLink variant="inverse" arrow />
+            <BookDemoLink variant="inverse" arrow />
             <a href="#pricing" className={ctaClassName({ variant: "glass" })}>
               See pricing
             </a>

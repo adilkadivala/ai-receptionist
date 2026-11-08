@@ -11,12 +11,13 @@ import type { NavLink } from "@/lib/site";
 export function MobileNav({
   links,
   loginUrl,
-  signupUrl,
+  bookDemoUrl,
   triggerClassName,
 }: {
   links: NavLink[];
-  loginUrl: string;
-  signupUrl: string;
+  /** Left out while there are no accounts to log in to. */
+  loginUrl?: string;
+  bookDemoUrl: string;
   triggerClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -41,11 +42,13 @@ export function MobileNav({
               {link.label}
             </a>
           ))}
-          <a href={loginUrl} className={linkClassName}>
-            Log in
-          </a>
-          <a href={signupUrl} className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 text-base")}>
-            Get started
+          {loginUrl && (
+            <a href={loginUrl} className={linkClassName}>
+              Log in
+            </a>
+          )}
+          <a href={bookDemoUrl} className={cn(buttonVariants({ size: "lg" }), "mt-2 h-11 text-base")}>
+            Book a demo
           </a>
         </nav>
       </SheetContent>

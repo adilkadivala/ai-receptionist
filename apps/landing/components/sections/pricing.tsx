@@ -3,7 +3,7 @@ import { PlanCard } from "@receptionist/ui/blocks/plan-card";
 import { cn } from "@receptionist/ui/lib/utils";
 import { contract, pricingCopy } from "@/content/home";
 import { addOnSummary } from "@/lib/plans";
-import { ContactLink, GetStartedLink } from "../cta-links";
+import { BookDemoLink, ContactLink } from "../cta-links";
 import { FrameRule } from "../frame-lines";
 import { Reveal, RevealGroup, RevealItem } from "../motion/reveal";
 import { Section, SectionHeading } from "../section";
@@ -32,14 +32,14 @@ export function Pricing() {
               plan={plan}
               className={cn(planCardClassName, plan.featured && featuredClassName)}
               action={
-                <GetStartedLink
+                <BookDemoLink
                   plan={plan.id}
                   variant={plan.featured ? "default" : "outline"}
                   size="md"
                   className="w-full shadow-none"
                 >
                   Choose {plan.name}
-                </GetStartedLink>
+                </BookDemoLink>
               }
             />
           </RevealItem>

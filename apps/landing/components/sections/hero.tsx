@@ -3,7 +3,7 @@ import type { CSSProperties } from "react";
 import { hero } from "@/content/home";
 import { lowestPlanPrice } from "@/lib/plans";
 import { Blueprint } from "../blueprint";
-import { GetStartedLink, HearCallLink } from "../cta-links";
+import { BookDemoLink, HearCallLink } from "../cta-links";
 import { DashboardPreview } from "../dashboard-preview";
 import { DeskProps } from "../desk-props";
 import { TiltIn } from "../motion/tilt-in";
@@ -56,7 +56,7 @@ export function Hero() {
             {hero.description}
           </p>
           <div className="animate-rise mt-8 flex flex-wrap justify-center gap-3" style={after(370)}>
-            <GetStartedLink variant="inverse" arrow />
+            <BookDemoLink variant="inverse" arrow />
             <HearCallLink variant="glass" />
           </div>
           <p className="animate-rise mt-[18px] text-[13px] text-primary-foreground/55" style={after(450)}>

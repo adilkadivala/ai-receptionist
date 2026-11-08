@@ -5,7 +5,7 @@ The approved design is **"Signal"** (approved 2026-11-01). The reference is `doc
 ## Brief
 - **Subject:** an AI phone receptionist that answers a business's calls 24/7 in 10 languages. It takes messages and booking requests (calendar booking is coming), puts urgent calls through to a person and sends a summary of every call. Customers range from a one-person plumber to a hospital.
 - **Audience:** owners who miss calls while they work (trades, salons, shops), busy professionals, and operations leads at hotels, hospitals and multi-branch companies. They have heard robotic phone bots before. They doubt it will understand their callers' language, book correctly, be honest that it's an AI, and be safe with patients.
-- **One job:** start the self-serve sign-up ("Get started"). Large organizations get one secondary path: "Talk to us".
+- **One job:** book a demo ("Book a demo"), until self-serve sign-up opens (`accountsOpen` in `lib/site.ts`). Large organizations get one secondary path: "Talk to us".
 
 ## Direction
 Signal on the drafting table: neutral greys, one electric blue, hairline borders and tight headlines, drawn like a technical sheet. The page sits in a framed column of dashed lines. The hero and the final call to action are blueprint panels: Signal blue taken halfway to black, with a cutting-mat grid, rulers and construction lines, and a few desk objects lying on them. Below the hero a light sheet curves up over its edge. Sections are separated by hatched bands and drawn as flush cells split by hairlines; each cell has a patterned grey stage where the product's pieces stand as soft white objects. Labels are mono, in blue, between drafting brackets. The product itself (a dashboard, a live call) is still the hero artifact.
@@ -63,7 +63,7 @@ Animation is Motion (`motion/react`) in client components, plus one CSS entrance
 
 ## 5 UX rules for this product
 1. The price of the cheapest plan and the AI notice are visible in the hero, without scrolling.
-2. One label for the main action everywhere: "Get started". Contracts get "Talk to us".
+2. One label for the main action everywhere: "Book a demo" (plan cards say "Choose Pro" and pass the plan along). Contracts get "Talk to us".
 3. Every claim on the page is backed by the README or `docs/architecture.md`. No testimonials, logos or usage numbers until they're real: the strip under the hero names kinds of business, not customers.
 4. Every example is labeled: the demo says "Example call", the dashboard preview is captioned as sample data.
 5. Plans, prices and languages come from `@receptionist/product`, never typed into the page.

@@ -85,7 +85,8 @@ export type TrustId = (typeof trust)[number]["id"];
 
 export const finalCta = {
   title: "Stop missing calls tonight.",
-  description: "Set up your receptionist, forward your number, and let it pick up the next call.",
+  description:
+    "Book a demo. We set up your receptionist from your website, you forward your number, and it picks up the next call.",
 };
 
 export const footer = {

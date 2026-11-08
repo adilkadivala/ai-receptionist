@@ -1,7 +1,7 @@
 import { LogoMark } from "@receptionist/ui/blocks/logo";
 import { cn } from "@receptionist/ui/lib/utils";
-import { loginUrl, sectionLinks, signupUrl, siteName } from "@/lib/site";
-import { ctaClassName, GetStartedLink } from "./cta-links";
+import { accountsOpen, bookDemoHref, loginUrl, sectionLinks, siteName } from "@/lib/site";
+import { BookDemoLink, ctaClassName } from "./cta-links";
 import { MobileNav } from "./mobile-nav";
 import { gutter } from "./section";
 
@@ -42,14 +42,21 @@ export function SiteHeader({ tone = "light", className }: { tone?: keyof typeof 
         ))}
       </nav>
       <div className="flex items-center gap-2">
-        <a
-          href={loginUrl}
-          className={ctaClassName({ size: "sm", className: cn("hidden lg:inline-flex", style.login) })}
-        >
-          Log in
-        </a>
-        <GetStartedLink size="sm" variant={style.cta} />
-        <MobileNav links={sectionLinks} loginUrl={loginUrl} signupUrl={signupUrl()} triggerClassName={style.menu} />
+        {accountsOpen && (
+          <a
+            href={loginUrl}
+            className={ctaClassName({ size: "sm", className: cn("hidden lg:inline-flex", style.login) })}
+          >
+            Log in
+          </a>
+        )}
+        <BookDemoLink size="sm" variant={style.cta} />
+        <MobileNav
+          links={sectionLinks}
+          loginUrl={accountsOpen ? loginUrl : undefined}
+          bookDemoUrl={bookDemoHref()}
+          triggerClassName={style.menu}
+        />
       </div>
     </header>
   );

@@ -1,7 +1,7 @@
 import { cn } from "@receptionist/ui/lib/utils";
 import type { ReactNode } from "react";
 import { steps } from "@/content/home";
-import { GetStartedLink, HearCallLink } from "../cta-links";
+import { BookDemoLink, HearCallLink } from "../cta-links";
 import { HatchBand, type PatternKind } from "../drafting";
 import { Reveal, RevealGroup, RevealItem } from "../motion/reveal";
 import { brandText, gutter, SectionHeading } from "../section";
@@ -21,7 +21,7 @@ export function HowItWorks() {
       <div className={cn("flex flex-wrap items-end justify-between gap-x-10 gap-y-7 pt-24 pb-14", gutter)}>
         <SectionHeading eyebrow="How it works" title="Live in three steps" className="max-w-160" />
         <Reveal delay={0.1} className="flex flex-wrap gap-3">
-          <GetStartedLink arrow />
+          <BookDemoLink arrow />
           <HearCallLink />
         </Reveal>
       </div>
